@@ -95,7 +95,12 @@ export async function POST(req: NextRequest) {
 
                 <p>Thank you for your support and may you have a sweet and blessed new year!</p>
 
-                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666;">
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 11px; color: #888; background-color: #fafafa; padding: 15px; border-radius: 5px;">
+                  <p><strong>Tax Deduction Information:</strong></p>
+                  <p>Tomchei Shabbos of Florida is a 501(c)(3) nonprofit organization (Tax ID: ${process.env.NONPROFIT_TAX_ID}). Your donation of $${(numericAmount / 100).toFixed(2)} is tax deductible to the extent allowed by law. No goods or services were provided in exchange for this contribution. Please consult your tax advisor regarding the deductibility of your contribution.</p>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666;">
                   <p>Tomchei Shabbos of Florida<br/>
                   Serving our community with dignity and care</p>
                 </div>
