@@ -1,0 +1,58 @@
+<svg width="100%" viewBox="0 0 240 280" xmlns="http://www.w3.org/2000/svg">
+  <title>Realistic red apple</title>
+  <desc>A detailed red apple with natural shading and depth</desc>
+
+  <defs>
+    <radialGradient id="appleSurface" cx="40%" cy="35%">
+      <stop offset="0%" style="stop-color:#FF5C3C;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#E63027;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#A81F1F;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="appleShine" cx="35%" cy="30%">
+      <stop offset="0%" style="stop-color:#FFE4D4;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </radialGradient>
+    <linearGradient id="stemGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8B6F47;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#A0826D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6B5435;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Top indent -->
+  <ellipse cx="120" cy="45" rx="28" ry="22" fill="#8B1515" opacity="0.4"/>
+
+  <!-- Main apple body - left side -->
+  <path d="M 120 35 Q 90 50 80 100 Q 70 140 85 175 Q 100 190 120 195 Q 90 170 85 130 Q 80 90 100 50 Z" fill="#D82020" opacity="0.3"/>
+
+  <!-- Main apple body -->
+  <ellipse cx="120" cy="115" rx="70" ry="75" fill="url(#appleSurface)" stroke="#6B0F0F" stroke-width="1"/>
+
+  <!-- Left side shadow -->
+  <ellipse cx="60" cy="120" rx="35" ry="50" fill="#7B0F0F" opacity="0.25"/>
+
+  <!-- Bottom indent -->
+  <ellipse cx="120" cy="188" rx="32" ry="18" fill="#5B0F0F" opacity="0.5"/>
+
+  <!-- Bright highlight - glossy shine -->
+  <ellipse cx="135" cy="75" rx="28" ry="35" fill="url(#appleShine)"/>
+
+  <!-- Secondary highlight -->
+  <ellipse cx="155" cy="95" rx="15" ry="20" fill="#FFFFFF" opacity="0.25"/>
+
+  <!-- Stem -->
+  <rect x="113" y="25" width="14" height="30" rx="3" fill="url(#stemGrad)" stroke="#5B4435" stroke-width="0.5"/>
+
+  <!-- Stem bark texture -->
+  <line x1="116" y1="25" x2="116" y2="55" stroke="#6B5445" stroke-width="0.5" opacity="0.5"/>
+  <line x1="120" y1="25" x2="120" y2="55" stroke="#6B5445" stroke-width="0.5" opacity="0.5"/>
+  <line x1="124" y1="25" x2="124" y2="55" stroke="#6B5445" stroke-width="0.5" opacity="0.5"/>
+
+  <!-- Stem cap -->
+  <circle cx="120" cy="25" r="7.5" fill="#8B6F47" stroke="#5B4435" stroke-width="0.5"/>
+
+  <!-- Natural skin texture (subtle) -->
+  <circle cx="95" cy="85" r="2" fill="#FFFFFF" opacity="0.1"/>
+  <circle cx="145" cy="100" r="1.5" fill="#FFFFFF" opacity="0.08"/>
+  <circle cx="110" cy="155" r="2" fill="#8B0F0F" opacity="0.1"/>
+</svg>
