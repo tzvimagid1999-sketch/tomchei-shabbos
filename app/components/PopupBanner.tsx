@@ -41,7 +41,7 @@ export default function PopupBanner() {
             Help us ensure every family in our community has a beautiful and meaningful Rosh Hashana. Your donation makes it possible.
           </p>
           <Link href="/rosh-hashanah" onClick={close}
-            className="block w-full bg-[#5A1B3D] text-white py-3.5 rounded-lg font-bold text-sm tracking-wide hover:bg-[#FFC700] transition mb-3">
+            className="block w-full bg-[#C9A961] text-white py-3.5 rounded-lg font-bold text-sm tracking-wide hover:bg-[#FFC700] transition mb-3">
             Learn More & Donate
           </Link>
           <button onClick={close} className="text-gray-400 text-xs hover:text-gray-600 transition">

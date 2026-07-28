@@ -155,18 +155,18 @@ export default function RoshHashanah() {
               <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (1750000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1.75M</span>
 
               {/* Right Milestone Markers - On Tracker */}
-              <div className="absolute right-0 w-8 h-2 bg-[#5A1B3D]" style={{ top: `${100 - (500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#5A1B3D] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$500k</span>
+              <div className="absolute right-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$500k</span>
 
-              <div className="absolute right-0 w-8 h-2 bg-[#5A1B3D]" style={{ top: `${100 - (1000000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#5A1B3D] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (1000000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1M</span>
+              <div className="absolute right-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (1000000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (1000000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1M</span>
 
-              <div className="absolute right-0 w-8 h-2 bg-[#5A1B3D]" style={{ top: `${100 - (1500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#5A1B3D] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (1500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1.5M</span>
+              <div className="absolute right-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (1500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (1500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1.5M</span>
             </div>
 
             {/* Amount Raised Display - Below tracker */}
-            <div className="text-center bg-gradient-to-br from-[#FFED4E] to-[#5A1B3D] rounded-2xl px-6 py-4 shadow-lg">
+            <div className="text-center bg-gradient-to-br from-[#FFED4E] to-[#C9A961] rounded-2xl px-6 py-4 shadow-lg">
               <p className="text-gray-700 text-sm font-semibold uppercase tracking-wider">Raised So Far</p>
               <p className="font-playfair text-5xl font-bold text-gray-900">
                 ${(totalDonated / 1000000).toFixed(2)}M
@@ -194,7 +194,7 @@ export default function RoshHashanah() {
                   }}
                   className={`bg-white rounded-xl p-4 text-left transition group cursor-pointer border-2 ${
                     selectedTier === tier.value
-                      ? "border-[#5A1B3D] bg-yellow-50 shadow-lg"
+                      ? "border-[#C9A961] bg-yellow-50 shadow-lg"
                       : "border-gray-200 hover:border-[#C9A961] hover:shadow-lg"
                   }`}
                 >
@@ -218,7 +218,7 @@ export default function RoshHashanah() {
             </div>
             <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
               <div
-                className="bg-gradient-to-r from-[#C9A961] to-[#5A1B3D] h-full transition-all duration-500"
+                className="bg-gradient-to-r from-[#C9A961] to-[#C9A961] h-full transition-all duration-500"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -329,9 +329,9 @@ export default function RoshHashanah() {
           <div className="space-y-4">
             {/* Selected Amount Display */}
             {checkoutAmount && (
-              <div className="bg-yellow-50 border-2 border-[#5A1B3D] rounded-lg p-4 mb-4">
+              <div className="bg-yellow-50 border-2 border-[#C9A961] rounded-lg p-4 mb-4">
                 <p className="text-sm text-gray-600">Donation Amount</p>
-                <p className="text-3xl font-bold text-[#5A1B3D]">${checkoutAmount}</p>
+                <p className="text-3xl font-bold text-[#C9A961]">${checkoutAmount}</p>
               </div>
             )}
 
