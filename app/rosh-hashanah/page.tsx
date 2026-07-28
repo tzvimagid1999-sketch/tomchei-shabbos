@@ -141,8 +141,8 @@ export default function RoshHashanah() {
         <span className="font-caveat text-[#1E40AF] text-3xl sm:text-4xl tracking-wide">
           Rosh Hashanah Campaign
         </span>
-        <h1 className="font-playfair text-6xl sm:text-7xl font-bold text-[#C9A961] mt-4 leading-[1.1]">
-          A New Year. A Fresh Start. A Chance to Make a Difference.
+        <h1 className="font-playfair text-6xl sm:text-7xl font-bold mt-4 leading-[1.1]">
+          A <span className="text-[#1E40AF]">New Year!</span> A <span className="text-[#C9A961]">Fresh Start!</span> A <span className="text-[#1E40AF]">Chance</span> to <span className="text-[#C9A961]">Make a Difference!</span>
         </h1>
       </div>
 
@@ -213,7 +213,7 @@ export default function RoshHashanah() {
 
               {/* Center heading */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <h2 className="font-playfair text-3xl font-bold text-[#C9A961] text-center max-w-xs">
+                <h2 className="font-playfair text-3xl font-bold text-[#1E40AF] text-center max-w-xs">
                   Rosh Hashanah Donation
                 </h2>
               </div>
