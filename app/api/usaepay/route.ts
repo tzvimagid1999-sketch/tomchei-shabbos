@@ -66,6 +66,12 @@ export async function POST(req: NextRequest) {
       // Send confirmation email if Resend is configured
       if (process.env.RESEND_API_KEY && email) {
         try {
+          // Mask email and address for privacy
+          const maskedEmail = email.replace(/(.{2})(.*)(@.*)/, "$1***$3");
+          const maskedStreet = street ? street.substring(0, 3) + "***" : "***";
+          const maskedCity = city ? city.substring(0, 2) + "***" : "***";
+          const maskedZip = zip ? zip.substring(0, 2) + "***" : "***";
+
           const resend = new Resend(process.env.RESEND_API_KEY);
           await resend.emails.send({
             from: "Tomchei Shabbos <donations@tomchei-shabbos.com>",
@@ -81,6 +87,8 @@ export async function POST(req: NextRequest) {
                   <p><strong>Confirmation Number:</strong> ${data.refnum || data.authcode}</p>
                   <p><strong>Amount:</strong> $${(numericAmount / 100).toFixed(2)}</p>
                   <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                  <p><strong>Email:</strong> ${maskedEmail}</p>
+                  <p><strong>Address:</strong> ${maskedStreet}, ${maskedCity}, ${state} ${maskedZip}</p>
                 </div>
 
                 <p>Your donation will help us ensure every family in our community has a meaningful Rosh Hashanah celebration.</p>
