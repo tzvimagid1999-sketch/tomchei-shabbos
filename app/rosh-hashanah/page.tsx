@@ -131,6 +131,9 @@ export default function RoshHashanah() {
               </p>
             </div>
 
+            {/* Bell on top of tracker */}
+            <div className="text-4xl mb-4">🔔</div>
+
             {/* Vertical Progress Bar Container - Much Taller & Wider */}
             <div className="relative h-[700px] w-32 bg-gray-100 rounded-3xl overflow-visible border-4 border-black flex flex-col shadow-2xl" style={{ background: 'linear-gradient(to bottom, #fff, #f5f5f5)' }}>
 
@@ -173,10 +176,6 @@ export default function RoshHashanah() {
               </p>
             </div>
 
-            {/* Tagline */}
-            <p className="text-center text-[#C9A961] font-playfair font-bold text-lg max-w-48">
-              Help the apple reach the honey
-            </p>
           </div>
 
           {/* Right: Donation Tiers */}
