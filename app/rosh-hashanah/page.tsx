@@ -8,7 +8,7 @@ export default function RoshHashanah() {
   const [totalDonated, setTotalDonated] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const GOAL = 2000000; // $2M
+  const GOAL = 500000; // $500k
   const progressPercent = Math.min((totalDonated / GOAL) * 100, 100);
   const reachedGoal = totalDonated >= GOAL;
 
@@ -167,7 +167,7 @@ export default function RoshHashanah() {
             <div className="text-center bg-gradient-to-br from-[#C9A961] to-[#C9A961] rounded-2xl px-6 py-4 shadow-lg">
               <p className="text-white text-sm font-semibold uppercase tracking-wider">Our Goal</p>
               <p className="font-playfair text-5xl font-bold text-white">
-                ${(GOAL / 1000000).toFixed(1)}M
+                ${(GOAL / 1000).toFixed(0)}k
               </p>
             </div>
 
@@ -182,34 +182,25 @@ export default function RoshHashanah() {
 
 
               {/* Left Milestone Markers - On Tracker */}
-              <div className="absolute left-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (250000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (250000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$250k</span>
+              <div className="absolute left-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (100000 / 500000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (100000 / 500000) * 100}%`, transform: 'translateY(-50%)' }}>$100k</span>
 
-              <div className="absolute left-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (750000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (750000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$750k</span>
-
-              <div className="absolute left-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (1250000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (1250000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1.25M</span>
-
-              <div className="absolute left-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (1750000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (1750000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1.75M</span>
+              <div className="absolute left-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (300000 / 500000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (300000 / 500000) * 100}%`, transform: 'translateY(-50%)' }}>$300k</span>
 
               {/* Right Milestone Markers - On Tracker */}
-              <div className="absolute right-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$500k</span>
+              <div className="absolute right-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (200000 / 500000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (200000 / 500000) * 100}%`, transform: 'translateY(-50%)' }}>$200k</span>
 
-              <div className="absolute right-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (1000000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (1000000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1M</span>
-
-              <div className="absolute right-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (1500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (1500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1.5M</span>
+              <div className="absolute right-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (400000 / 500000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (400000 / 500000) * 100}%`, transform: 'translateY(-50%)' }}>$400k</span>
             </div>
 
             {/* Amount Raised Display - Below tracker */}
             <div className="text-center bg-gradient-to-br from-[#FFED4E] to-[#C9A961] rounded-2xl px-6 py-4 shadow-lg">
               <p className="text-gray-700 text-sm font-semibold uppercase tracking-wider">Raised So Far</p>
               <p className="font-playfair text-5xl font-bold text-gray-900">
-                ${(totalDonated / 1000000).toFixed(2)}M
+                ${(totalDonated / 1000).toFixed(0)}k
               </p>
             </div>
 
