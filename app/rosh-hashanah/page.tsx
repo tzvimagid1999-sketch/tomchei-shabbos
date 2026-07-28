@@ -100,7 +100,7 @@ export default function RoshHashanah() {
 
   return (
     <main className="min-h-screen pt-20 pb-16" style={{
-      backgroundImage: "url(/rosh-hashana-bg.jpg)",
+      backgroundImage: "url(/rosh-hashanah-bg.png)",
       backgroundSize: "cover",
       backgroundPosition: "center",
       backgroundAttachment: "fixed",
@@ -116,9 +116,6 @@ export default function RoshHashanah() {
         <h1 className="font-playfair text-6xl sm:text-7xl font-bold text-[#FF8C00] mt-4 leading-[1.1]">
           A New Year. A Fresh Start. A Chance to Make a Difference.
         </h1>
-        <p className="text-gray-600 text-xl mt-6 leading-relaxed">
-          Behind every donation is a family, a story, and a chance to make someone's New Year a little brighter.
-        </p>
       </div>
 
       {/* Main Content with Vertical Tracker on Left and Tiers on Right */}
