@@ -135,15 +135,7 @@ export default function RoshHashanah() {
             </div>
 
             {/* Vertical Progress Bar Container - Much Taller & Wider */}
-            <div className="relative h-[700px] w-32 bg-gray-100 rounded-3xl overflow-visible border-4 border-[#FF8C00] flex flex-col shadow-2xl" style={{ background: 'linear-gradient(to bottom, #fff, #f5f5f5)' }}>
-              {/* Honey Bowl at Top - Using SVG for cleaner look */}
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-8 z-20 w-32 h-32 rounded-full bg-gradient-to-br from-[#FFD700] to-[#FF8C00] shadow-xl border-4 border-white flex items-center justify-center">
-                <svg viewBox="0 0 100 100" className="w-24 h-24" xmlns="http://www.w3.org/2000/svg">
-                  <ellipse cx="50" cy="30" rx="35" ry="20" fill="#D4A574" opacity="0.8"/>
-                  <path d="M 25 30 Q 25 70 50 75 Q 75 70 75 30" fill="#D4A574"/>
-                  <ellipse cx="50" cy="75" rx="25" ry="15" fill="#C19A6B" opacity="0.6"/>
-                </svg>
-              </div>
+            <div className="relative h-[700px] w-32 bg-black rounded-3xl overflow-visible border-4 border-[#FF8C00] flex flex-col shadow-2xl">
 
               {/* Filled portion (bottom to top) */}
               <div
@@ -151,13 +143,6 @@ export default function RoshHashanah() {
                 style={{ height: `${progressPercent}%` }}
               />
 
-              {/* Apple Icon - Rises with progress */}
-              <div
-                className="absolute left-1/2 transform -translate-x-1/2 transition-all duration-500 z-10 drop-shadow-lg"
-                style={{ bottom: `${progressPercent}%` }}
-              >
-                <Image src="/apple.svg" alt="Apple" width={70} height={70} className="object-contain animate-bounce" />
-              </div>
 
               {/* Left Milestone Markers - On Tracker */}
               <div className="absolute left-0 w-8 h-2 bg-[#FF8C00]" style={{ top: `${100 - (250000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
