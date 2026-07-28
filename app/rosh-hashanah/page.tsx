@@ -110,10 +110,10 @@ export default function RoshHashanah() {
       <div className="relative z-10">
       {/* Hero */}
       <div className="max-w-3xl mx-auto px-6 text-center mb-16">
-        <span className="font-caveat text-[#FF8C00] text-3xl sm:text-4xl tracking-wide">
+        <span className="font-caveat text-[#C9A961] text-3xl sm:text-4xl tracking-wide">
           Rosh Hashanah Campaign
         </span>
-        <h1 className="font-playfair text-6xl sm:text-7xl font-bold text-[#FF8C00] mt-4 leading-[1.1]">
+        <h1 className="font-playfair text-6xl sm:text-7xl font-bold text-[#C9A961] mt-4 leading-[1.1]">
           A New Year. A Fresh Start. A Chance to Make a Difference.
         </h1>
       </div>
@@ -124,7 +124,7 @@ export default function RoshHashanah() {
           {/* Left: Vertical Progress Tracker */}
           <div className="hidden lg:flex flex-col items-center gap-6 min-w-fit">
             {/* Goal Display - Top */}
-            <div className="text-center bg-gradient-to-br from-[#FF8C00] to-[#FF8C00] rounded-2xl px-6 py-4 shadow-lg">
+            <div className="text-center bg-gradient-to-br from-[#C9A961] to-[#C9A961] rounded-2xl px-6 py-4 shadow-lg">
               <p className="text-white text-sm font-semibold uppercase tracking-wider">Our Goal</p>
               <p className="font-playfair text-5xl font-bold text-white">
                 ${(GOAL / 1000000).toFixed(1)}M
@@ -132,41 +132,41 @@ export default function RoshHashanah() {
             </div>
 
             {/* Vertical Progress Bar Container - Much Taller & Wider */}
-            <div className="relative h-[700px] w-32 bg-black rounded-3xl overflow-visible border-4 border-[#FF8C00] flex flex-col shadow-2xl">
+            <div className="relative h-[700px] w-32 bg-gray-100 rounded-3xl overflow-visible border-4 border-black flex flex-col shadow-2xl" style={{ background: 'linear-gradient(to bottom, #fff, #f5f5f5)' }}>
 
               {/* Filled portion (bottom to top) */}
               <div
-                className="absolute bottom-0 w-full bg-gradient-to-t from-[#FF6B00] via-[#FF8C00] to-[#FFED4E] transition-all duration-500 rounded-b-2xl"
+                className="absolute bottom-0 w-full bg-gradient-to-t from-[#FF6B00] via-[#C9A961] to-[#FFED4E] transition-all duration-500 rounded-b-2xl"
                 style={{ height: `${progressPercent}%` }}
               />
 
 
               {/* Left Milestone Markers - On Tracker */}
-              <div className="absolute left-0 w-8 h-2 bg-[#FF8C00]" style={{ top: `${100 - (250000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#FF8C00] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (250000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$250k</span>
+              <div className="absolute left-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (250000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (250000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$250k</span>
 
-              <div className="absolute left-0 w-8 h-2 bg-[#FF8C00]" style={{ top: `${100 - (750000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#FF8C00] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (750000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$750k</span>
+              <div className="absolute left-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (750000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (750000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$750k</span>
 
-              <div className="absolute left-0 w-8 h-2 bg-[#FF8C00]" style={{ top: `${100 - (1250000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#FF8C00] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (1250000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1.25M</span>
+              <div className="absolute left-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (1250000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (1250000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1.25M</span>
 
-              <div className="absolute left-0 w-8 h-2 bg-[#FF8C00]" style={{ top: `${100 - (1750000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#FF8C00] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (1750000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1.75M</span>
+              <div className="absolute left-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (1750000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (1750000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1.75M</span>
 
               {/* Right Milestone Markers - On Tracker */}
-              <div className="absolute right-0 w-8 h-2 bg-[#FFEC0D]" style={{ top: `${100 - (500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#FFEC0D] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$500k</span>
+              <div className="absolute right-0 w-8 h-2 bg-[#5A1B3D]" style={{ top: `${100 - (500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#5A1B3D] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$500k</span>
 
-              <div className="absolute right-0 w-8 h-2 bg-[#FFEC0D]" style={{ top: `${100 - (1000000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#FFEC0D] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (1000000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1M</span>
+              <div className="absolute right-0 w-8 h-2 bg-[#5A1B3D]" style={{ top: `${100 - (1000000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#5A1B3D] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (1000000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1M</span>
 
-              <div className="absolute right-0 w-8 h-2 bg-[#FFEC0D]" style={{ top: `${100 - (1500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#FFEC0D] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (1500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1.5M</span>
+              <div className="absolute right-0 w-8 h-2 bg-[#5A1B3D]" style={{ top: `${100 - (1500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }} />
+              <span className="absolute font-bold text-[#5A1B3D] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (1500000 / 2000000) * 100}%`, transform: 'translateY(-50%)' }}>$1.5M</span>
             </div>
 
             {/* Amount Raised Display - Below tracker */}
-            <div className="text-center bg-gradient-to-br from-[#FFED4E] to-[#FFEC0D] rounded-2xl px-6 py-4 shadow-lg">
+            <div className="text-center bg-gradient-to-br from-[#FFED4E] to-[#5A1B3D] rounded-2xl px-6 py-4 shadow-lg">
               <p className="text-gray-700 text-sm font-semibold uppercase tracking-wider">Raised So Far</p>
               <p className="font-playfair text-5xl font-bold text-gray-900">
                 ${(totalDonated / 1000000).toFixed(2)}M
@@ -174,14 +174,14 @@ export default function RoshHashanah() {
             </div>
 
             {/* Tagline */}
-            <p className="text-center text-[#FF8C00] font-playfair font-bold text-lg max-w-48">
+            <p className="text-center text-[#C9A961] font-playfair font-bold text-lg max-w-48">
               Help the apple reach the honey
             </p>
           </div>
 
           {/* Right: Donation Tiers */}
           <div className="hidden lg:block flex-1">
-            <h2 className="font-playfair text-3xl font-bold text-[#FF8C00] mb-6">
+            <h2 className="font-playfair text-3xl font-bold text-[#C9A961] mb-6">
               Choose Your Gift
             </h2>
             <div className="grid grid-cols-2 gap-3">
@@ -194,12 +194,12 @@ export default function RoshHashanah() {
                   }}
                   className={`bg-white rounded-xl p-4 text-left transition group cursor-pointer border-2 ${
                     selectedTier === tier.value
-                      ? "border-[#FFEC0D] bg-yellow-50 shadow-lg"
-                      : "border-gray-200 hover:border-[#FF8C00] hover:shadow-lg"
+                      ? "border-[#5A1B3D] bg-yellow-50 shadow-lg"
+                      : "border-gray-200 hover:border-[#C9A961] hover:shadow-lg"
                   }`}
                 >
                   <div className="flex-1">
-                    <p className="font-bold text-2xl text-[#FF8C00] mb-2">{tier.label}</p>
+                    <p className="font-bold text-2xl text-[#C9A961] mb-2">{tier.label}</p>
                     <p className="text-base font-semibold text-gray-700 mb-2">{tier.title}</p>
                     <p className="text-sm text-gray-600 leading-snug">{tier.note}</p>
                   </div>
@@ -211,14 +211,14 @@ export default function RoshHashanah() {
           {/* Mobile Progress Section */}
           <div className="lg:hidden w-full bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-8">
             <div className="flex justify-between items-center mb-2">
-              <h2 className="font-playfair text-xl font-bold text-[#FF8C00]">Progress</h2>
+              <h2 className="font-playfair text-xl font-bold text-[#C9A961]">Progress</h2>
               <p className="text-gray-600 text-sm">
                 ${(totalDonated / 1000000).toFixed(2)}M / ${(GOAL / 1000000).toFixed(1)}M
               </p>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
               <div
-                className="bg-gradient-to-r from-[#FF8C00] to-[#FFEC0D] h-full transition-all duration-500"
+                className="bg-gradient-to-r from-[#C9A961] to-[#5A1B3D] h-full transition-all duration-500"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -229,7 +229,7 @@ export default function RoshHashanah() {
       {/* Mobile Checkout */}
       <div className="lg:hidden max-w-2xl mx-auto px-6 mb-12">
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-          <h2 className="font-playfair text-3xl font-bold text-[#FF8C00] mb-2">
+          <h2 className="font-playfair text-3xl font-bold text-[#C9A961] mb-2">
             Donate Now
           </h2>
           <p className="text-gray-600 mb-6">Pay securely with your credit card</p>
@@ -247,7 +247,7 @@ export default function RoshHashanah() {
                   placeholder="Enter amount"
                   value={checkoutAmount}
                   onChange={(e) => setCheckoutAmount(e.target.value)}
-                  className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
+                  className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                 />
               </div>
             </div>
@@ -265,13 +265,13 @@ export default function RoshHashanah() {
               <input
                 type="text"
                 placeholder="First Name"
-                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
+                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                 id="firstName-mobile"
               />
               <input
                 type="text"
                 placeholder="Last Name"
-                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
+                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                 id="lastName-mobile"
               />
             </div>
@@ -279,7 +279,7 @@ export default function RoshHashanah() {
             <input
               type="text"
               placeholder="Street Address"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
               id="street-mobile"
             />
 
@@ -287,14 +287,14 @@ export default function RoshHashanah() {
               <input
                 type="text"
                 placeholder="City"
-                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
+                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                 id="city-mobile"
               />
               <input
                 type="text"
                 placeholder="State"
                 maxLength={2}
-                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
+                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
                 id="state-mobile"
               />
             </div>
@@ -303,14 +303,14 @@ export default function RoshHashanah() {
               type="text"
               placeholder="ZIP Code"
               maxLength={5}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
               id="zip-mobile"
             />
 
             {/* Submit Button */}
             <button
               onClick={handleCheckoutPayment}
-              className="w-full bg-[#FF8C00] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#B91130] transition mt-6"
+              className="w-full bg-[#C9A961] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#B91130] transition mt-6"
             >
               Donate Now
             </button>
@@ -320,7 +320,7 @@ export default function RoshHashanah() {
 
       {/* Credit Card Checkout Section */}
       <div className="max-w-3xl mx-auto px-6 mb-12">
-        <h2 className="font-playfair text-4xl font-bold text-[#FF8C00] mb-2">
+        <h2 className="font-playfair text-4xl font-bold text-[#C9A961] mb-2">
           Complete Your Donation
         </h2>
         <p className="text-gray-600 text-lg mb-6">Pay securely with your credit card</p>
@@ -329,9 +329,9 @@ export default function RoshHashanah() {
           <div className="space-y-4">
             {/* Selected Amount Display */}
             {checkoutAmount && (
-              <div className="bg-yellow-50 border-2 border-[#FFEC0D] rounded-lg p-4 mb-4">
+              <div className="bg-yellow-50 border-2 border-[#5A1B3D] rounded-lg p-4 mb-4">
                 <p className="text-sm text-gray-600">Donation Amount</p>
-                <p className="text-3xl font-bold text-[#FFEC0D]">${checkoutAmount}</p>
+                <p className="text-3xl font-bold text-[#5A1B3D]">${checkoutAmount}</p>
               </div>
             )}
 
@@ -347,7 +347,7 @@ export default function RoshHashanah() {
                   placeholder="Enter amount"
                   value={checkoutAmount}
                   onChange={(e) => setCheckoutAmount(e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF8C00] [&::-webkit-outer-spin-button]:hidden [&::-webkit-inner-spin-button]:hidden"
+                  className="w-full pl-8 pr-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C9A961] [&::-webkit-outer-spin-button]:hidden [&::-webkit-inner-spin-button]:hidden"
                 />
               </div>
             </div>
@@ -362,21 +362,21 @@ export default function RoshHashanah() {
 
             {/* Billing Address */}
             <div className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="First Name" className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]" id="firstName" />
-              <input type="text" placeholder="Last Name" className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]" id="lastName" />
+              <input type="text" placeholder="First Name" className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="firstName" />
+              <input type="text" placeholder="Last Name" className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="lastName" />
             </div>
 
-            <input type="text" placeholder="Street Address" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]" id="street" />
+            <input type="text" placeholder="Street Address" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="street" />
 
             <div className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="City" className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]" id="city" />
-              <input type="text" placeholder="State" maxLength={2} className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]" id="state" />
+              <input type="text" placeholder="City" className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="city" />
+              <input type="text" placeholder="State" maxLength={2} className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="state" />
             </div>
 
-            <input type="text" placeholder="ZIP Code" maxLength={5} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF8C00]" id="zip" />
+            <input type="text" placeholder="ZIP Code" maxLength={5} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="zip" />
 
             {/* Submit Button */}
-            <button onClick={handleCheckoutPayment} disabled={checkoutLoading} className="w-full bg-[#FF8C00] text-white py-4 rounded-lg font-bold text-xl hover:bg-orange-600 transition mt-6 disabled:opacity-50">
+            <button onClick={handleCheckoutPayment} disabled={checkoutLoading} className="w-full bg-[#C9A961] text-white py-4 rounded-lg font-bold text-xl hover:bg-orange-600 transition mt-6 disabled:opacity-50">
               {checkoutLoading ? "Processing..." : "Complete Donation"}
             </button>
           </div>

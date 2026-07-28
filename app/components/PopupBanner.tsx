@@ -26,7 +26,7 @@ export default function PopupBanner() {
         {/* Image header bar */}
         <div className="relative px-8 py-8 text-center overflow-hidden">
           <Image src="/rosh-hashana-bg-small.jpg" alt="Rosh Hashana" fill className="object-cover object-center" />
-          <div className="absolute inset-0 bg-[#FF8C00]/70" />
+          <div className="absolute inset-0 bg-[#C9A961]/70" />
           <div className="relative z-10">
             <p className="text-white/80 text-xs font-semibold uppercase tracking-widest mb-2">Special Announcement</p>
             <h2 className="font-playfair text-3xl font-extrabold text-white leading-tight">
@@ -41,7 +41,7 @@ export default function PopupBanner() {
             Help us ensure every family in our community has a beautiful and meaningful Rosh Hashana. Your donation makes it possible.
           </p>
           <Link href="/rosh-hashanah" onClick={close}
-            className="block w-full bg-[#FFEC0D] text-white py-3.5 rounded-lg font-bold text-sm tracking-wide hover:bg-[#FFC700] transition mb-3">
+            className="block w-full bg-[#5A1B3D] text-white py-3.5 rounded-lg font-bold text-sm tracking-wide hover:bg-[#FFC700] transition mb-3">
             Learn More & Donate
           </Link>
           <button onClick={close} className="text-gray-400 text-xs hover:text-gray-600 transition">
