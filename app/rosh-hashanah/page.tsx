@@ -29,6 +29,33 @@ export default function RoshHashanah() {
     return () => clearInterval(interval);
   }, []);
 
+  // Load USAePay card field
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://secure.usaepay.com/upapi/embedded_fields_v1.min.js";
+    script.async = true;
+    script.onload = () => {
+      if (typeof UPAPI !== "undefined") {
+        UPAPI.embedded.setup({
+          customPubKey: process.env.NEXT_PUBLIC_KEY,
+          fields: {
+            cardNumber: {
+              selector: "#card-field",
+              placeholder: "Card Number"
+            }
+          },
+          override: {
+            cardNumber: {
+              autoTab: true,
+              autoFormat: true
+            }
+          }
+        });
+      }
+    };
+    document.body.appendChild(script);
+  }, []);
+
   const [checkoutAmount, setCheckoutAmount] = useState("");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
@@ -110,7 +137,7 @@ export default function RoshHashanah() {
       <div className="relative z-10">
       {/* Hero */}
       <div className="max-w-3xl mx-auto px-6 text-center mb-16">
-        <span className="font-caveat text-[#C9A961] text-3xl sm:text-4xl tracking-wide">
+        <span className="font-caveat text-[#1E40AF] text-3xl sm:text-4xl tracking-wide">
           Rosh Hashanah Campaign
         </span>
         <h1 className="font-playfair text-6xl sm:text-7xl font-bold text-[#C9A961] mt-4 leading-[1.1]">
@@ -120,7 +147,7 @@ export default function RoshHashanah() {
 
       {/* Main Content with Vertical Tracker on Left and Tiers on Right */}
       <div className="max-w-7xl mx-auto px-6 mb-12">
-        <div className="flex gap-8 items-start">
+        <div className="flex gap-8 items-start" style={{ marginTop: "-200px" }}>
           {/* Left: Vertical Progress Tracker */}
           <div className="hidden lg:flex flex-col items-center gap-6 min-w-fit">
             {/* Goal Display - Top */}
@@ -131,11 +158,8 @@ export default function RoshHashanah() {
               </p>
             </div>
 
-            {/* Bell on top of tracker */}
-            <div className="text-4xl mb-4">🔔</div>
-
             {/* Vertical Progress Bar Container - Much Taller & Wider */}
-            <div className="relative h-[700px] w-32 bg-gray-100 rounded-3xl overflow-visible border-4 border-black flex flex-col shadow-2xl" style={{ background: 'linear-gradient(to bottom, #fff, #f5f5f5)' }}>
+            <div className="relative h-[900px] w-32 bg-gray-100 rounded-3xl overflow-visible flex flex-col shadow-2xl" style={{ background: 'linear-gradient(to bottom, #fff, #f5f5f5)', border: '4px solid #1E40AF' }}>
 
               {/* Filled portion (bottom to top) */}
               <div
@@ -178,32 +202,57 @@ export default function RoshHashanah() {
 
           </div>
 
-          {/* Right: Donation Tiers */}
-          <div className="hidden lg:block flex-1">
-            <h2 className="font-playfair text-3xl font-bold text-[#C9A961] mb-6">
-              Rosh Hashanah Donation
-            </h2>
-            <div className="grid grid-cols-2 gap-3">
-              {tiers.map((tier) => (
-                <button
-                  key={tier.value}
-                  onClick={() => {
-                    setCheckoutAmount(tier.value.toString());
-                    setSelectedTier(tier.value);
-                  }}
-                  className={`bg-white rounded-xl p-4 text-left transition group cursor-pointer border-2 ${
-                    selectedTier === tier.value
-                      ? "border-[#C9A961] bg-yellow-50 shadow-lg"
-                      : "border-gray-200 hover:border-[#C9A961] hover:shadow-lg"
-                  }`}
-                >
-                  <div className="flex-1">
-                    <p className="font-bold text-2xl text-[#C9A961] mb-2">{tier.label}</p>
-                    <p className="text-lg font-bold text-black mb-2">{tier.title}</p>
-                    <p className="text-sm text-gray-600 leading-snug">{tier.note}</p>
-                  </div>
-                </button>
-              ))}
+          {/* Right: Donation Tiers - Circular Layout */}
+          <div className="hidden lg:flex flex-1 items-center justify-center" style={{ minHeight: "900px", marginTop: "200px" }}>
+            <div className="relative" style={{ width: "800px", height: "800px" }}>
+              {/* Circle reference (invisible) */}
+              <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0 }}>
+                <circle cx="400" cy="400" r="300" fill="none" stroke="#C9A961" strokeWidth="2" />
+              </svg>
+
+              {/* Center heading */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <h2 className="font-playfair text-3xl font-bold text-[#C9A961] text-center max-w-xs">
+                  Rosh Hashanah Donation
+                </h2>
+              </div>
+
+              {/* Boxes arranged in circle */}
+              {tiers.map((tier, index) => {
+                const angle = (index / tiers.length) * 360;
+                const radius = 320;
+                const x = 400 + radius * Math.cos((angle - 90) * Math.PI / 180);
+                const y = 400 + radius * Math.sin((angle - 90) * Math.PI / 180);
+
+                return (
+                  <button
+                    key={tier.value}
+                    onClick={() => {
+                      setCheckoutAmount(tier.value.toString());
+                      setSelectedTier(tier.value);
+                    }}
+                    className={`absolute bg-white rounded-xl p-4 text-left transition group cursor-pointer w-40 ${
+                      selectedTier === tier.value
+                        ? "bg-yellow-50 shadow-lg"
+                        : "hover:shadow-lg"
+                    }`}
+                    style={{
+                      left: `${x}px`,
+                      top: `${y}px`,
+                      transform: "translate(-50%, -50%)",
+                      borderWidth: "2px",
+                      borderColor: selectedTier === tier.value ? "#C9A961" : "#1E40AF",
+                      boxShadow: selectedTier === tier.value ? undefined : "0 2px 8px rgba(30, 64, 175, 0.2)"
+                    }}
+                  >
+                    <div className="flex-1">
+                      <p className="font-bold text-xl text-[#C9A961] mb-2">{tier.label}</p>
+                      <p className="text-sm font-bold text-black mb-2 line-clamp-2">{tier.title}</p>
+                      <p className="text-xs text-gray-600 leading-snug line-clamp-3">{tier.note}</p>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
