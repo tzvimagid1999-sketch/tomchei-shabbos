@@ -59,12 +59,13 @@ export default function RoshHashanah() {
   const handleCheckoutPayment = async () => {
     const firstName = (document.getElementById("firstName") as HTMLInputElement)?.value;
     const lastName = (document.getElementById("lastName") as HTMLInputElement)?.value;
+    const email = (document.getElementById("email") as HTMLInputElement)?.value;
     const street = (document.getElementById("street") as HTMLInputElement)?.value;
     const city = (document.getElementById("city") as HTMLInputElement)?.value;
     const state = (document.getElementById("state") as HTMLInputElement)?.value;
     const zip = (document.getElementById("zip") as HTMLInputElement)?.value;
 
-    if (!checkoutAmount || !firstName || !lastName || !street || !city || !state || !zip) {
+    if (!checkoutAmount || !firstName || !lastName || !email || !street || !city || !state || !zip) {
       alert("Please fill in all fields");
       return;
     }
@@ -90,6 +91,7 @@ export default function RoshHashanah() {
           paymentKey,
           firstName,
           lastName,
+          email,
           street,
           city,
           state,
@@ -99,10 +101,11 @@ export default function RoshHashanah() {
 
       const data = await response.json();
       if (data.success) {
-        alert(`Donation of $${checkoutAmount} received! Thank you.`);
+        alert(`Donation of $${checkoutAmount} received! Thank you. A confirmation email has been sent to ${email}`);
         setCheckoutAmount("");
         (document.getElementById("firstName") as HTMLInputElement).value = "";
         (document.getElementById("lastName") as HTMLInputElement).value = "";
+        (document.getElementById("email") as HTMLInputElement).value = "";
         (document.getElementById("street") as HTMLInputElement).value = "";
         (document.getElementById("city") as HTMLInputElement).value = "";
         (document.getElementById("state") as HTMLInputElement).value = "";
@@ -335,6 +338,14 @@ export default function RoshHashanah() {
             </div>
 
             <input
+              type="email"
+              placeholder="Email Address"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
+              id="email-mobile"
+              required
+            />
+
+            <input
               type="text"
               placeholder="Street Address"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
@@ -423,6 +434,8 @@ export default function RoshHashanah() {
               <input type="text" placeholder="First Name" className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="firstName" />
               <input type="text" placeholder="Last Name" className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="lastName" />
             </div>
+
+            <input type="email" placeholder="Email Address" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="email" required />
 
             <input type="text" placeholder="Street Address" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="street" />
 
