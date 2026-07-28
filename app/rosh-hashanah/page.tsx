@@ -35,6 +35,7 @@ export default function RoshHashanah() {
     script.src = "https://secure.usaepay.com/upapi/embedded_fields_v1.min.js";
     script.async = true;
     script.onload = () => {
+      const UPAPI = (window as any).UPAPI;
       if (typeof UPAPI !== "undefined") {
         UPAPI.embedded.setup({
           customPubKey: process.env.NEXT_PUBLIC_KEY,
