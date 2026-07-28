@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Script from "next/script";
 import { Heart } from "lucide-react";
 import Image from "next/image";
 
@@ -29,33 +30,27 @@ export default function RoshHashanah() {
     return () => clearInterval(interval);
   }, []);
 
-  // Load USAePay card field
+  // Load USAePay - same as donate page
+  const [scriptReady, setScriptReady] = useState(false);
+  const cardRef = useRef<any>(null);
+  const clientRef = useRef<any>(null);
+  const publicKey = process.env.NEXT_PUBLIC_USAEPAY_PUBLIC_KEY;
+
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://secure.usaepay.com/upapi/embedded_fields_v1.min.js";
-    script.async = true;
-    script.onload = () => {
-      const UPAPI = (window as any).UPAPI;
-      if (typeof UPAPI !== "undefined") {
-        UPAPI.embedded.setup({
-          customPubKey: process.env.NEXT_PUBLIC_KEY,
-          fields: {
-            cardNumber: {
-              selector: "#card-field",
-              placeholder: "Card Number"
-            }
-          },
-          override: {
-            cardNumber: {
-              autoTab: true,
-              autoFormat: true
-            }
-          }
-        });
-      }
-    };
-    document.body.appendChild(script);
-  }, []);
+    if (!scriptReady || !(window as any).usaepay || !publicKey || cardRef.current) return;
+    const client = new (window as any).usaepay.Client(publicKey);
+    clientRef.current = client;
+    const card = client.createPaymentCardEntry();
+    card.generateHTML({
+      base: { fontSize: "15px", color: "#374151", fontFamily: "inherit" },
+      "::placeholder": { color: "#9ca3af" },
+    });
+    card.addHTML("card-field");
+    card.addEventListener("error", (data: any) => {
+      if (data.error) console.error(data.error.message);
+    });
+    cardRef.current = card;
+  }, [scriptReady, publicKey]);
 
   const [checkoutAmount, setCheckoutAmount] = useState("");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
@@ -74,16 +69,25 @@ export default function RoshHashanah() {
       return;
     }
 
+    if (!clientRef.current || !cardRef.current) {
+      alert("The payment form is still loading. Please try again in a moment.");
+      return;
+    }
+
     setCheckoutLoading(true);
-    const amountCents = Math.round(parseFloat(checkoutAmount) * 100);
 
     try {
+      const result = await clientRef.current.getPaymentKey(cardRef.current);
+      const paymentKey = result?.key || (typeof result === "string" ? result : "");
+      if (!paymentKey) throw new Error("No payment token returned.");
+
+      const amountCents = Math.round(parseFloat(checkoutAmount) * 100);
       const response = await fetch("/api/usaepay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           amount: amountCents,
-          cardRef: (window as any).tokenizedCardRef,
+          paymentKey,
           firstName,
           lastName,
           street,
@@ -93,8 +97,8 @@ export default function RoshHashanah() {
         }),
       });
 
-      const result = await response.json();
-      if (result.success) {
+      const data = await response.json();
+      if (data.success) {
         alert(`Donation of $${checkoutAmount} received! Thank you.`);
         setCheckoutAmount("");
         (document.getElementById("firstName") as HTMLInputElement).value = "";
@@ -104,10 +108,11 @@ export default function RoshHashanah() {
         (document.getElementById("state") as HTMLInputElement).value = "";
         (document.getElementById("zip") as HTMLInputElement).value = "";
       } else {
-        alert("Payment failed: " + (result.error || "Unknown error"));
+        alert("Payment failed: " + (data.error || "Unknown error"));
       }
     } catch (err) {
-      alert("Error processing payment");
+      const msg = typeof err === "string" ? err : err instanceof Error ? err.message : "Error processing payment";
+      alert(msg);
       console.error(err);
     } finally {
       setCheckoutLoading(false);
@@ -136,6 +141,10 @@ export default function RoshHashanah() {
     }}>
       <div className="absolute inset-0 bg-[#FDF9F7]/80"></div>
       <div className="relative z-10">
+      <Script
+        src="https://www.usaepay.com/js/v2/pay.js"
+        onLoad={() => setScriptReady(true)}
+      />
       {/* Hero */}
       <div className="max-w-3xl mx-auto px-6 text-center mb-16">
         <span className="font-caveat text-[#1E40AF] text-3xl sm:text-4xl tracking-wide">
