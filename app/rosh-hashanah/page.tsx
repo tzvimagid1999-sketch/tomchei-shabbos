@@ -200,7 +200,7 @@ export default function RoshHashanah() {
                 >
                   <div className="flex-1">
                     <p className="font-bold text-2xl text-[#C9A961] mb-2">{tier.label}</p>
-                    <p className="text-base font-semibold text-gray-700 mb-2">{tier.title}</p>
+                    <p className="text-lg font-bold text-[#C9A961] mb-2">{tier.title}</p>
                     <p className="text-sm text-gray-600 leading-snug">{tier.note}</p>
                   </div>
                 </button>
