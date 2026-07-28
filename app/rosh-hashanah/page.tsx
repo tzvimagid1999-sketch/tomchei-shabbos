@@ -182,7 +182,7 @@ export default function RoshHashanah() {
           {/* Right: Donation Tiers */}
           <div className="hidden lg:block flex-1">
             <h2 className="font-playfair text-3xl font-bold text-[#C9A961] mb-6">
-              Choose Your Gift
+              Rosh Hashanah Donation
             </h2>
             <div className="grid grid-cols-2 gap-3">
               {tiers.map((tier) => (
