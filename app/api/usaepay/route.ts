@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { Resend } from "resend";
 
 // Charges a donation through the USAePay gateway using a payment token
 // (payment_key) that was generated in the donor's browser by pay.js.
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, name, email, street, city, state, zip } = await req.json();
+    const { amount, paymentKey, firstName, lastName, email, street, city, state, zip } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -48,7 +49,8 @@ export async function POST(req: NextRequest) {
         email: email || undefined,
         description: "Donation to Tomchei Shabbos of Florida",
         billing_address: {
-          firstname: name || undefined,
+          firstname: firstName || undefined,
+          lastname: lastName || undefined,
           street: street || undefined,
           city: city || undefined,
           state: state || undefined,
@@ -61,6 +63,43 @@ export async function POST(req: NextRequest) {
     const data = await res.json();
 
     if (data.result === "Approved" || data.result_code === "A") {
+      // Send confirmation email if Resend is configured
+      if (process.env.RESEND_API_KEY && email) {
+        try {
+          const resend = new Resend(process.env.RESEND_API_KEY);
+          await resend.emails.send({
+            from: "Tomchei Shabbos <donations@tomchei-shabbos.com>",
+            to: email,
+            subject: "Donation Confirmation - Tomchei Shabbos of Florida",
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #C9A961;">Thank You for Your Donation!</h2>
+                <p>Dear ${firstName},</p>
+                <p>We have received your generous donation of <strong>$${(numericAmount / 100).toFixed(2)}</strong> to Tomchei Shabbos of Florida for our Rosh Hashanah campaign.</p>
+
+                <div style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #C9A961; margin: 20px 0;">
+                  <p><strong>Confirmation Number:</strong> ${data.refnum || data.authcode}</p>
+                  <p><strong>Amount:</strong> $${(numericAmount / 100).toFixed(2)}</p>
+                  <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                </div>
+
+                <p>Your donation will help us ensure every family in our community has a meaningful Rosh Hashanah celebration.</p>
+
+                <p>Thank you for your support and may you have a sweet and blessed new year!</p>
+
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666;">
+                  <p>Tomchei Shabbos of Florida<br/>
+                  Serving our community with dignity and care</p>
+                </div>
+              </div>
+            `,
+          });
+        } catch (emailError) {
+          console.error("Failed to send confirmation email:", emailError);
+          // Don't fail the payment if email fails
+        }
+      }
+
       return NextResponse.json({
         success: true,
         refnum: data.refnum,
