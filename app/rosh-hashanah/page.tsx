@@ -318,19 +318,9 @@ export default function RoshHashanah() {
               </h3>
 
               {/* Description */}
-              <p className="text-sm text-[#2D2D2D] font-light mb-6 leading-relaxed">
+              <p className="text-sm text-[#2D2D2D] font-light leading-relaxed">
                 {tier.note}
               </p>
-
-              {/* CTA */}
-              <div className="flex items-center justify-between pt-4 border-t border-[#F8F4EC] group-hover:border-[#C8A75B] transition-colors">
-                <span className="text-sm font-semibold text-[#C8A75B]">
-                  Sponsor This Gift
-                </span>
-                <span className="text-[#C8A75B] group-hover:translate-x-1 transition-transform">
-                  →
-                </span>
-              </div>
             </button>
           ))}
         </div>
