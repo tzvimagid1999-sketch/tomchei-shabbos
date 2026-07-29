@@ -8,6 +8,23 @@ export default function RoshHashanah() {
   const [totalDonated, setTotalDonated] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // Animation for heading
+  const headingStyle = `
+    @keyframes slideInFade {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .heading-animate {
+      animation: slideInFade 0.8s ease-out;
+    }
+  `;
+
   const GOAL = 500000; // $500k
   const progressPercent = Math.min((totalDonated / GOAL) * 100, 100);
   const reachedGoal = totalDonated >= GOAL;
@@ -141,6 +158,7 @@ export default function RoshHashanah() {
     }}>
       <div className="absolute inset-0 bg-[#FDF9F7]/80"></div>
       <div className="relative z-10">
+      <style>{headingStyle}</style>
       <Script
         src="https://www.usaepay.com/js/v2/pay.js"
         onLoad={() => setScriptReady(true)}
@@ -150,7 +168,7 @@ export default function RoshHashanah() {
         <span className="font-caveat text-[#E57373] text-3xl sm:text-4xl tracking-wide">
           Rosh Hashanah Campaign
         </span>
-        <h1 className="font-playfair text-6xl sm:text-7xl font-bold text-[#C9A961] mt-4 leading-[1.1]">
+        <h1 className="font-playfair text-6xl sm:text-7xl font-bold text-[#C9A961] mt-4 leading-[1.1] heading-animate" style={{ textShadow: '4px 4px 8px rgba(0, 0, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
           A New Year! A Fresh Start! A Chance to Make a Difference!
         </h1>
       </div>
