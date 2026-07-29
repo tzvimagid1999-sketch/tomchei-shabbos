@@ -163,14 +163,27 @@ export default function RoshHashanah() {
         src="https://www.usaepay.com/js/v2/pay.js"
         onLoad={() => setScriptReady(true)}
       />
-      {/* Hero */}
-      <div className="max-w-3xl mx-auto px-6 text-center mb-16">
-        <span className="font-caveat text-[#E57373] text-3xl sm:text-4xl tracking-wide">
+      {/* Hero - Premium Section */}
+      <div className="max-w-2xl mx-auto px-6 text-center mb-20">
+        <span className="font-caveat text-[#E57373] text-2xl sm:text-3xl tracking-wide block mb-4">
           Rosh Hashanah Campaign
         </span>
-        <h1 className="font-playfair text-6xl sm:text-7xl font-bold text-[#C9A961] mt-4 leading-[1.1] heading-animate" style={{ textShadow: '4px 4px 8px rgba(0, 0, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
-          A New Year! A Fresh Start! A Chance to Make a Difference!
+        <h1 className="font-playfair text-4xl sm:text-5xl font-bold text-[#2D2D2D] mt-6 leading-relaxed heading-animate">
+          A New Year. A Fresh Start. A Chance to Make a Difference.
         </h1>
+        <p className="text-lg text-[#2D2D2D] mt-8 leading-relaxed max-w-xl mx-auto font-light">
+          Every family deserves to celebrate the Jewish New Year with dignity, warmth, and the comfort of a complete Rosh Hashanah. Your donation directly provides food, joy, and hope to families in our community who need it most.
+        </p>
+        <button
+          onClick={() => {
+            const element = document.getElementById('donate-section');
+            element?.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="mt-10 bg-[#C8A75B] hover:bg-[#B8975B] text-white px-10 py-4 rounded-lg font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl heading-animate"
+          style={{ animationDelay: '0.2s' }}
+        >
+          Donate Now
+        </button>
       </div>
 
       {/* Main Content with Vertical Tracker on Left and Tiers on Right */}
