@@ -297,20 +297,20 @@ export default function RoshHashanah() {
         </div>
       </div>
 
-          {/* Mobile Progress Section */}
-          <div className="lg:hidden w-full bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-8">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="font-playfair text-xl font-bold text-[#C9A961]">Progress</h2>
-              <p className="text-gray-600 text-sm">
-                ${(totalDonated / 1000000).toFixed(2)}M / ${(GOAL / 1000000).toFixed(1)}M
-              </p>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
-              <div
-                className="bg-gradient-to-r from-[#C9A961] to-[#C9A961] h-full transition-all duration-500"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
+      {/* Mobile Progress Section */}
+      <div className="lg:hidden max-w-4xl mx-auto px-6 mb-12">
+        <div className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-8">
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="font-playfair text-xl font-bold text-[#C9A961]">Progress</h2>
+            <p className="text-gray-600 text-sm">
+              ${(totalDonated / 1000).toFixed(0)}k / $500k
+            </p>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+            <div
+              className="bg-gradient-to-r from-[#C8A75B] to-[#D9B870] h-full transition-all duration-500"
+              style={{ width: `${progressPercent}%` }}
+            />
           </div>
         </div>
       </div>
