@@ -356,7 +356,7 @@ export default function RoshHashanah() {
           {/* Urgency Message */}
           <div className="text-center bg-white rounded-2xl border-2 border-[#C8A75B] p-8">
             <p className="text-lg text-[#2D2D2D] font-semibold mb-2">
-              🎯 Help Us Reach Our Goal
+              Help Us Reach Our Goal
             </p>
             <p className="text-[#2D2D2D] font-light">
               We're on a mission to support every family this Rosh Hashanah. Your donation today makes a direct difference in someone's life.
