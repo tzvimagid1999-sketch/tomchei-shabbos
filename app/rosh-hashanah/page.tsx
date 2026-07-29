@@ -243,63 +243,59 @@ export default function RoshHashanah() {
         </div>
       </div>
 
-      {/* Main Content with Donation Tiers */}
-      <div className="max-w-7xl mx-auto px-6 mb-12">
-        <div className="flex gap-8 items-start">
+      {/* Donation Cards Grid Section */}
+      <div className="max-w-6xl mx-auto px-6 mb-20">
+        <h2 className="font-playfair text-4xl font-bold text-[#2D2D2D] text-center mb-4">
+          Choose Your Gift
+        </h2>
+        <p className="text-center text-[#2D2D2D] mb-12 max-w-2xl mx-auto font-light">
+          Every donation directly supports families in our community. Select the gift amount that fits your heart.
+        </p>
 
-          {/* Right: Donation Tiers - Circular Layout */}
-          <div className="hidden lg:flex flex-1 items-center justify-center" style={{ minHeight: "900px", marginTop: "200px" }}>
-            <div className="relative" style={{ width: "800px", height: "800px" }}>
-              {/* Circle reference (invisible) */}
-              <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0 }}>
-                <circle cx="400" cy="400" r="300" fill="none" stroke="#C9A961" strokeWidth="2" />
-              </svg>
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tiers.map((tier) => (
+            <button
+              key={tier.value}
+              onClick={() => {
+                setCheckoutAmount(tier.value.toString());
+                setSelectedTier(tier.value);
+                const element = document.getElementById('donate-section');
+                element?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="group bg-white rounded-[20px] p-8 text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-2 border-[#C8A75B]"
+              style={{
+                background: selectedTier === tier.value ? '#F8F4EC' : '#FFFFFF'
+              }}
+            >
+              {/* Amount - Most Prominent */}
+              <p className="font-playfair text-5xl font-bold text-[#C8A75B] mb-4">
+                {tier.label}
+              </p>
 
-              {/* Center heading */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <h2 className="font-playfair text-3xl font-bold text-[#FF6B6B] text-center max-w-xs">
-                  Rosh Hashanah Donation
-                </h2>
+              {/* Title - Impact Focused */}
+              <h3 className="text-lg font-bold text-[#2D2D2D] mb-3 leading-snug">
+                {tier.title}
+              </h3>
+
+              {/* Description */}
+              <p className="text-sm text-[#2D2D2D] font-light mb-6 leading-relaxed">
+                {tier.note}
+              </p>
+
+              {/* CTA */}
+              <div className="flex items-center justify-between pt-4 border-t border-[#F8F4EC] group-hover:border-[#C8A75B] transition-colors">
+                <span className="text-sm font-semibold text-[#C8A75B]">
+                  Sponsor This Gift
+                </span>
+                <span className="text-[#C8A75B] group-hover:translate-x-1 transition-transform">
+                  →
+                </span>
               </div>
-
-              {/* Boxes arranged in circle */}
-              {tiers.map((tier, index) => {
-                const angle = (index / tiers.length) * 360;
-                const radius = 320;
-                const x = 400 + radius * Math.cos((angle - 90) * Math.PI / 180);
-                const y = 400 + radius * Math.sin((angle - 90) * Math.PI / 180);
-
-                return (
-                  <button
-                    key={tier.value}
-                    onClick={() => {
-                      setCheckoutAmount(tier.value.toString());
-                      setSelectedTier(tier.value);
-                    }}
-                    className={`absolute bg-white rounded-xl p-4 text-left transition group cursor-pointer w-40 ${
-                      selectedTier === tier.value
-                        ? "bg-yellow-50 shadow-lg"
-                        : "hover:shadow-lg"
-                    }`}
-                    style={{
-                      left: `${x}px`,
-                      top: `${y}px`,
-                      transform: "translate(-50%, -50%)",
-                      borderWidth: "2px",
-                      borderColor: selectedTier === tier.value ? "#C9A961" : "#FF6B6B",
-                      boxShadow: selectedTier === tier.value ? undefined : "0 2px 8px rgba(30, 64, 175, 0.2)"
-                    }}
-                  >
-                    <div className="flex-1">
-                      <p className="font-bold text-xl text-[#C9A961] mb-2">{tier.label}</p>
-                      <p className="text-sm font-bold text-black mb-2 line-clamp-2">{tier.title}</p>
-                      <p className="text-xs text-gray-600 leading-snug line-clamp-3">{tier.note}</p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+            </button>
+          ))}
+        </div>
+      </div>
 
           {/* Mobile Progress Section */}
           <div className="lg:hidden w-full bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-8">
