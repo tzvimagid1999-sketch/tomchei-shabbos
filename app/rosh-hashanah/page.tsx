@@ -148,12 +148,12 @@ export default function RoshHashanah() {
   };
 
   const tiers = [
-    { value: 6000, label: "$6,000", emoji: "🍎", title: "Sponsor Succos for 10 families", note: "Sponsor Succos for 10 families" },
-    { value: 1250, label: "$1,250", emoji: "🍯", title: "Sponsor Shabbas for 10 families", note: "Sponsor Shabbas for 10 families" },
-    { value: 250, label: "$250", emoji: "🍎", title: "Sponsor Rosh Hashanah for a family", note: "Sponsor Rosh Hashanah for a family" },
-    { value: 2500, label: "$2,500", emoji: "🍯", title: "Sponsor Rosh Hashanah for 10 families", note: "Sponsor Rosh Hashanah for 10 families" },
-    { value: 600, label: "$600", emoji: "🍎", title: "Sponsor Succos for a family", note: "Sponsor Succos for a family" },
     { value: 125, label: "$125", emoji: "🍯", title: "Sponsor Shabbas for a family", note: "Sponsor Shabbas for a family" },
+    { value: 250, label: "$250", emoji: "🍎", title: "Sponsor Rosh Hashanah for a family", note: "Sponsor Rosh Hashanah for a family" },
+    { value: 600, label: "$600", emoji: "🍎", title: "Sponsor Succos for a family", note: "Sponsor Succos for a family" },
+    { value: 1250, label: "$1,250", emoji: "🍯", title: "Sponsor Shabbas for 10 families", note: "Sponsor Shabbas for 10 families" },
+    { value: 2500, label: "$2,500", emoji: "🍯", title: "Sponsor Rosh Hashanah for 10 families", note: "Sponsor Rosh Hashanah for 10 families" },
+    { value: 6000, label: "$6,000", emoji: "🍎", title: "Sponsor Succos for 10 families", note: "Sponsor Succos for 10 families" },
   ];
 
   return (
