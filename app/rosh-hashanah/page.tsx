@@ -147,7 +147,7 @@ export default function RoshHashanah() {
       />
       {/* Hero */}
       <div className="max-w-3xl mx-auto px-6 text-center mb-16">
-        <span className="font-caveat text-[#1E40AF] text-3xl sm:text-4xl tracking-wide">
+        <span className="font-caveat text-[#E57373] text-3xl sm:text-4xl tracking-wide">
           Rosh Hashanah Campaign
         </span>
         <h1 className="font-playfair text-6xl sm:text-7xl font-bold text-[#C9A961] mt-4 leading-[1.1]">
