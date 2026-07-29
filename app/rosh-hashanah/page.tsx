@@ -245,13 +245,6 @@ export default function RoshHashanah() {
 
       {/* Donation Cards Grid Section */}
       <div className="max-w-6xl mx-auto px-6 mb-20">
-        <h2 className="font-playfair text-4xl font-bold text-[#2D2D2D] text-center mb-4">
-          Choose Your Gift
-        </h2>
-        <p className="text-center text-[#2D2D2D] mb-12 max-w-2xl mx-auto font-light">
-          Every donation directly supports families in our community. Select the gift amount that fits your heart.
-        </p>
-
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tiers.map((tier) => (
