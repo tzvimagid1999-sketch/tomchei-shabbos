@@ -169,7 +169,7 @@ export default function RoshHashanah() {
             </div>
 
             {/* Vertical Progress Bar Container - Much Taller & Wider */}
-            <div className="relative h-[900px] w-32 bg-gray-100 rounded-3xl overflow-visible flex flex-col shadow-2xl" style={{ background: 'linear-gradient(to bottom, #fff, #f5f5f5)', border: '4px solid #1E40AF' }}>
+            <div className="relative h-[900px] w-32 bg-gray-100 rounded-3xl overflow-visible flex flex-col shadow-2xl" style={{ background: 'linear-gradient(to bottom, #fff, #f5f5f5)', border: '4px solid #FF6B6B' }}>
 
               {/* Filled portion (bottom to top) */}
               <div
@@ -213,7 +213,7 @@ export default function RoshHashanah() {
 
               {/* Center heading */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <h2 className="font-playfair text-3xl font-bold text-[#1E40AF] text-center max-w-xs">
+                <h2 className="font-playfair text-3xl font-bold text-[#FF6B6B] text-center max-w-xs">
                   Rosh Hashanah Donation
                 </h2>
               </div>
@@ -242,7 +242,7 @@ export default function RoshHashanah() {
                       top: `${y}px`,
                       transform: "translate(-50%, -50%)",
                       borderWidth: "2px",
-                      borderColor: selectedTier === tier.value ? "#C9A961" : "#1E40AF",
+                      borderColor: selectedTier === tier.value ? "#C9A961" : "#FF6B6B",
                       boxShadow: selectedTier === tier.value ? undefined : "0 2px 8px rgba(30, 64, 175, 0.2)"
                     }}
                   >
