@@ -8,7 +8,7 @@ export default function RoshHashanah() {
   const [totalDonated, setTotalDonated] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Animation for heading and thermometer
+  // Animations for premium feel
   const headingStyle = `
     @keyframes slideInFade {
       from {
@@ -28,8 +28,54 @@ export default function RoshHashanah() {
         width: 100%;
       }
     }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
     .heading-animate {
       animation: slideInFade 0.8s ease-out;
+    }
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
+      opacity: 0;
+    }
+    .fade-in-up-delay-1 { animation-delay: 0.1s; }
+    .fade-in-up-delay-2 { animation-delay: 0.2s; }
+    .fade-in-up-delay-3 { animation-delay: 0.3s; }
+    .fade-in-up-delay-4 { animation-delay: 0.4s; }
+    .fade-in-up-delay-5 { animation-delay: 0.5s; }
+    .fade-in-up-delay-6 { animation-delay: 0.6s; }
+    .fade-in {
+      animation: fadeIn 0.8s ease-out forwards;
+      opacity: 0;
+    }
+    .scale-in {
+      animation: scaleIn 0.6s ease-out forwards;
+      opacity: 0;
     }
   `;
 
@@ -195,8 +241,8 @@ export default function RoshHashanah() {
       </div>
 
       {/* Premium Goal Thermometer Section */}
-      <div className="max-w-4xl mx-auto px-6 mb-20">
-        <div className="bg-white rounded-2xl shadow-lg p-8" style={{ background: 'rgba(255, 255, 255, 0.95)' }}>
+      <div className="max-w-4xl mx-auto px-6 mb-20 fade-in">
+        <div className="bg-white rounded-2xl shadow-lg p-8 scale-in" style={{ background: 'rgba(255, 255, 255, 0.95)' }}>
           {/* Header */}
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div className="text-center">
@@ -247,7 +293,7 @@ export default function RoshHashanah() {
       <div id="donate-section" className="max-w-6xl mx-auto px-6 mb-20">
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tiers.map((tier) => (
+          {tiers.map((tier, index) => (
             <button
               key={tier.value}
               onClick={() => {
@@ -256,7 +302,7 @@ export default function RoshHashanah() {
                 const element = document.getElementById('donate-section');
                 element?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="group bg-white rounded-[20px] p-8 text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-2 border-[#C8A75B]"
+              className={`group bg-white rounded-[20px] p-8 text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-2 border-[#C8A75B] fade-in-up fade-in-up-delay-${Math.min(index + 1, 6)}`}
               style={{
                 background: selectedTier === tier.value ? '#F8F4EC' : '#FFFFFF'
               }}
@@ -309,12 +355,12 @@ export default function RoshHashanah() {
       </div>
 
       {/* Trust & Urgency Section */}
-      <div className="bg-gradient-to-r from-[#F8F4EC] to-white py-16 px-6 mb-20">
+      <div className="bg-gradient-to-r from-[#F8F4EC] to-white py-16 px-6 mb-20 fade-in">
         <div className="max-w-6xl mx-auto">
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {/* Families Helped */}
-            <div className="text-center">
+            <div className="text-center fade-in-up fade-in-up-delay-1">
               <p className="font-playfair text-5xl font-bold text-[#C8A75B] mb-2">
                 2,500+
               </p>
@@ -327,7 +373,7 @@ export default function RoshHashanah() {
             </div>
 
             {/* Years Serving */}
-            <div className="text-center">
+            <div className="text-center fade-in-up fade-in-up-delay-2">
               <p className="font-playfair text-5xl font-bold text-[#C8A75B] mb-2">
                 20+
               </p>
@@ -340,7 +386,7 @@ export default function RoshHashanah() {
             </div>
 
             {/* Direct Impact */}
-            <div className="text-center">
+            <div className="text-center fade-in-up fade-in-up-delay-3">
               <p className="font-playfair text-5xl font-bold text-[#C8A75B] mb-2">
                 100%
               </p>
