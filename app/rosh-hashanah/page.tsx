@@ -308,6 +308,63 @@ export default function RoshHashanah() {
         </div>
       </div>
 
+      {/* Trust & Urgency Section */}
+      <div className="bg-gradient-to-r from-[#F8F4EC] to-white py-16 px-6 mb-20">
+        <div className="max-w-6xl mx-auto">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            {/* Families Helped */}
+            <div className="text-center">
+              <p className="font-playfair text-5xl font-bold text-[#C8A75B] mb-2">
+                2,500+
+              </p>
+              <p className="text-[#2D2D2D] font-semibold">
+                Families Helped
+              </p>
+              <p className="text-sm text-[#2D2D2D] font-light mt-2">
+                Families strengthened through our support
+              </p>
+            </div>
+
+            {/* Years Serving */}
+            <div className="text-center">
+              <p className="font-playfair text-5xl font-bold text-[#C8A75B] mb-2">
+                20+
+              </p>
+              <p className="text-[#2D2D2D] font-semibold">
+                Years Serving Our Community
+              </p>
+              <p className="text-sm text-[#2D2D2D] font-light mt-2">
+                Dedicated to supporting families every week
+              </p>
+            </div>
+
+            {/* Direct Impact */}
+            <div className="text-center">
+              <p className="font-playfair text-5xl font-bold text-[#C8A75B] mb-2">
+                100%
+              </p>
+              <p className="text-[#2D2D2D] font-semibold">
+                Direct Impact
+              </p>
+              <p className="text-sm text-[#2D2D2D] font-light mt-2">
+                Your donation goes directly to families in need
+              </p>
+            </div>
+          </div>
+
+          {/* Urgency Message */}
+          <div className="text-center bg-white rounded-2xl border-2 border-[#C8A75B] p-8">
+            <p className="text-lg text-[#2D2D2D] font-semibold mb-2">
+              🎯 Help Us Reach Our Goal
+            </p>
+            <p className="text-[#2D2D2D] font-light">
+              We're on a mission to support every family this Rosh Hashanah. Your donation today makes a direct difference in someone's life.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Mobile Checkout */}
       <div className="lg:hidden max-w-2xl mx-auto px-6 mb-12">
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
