@@ -8,7 +8,7 @@ export default function RoshHashanah() {
   const [totalDonated, setTotalDonated] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Animation for heading
+  // Animation for heading and thermometer
   const headingStyle = `
     @keyframes slideInFade {
       from {
@@ -18,6 +18,14 @@ export default function RoshHashanah() {
       to {
         opacity: 1;
         transform: translateY(0);
+      }
+    }
+    @keyframes slideIn {
+      from {
+        width: 0;
+      }
+      to {
+        width: 100%;
       }
     }
     .heading-animate {
@@ -186,53 +194,58 @@ export default function RoshHashanah() {
         </button>
       </div>
 
-      {/* Main Content with Vertical Tracker on Left and Tiers on Right */}
-      <div className="max-w-7xl mx-auto px-6 mb-12">
-        <div className="flex gap-8 items-start" style={{ marginTop: "-200px" }}>
-          {/* Left: Vertical Progress Tracker */}
-          <div className="hidden lg:flex flex-col items-center gap-6 min-w-fit">
-            {/* Goal Display - Top */}
-            <div className="text-center bg-gradient-to-br from-[#C9A961] to-[#C9A961] rounded-2xl px-6 py-4 shadow-lg">
-              <p className="text-white text-sm font-semibold uppercase tracking-wider">Our Goal</p>
-              <p className="font-playfair text-5xl font-bold text-white">
-                ${(GOAL / 1000).toFixed(0)}k
+      {/* Premium Goal Thermometer Section */}
+      <div className="max-w-4xl mx-auto px-6 mb-20">
+        <div className="bg-white rounded-2xl shadow-lg p-8" style={{ background: 'rgba(255, 255, 255, 0.95)' }}>
+          {/* Header */}
+          <div className="grid grid-cols-3 gap-6 mb-8">
+            <div className="text-center">
+              <p className="text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-2">Campaign Goal</p>
+              <p className="font-playfair text-3xl font-bold text-[#C8A75B]">
+                $500,000
               </p>
             </div>
-
-            {/* Vertical Progress Bar Container - Much Taller & Wider */}
-            <div className="relative h-[900px] w-32 bg-gray-100 rounded-3xl overflow-visible flex flex-col shadow-2xl" style={{ background: 'linear-gradient(to bottom, #fff, #f5f5f5)', border: '4px solid #FF6B6B' }}>
-
-              {/* Filled portion (bottom to top) */}
-              <div
-                className="absolute bottom-0 w-full bg-gradient-to-t from-[#FF6B00] via-[#C9A961] to-[#FFED4E] transition-all duration-500 rounded-b-2xl"
-                style={{ height: `${progressPercent}%` }}
-              />
-
-
-              {/* Left Milestone Markers - On Tracker */}
-              <div className="absolute left-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (100000 / 500000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (100000 / 500000) * 100}%`, transform: 'translateY(-50%)' }}>$100k</span>
-
-              <div className="absolute left-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (300000 / 500000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ left: '-50px', top: `${100 - (300000 / 500000) * 100}%`, transform: 'translateY(-50%)' }}>$300k</span>
-
-              {/* Right Milestone Markers - On Tracker */}
-              <div className="absolute right-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (200000 / 500000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (200000 / 500000) * 100}%`, transform: 'translateY(-50%)' }}>$200k</span>
-
-              <div className="absolute right-0 w-8 h-2 bg-[#C9A961]" style={{ top: `${100 - (400000 / 500000) * 100}%`, transform: 'translateY(-50%)' }} />
-              <span className="absolute font-bold text-[#C9A961] text-xs whitespace-nowrap" style={{ right: '-50px', top: `${100 - (400000 / 500000) * 100}%`, transform: 'translateY(-50%)' }}>$400k</span>
-            </div>
-
-            {/* Amount Raised Display - Below tracker */}
-            <div className="text-center bg-gradient-to-br from-[#FFED4E] to-[#C9A961] rounded-2xl px-6 py-4 shadow-lg">
-              <p className="text-gray-700 text-sm font-semibold uppercase tracking-wider">Raised So Far</p>
-              <p className="font-playfair text-5xl font-bold text-gray-900">
+            <div className="text-center">
+              <p className="text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-2">Raised So Far</p>
+              <p className="font-playfair text-3xl font-bold text-[#2D2D2D]">
                 ${(totalDonated / 1000).toFixed(0)}k
               </p>
             </div>
-
+            <div className="text-center">
+              <p className="text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-2">Progress</p>
+              <p className="font-playfair text-3xl font-bold text-[#C8A75B]">
+                {Math.round(progressPercent)}%
+              </p>
+            </div>
           </div>
+
+          {/* Progress Bar */}
+          <div className="relative w-full h-6 bg-[#F8F4EC] rounded-full overflow-hidden shadow-sm">
+            <div
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#C8A75B] to-[#D9B870] rounded-full transition-all duration-500"
+              style={{ width: `${progressPercent}%`, animation: progressPercent > 0 ? 'slideIn 1s ease-out' : 'none' }}
+            />
+          </div>
+
+          {/* Milestone labels */}
+          <div className="flex justify-between mt-4 text-xs font-semibold text-[#2D2D2D]">
+            <span>$0</span>
+            <span>$125k</span>
+            <span>$250k</span>
+            <span>$375k</span>
+            <span>$500k</span>
+          </div>
+
+          {/* Urgency message */}
+          <p className="text-center mt-6 text-sm text-[#2D2D2D] font-light">
+            Help us reach our goal before Rosh Hashanah to support every family in need.
+          </p>
+        </div>
+      </div>
+
+      {/* Main Content with Donation Tiers */}
+      <div className="max-w-7xl mx-auto px-6 mb-12">
+        <div className="flex gap-8 items-start">
 
           {/* Right: Donation Tiers - Circular Layout */}
           <div className="hidden lg:flex flex-1 items-center justify-center" style={{ minHeight: "900px", marginTop: "200px" }}>
