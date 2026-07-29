@@ -367,99 +367,103 @@ export default function RoshHashanah() {
 
       {/* Mobile Checkout */}
       <div className="lg:hidden max-w-2xl mx-auto px-6 mb-12">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-          <h2 className="font-playfair text-3xl font-bold text-[#C9A961] mb-2">
+        <div className="bg-white rounded-2xl border-2 border-[#C8A75B] shadow-lg p-8">
+          <h2 className="font-playfair text-3xl font-bold text-[#2D2D2D] mb-2">
             Donate Now
           </h2>
-          <p className="text-gray-600 mb-6">Pay securely with your credit card</p>
+          <p className="text-[#2D2D2D] font-light mb-8">Secure payment • All information encrypted</p>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Amount */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-[#2D2D2D] mb-2 uppercase tracking-wider">
                 Donation Amount
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-3 text-gray-500">$</span>
+                <span className="absolute left-4 top-3 text-[#C8A75B] font-semibold">$</span>
                 <input
                   type="number"
-                  placeholder="Enter amount"
+                  placeholder="0.00"
                   value={checkoutAmount}
                   onChange={(e) => setCheckoutAmount(e.target.value)}
-                  className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
+                  className="w-full pl-10 pr-4 py-3 border-2 border-[#E5E5E5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]"
                 />
               </div>
             </div>
 
             {/* Card Field */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-[#2D2D2D] mb-2 uppercase tracking-wider">
                 Card Number
               </label>
-              <div id="card-field-mobile" className="border border-gray-300 rounded-lg p-3 bg-white"></div>
+              <div id="card-field-mobile" className="border-2 border-[#E5E5E5] rounded-lg p-4 bg-white"></div>
             </div>
 
             {/* Billing Address */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="pt-2">
+              <h3 className="text-sm font-semibold text-[#2D2D2D] mb-4 uppercase tracking-wider">Billing Information</h3>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <input
+                  type="text"
+                  placeholder="First Name"
+                  className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]"
+                  id="firstName-mobile"
+                />
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]"
+                  id="lastName-mobile"
+                />
+              </div>
+
               <input
-                type="text"
-                placeholder="First Name"
-                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                id="firstName-mobile"
+                type="email"
+                placeholder="Email Address"
+                className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D] mb-3"
+                id="email-mobile"
+                required
               />
+
               <input
                 type="text"
-                placeholder="Last Name"
-                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                id="lastName-mobile"
+                placeholder="Street Address"
+                className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D] mb-3"
+                id="street-mobile"
+              />
+
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <input
+                  type="text"
+                  placeholder="City"
+                  className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]"
+                  id="city-mobile"
+                />
+                <input
+                  type="text"
+                  placeholder="State"
+                  maxLength={2}
+                  className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]"
+                  id="state-mobile"
+                />
+              </div>
+
+              <input
+                type="text"
+                placeholder="ZIP Code"
+                maxLength={5}
+                className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]"
+                id="zip-mobile"
               />
             </div>
-
-            <input
-              type="email"
-              placeholder="Email Address"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-              id="email-mobile"
-              required
-            />
-
-            <input
-              type="text"
-              placeholder="Street Address"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-              id="street-mobile"
-            />
-
-            <div className="grid grid-cols-2 gap-4">
-              <input
-                type="text"
-                placeholder="City"
-                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                id="city-mobile"
-              />
-              <input
-                type="text"
-                placeholder="State"
-                maxLength={2}
-                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                id="state-mobile"
-              />
-            </div>
-
-            <input
-              type="text"
-              placeholder="ZIP Code"
-              maxLength={5}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-              id="zip-mobile"
-            />
 
             {/* Submit Button */}
             <button
               onClick={handleCheckoutPayment}
-              className="w-full bg-[#C9A961] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#B91130] transition mt-6"
+              disabled={checkoutLoading}
+              className="w-full bg-[#C8A75B] hover:bg-[#B8975B] text-white py-4 rounded-lg font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 mt-8"
             >
-              Donate Now
+              {checkoutLoading ? "Processing..." : "Donate Now"}
             </button>
           </div>
         </div>
@@ -467,65 +471,68 @@ export default function RoshHashanah() {
 
       {/* Credit Card Checkout Section */}
       <div className="max-w-3xl mx-auto px-6 mb-12">
-        <h2 className="font-playfair text-4xl font-bold text-[#C9A961] mb-2">
+        <h2 className="font-playfair text-4xl font-bold text-[#2D2D2D] mb-3">
           Complete Your Donation
         </h2>
-        <p className="text-gray-600 text-lg mb-6">Pay securely with your credit card</p>
+        <p className="text-[#2D2D2D] text-lg mb-8 font-light">Secure payment • All information is encrypted</p>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-          <div className="space-y-4">
+        <div className="bg-white rounded-2xl border-2 border-[#C8A75B] shadow-lg p-10">
+          <div className="space-y-6">
             {/* Selected Amount Display */}
             {checkoutAmount && (
-              <div className="bg-yellow-50 border-2 border-[#C9A961] rounded-lg p-4 mb-4">
-                <p className="text-sm text-gray-600">Donation Amount</p>
-                <p className="text-3xl font-bold text-[#C9A961]">${checkoutAmount}</p>
+              <div className="bg-gradient-to-br from-[#F8F4EC] to-white border-2 border-[#C8A75B] rounded-xl p-6 mb-6">
+                <p className="text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-2">Donation Amount</p>
+                <p className="font-playfair text-5xl font-bold text-[#C8A75B]">${checkoutAmount}</p>
               </div>
             )}
 
             {/* Amount */}
             <div>
-              <label className="block text-base font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">
                 Amount (or enter custom)
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-3 text-gray-500">$</span>
+                <span className="absolute left-4 top-4 text-[#C8A75B] font-semibold text-lg">$</span>
                 <input
                   type="number"
-                  placeholder="Enter amount"
+                  placeholder="0.00"
                   value={checkoutAmount}
                   onChange={(e) => setCheckoutAmount(e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C9A961] [&::-webkit-outer-spin-button]:hidden [&::-webkit-inner-spin-button]:hidden"
+                  className="w-full pl-10 pr-4 py-3 text-lg border-2 border-[#E5E5E5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white [&::-webkit-outer-spin-button]:hidden [&::-webkit-inner-spin-button]:hidden"
                 />
               </div>
             </div>
 
             {/* Card Field */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">
                 Card Number
               </label>
-              <div id="card-field" className="border border-gray-300 rounded-lg p-3 bg-white"></div>
+              <div id="card-field" className="border-2 border-[#E5E5E5] rounded-lg p-4 bg-white focus-within:ring-2 focus-within:ring-[#C8A75B]"></div>
             </div>
 
-            {/* Billing Address */}
-            <div className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="First Name" className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="firstName" />
-              <input type="text" placeholder="Last Name" className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="lastName" />
+            {/* Billing Details */}
+            <div className="pt-4">
+              <h3 className="text-sm font-semibold text-[#2D2D2D] mb-4 uppercase tracking-wider">Billing Information</h3>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <input type="text" placeholder="First Name" className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="firstName" />
+                <input type="text" placeholder="Last Name" className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="lastName" />
+              </div>
+
+              <input type="email" placeholder="Email Address" className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D] mb-4" id="email" required />
+
+              <input type="text" placeholder="Street Address" className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D] mb-4" id="street" />
+
+              <div className="grid grid-cols-2 gap-4">
+                <input type="text" placeholder="City" className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="city" />
+                <input type="text" placeholder="State" maxLength={2} className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="state" />
+              </div>
+
+              <input type="text" placeholder="ZIP Code" maxLength={5} className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D] mt-4" id="zip" />
             </div>
-
-            <input type="email" placeholder="Email Address" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="email" required />
-
-            <input type="text" placeholder="Street Address" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="street" />
-
-            <div className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="City" className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="city" />
-              <input type="text" placeholder="State" maxLength={2} className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="state" />
-            </div>
-
-            <input type="text" placeholder="ZIP Code" maxLength={5} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A961]" id="zip" />
 
             {/* Submit Button */}
-            <button onClick={handleCheckoutPayment} disabled={checkoutLoading} className="w-full bg-[#C9A961] text-white py-4 rounded-lg font-bold text-xl hover:bg-orange-600 transition mt-6 disabled:opacity-50">
+            <button onClick={handleCheckoutPayment} disabled={checkoutLoading} className="w-full bg-[#C8A75B] hover:bg-[#B8975B] text-white py-4 rounded-lg font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 mt-8">
               {checkoutLoading ? "Processing..." : "Complete Donation"}
             </button>
           </div>
