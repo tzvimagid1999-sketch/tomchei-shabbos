@@ -244,7 +244,7 @@ export default function RoshHashanah() {
       </div>
 
       {/* Donation Cards Grid Section */}
-      <div className="max-w-6xl mx-auto px-6 mb-20">
+      <div id="donate-section" className="max-w-6xl mx-auto px-6 mb-20">
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tiers.map((tier) => (
