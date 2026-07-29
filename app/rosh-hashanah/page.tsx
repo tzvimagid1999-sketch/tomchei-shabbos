@@ -150,7 +150,7 @@ export default function RoshHashanah() {
         <span className="font-caveat text-[#1E40AF] text-3xl sm:text-4xl tracking-wide">
           Rosh Hashanah Campaign
         </span>
-        <h1 className="font-playfair text-6xl sm:text-7xl font-bold text-[#C9A961] mt-4 leading-[1.1]" style={{ textShadow: '0 0 20px rgba(201, 169, 97, 0.8), 0 0 40px rgba(201, 169, 97, 0.5), 0 0 60px rgba(201, 169, 97, 0.3)' }}>
+        <h1 className="font-playfair text-6xl sm:text-7xl font-bold text-[#C9A961] mt-4 leading-[1.1]">
           A New Year! A Fresh Start! A Chance to Make a Difference!
         </h1>
       </div>
