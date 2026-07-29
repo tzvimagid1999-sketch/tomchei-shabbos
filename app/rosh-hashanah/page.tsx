@@ -123,15 +123,12 @@ export default function RoshHashanah() {
   };
 
   const tiers = [
-    { value: 180, label: "$180", emoji: "🍎", title: "A Sweet Start to the New Year", note: "Inspired by the sweetness of apples and honey and the call of the shofar during Elul, your donation helps bring warmth, dignity, and joy to a family this Rosh Hashanah." },
-    { value: 250, label: "$250", emoji: "🍯", title: "Share the Sweetness of Rosh Hashanah", note: "Your donation helps a family prepare for the New Year with the comfort and support they need to celebrate with dignity." },
-    { value: 360, label: "$360", emoji: "🍎", title: "Answer the Call of the Shofar", note: "As we reflect and prepare during Elul, your donation helps bring hope, happiness, and a brighter Rosh Hashanah to families in our community." },
-    { value: 500, label: "$500", emoji: "🍯", title: "Sweeten a Family's New Year", note: "Your donation helps ensure a family can welcome Rosh Hashanah with dignity, warmth, and the sweetness they deserve." },
-    { value: 750, label: "$750", emoji: "🍎", title: "Spread the Blessings of the New Year", note: "Help extend the spirit of Rosh Hashanah by bringing comfort and support to more families in need." },
-    { value: 1000, label: "$1,000", emoji: "🍯", title: "A Rosh Hashanah Community Sponsor", note: "Your generous donation helps make a meaningful difference for families as they begin the New Year." },
-    { value: 1800, label: "$1,800", emoji: "🍎", title: "A Greater Measure of Kindness", note: "During this sacred time of reflection and renewal, your donation helps bring greater support and sweetness to families throughout our community." },
-    { value: 2500, label: "$2,500", emoji: "🍯", title: "A Year of Blessing and Giving", note: "Your donation helps create lasting impact, allowing more families to experience the joy and dignity of Rosh Hashanah." },
-    { value: 5000, label: "$5,000", emoji: "🍯", title: "The Sweetest Blessing", note: "Your extraordinary donation helps bring hope, comfort, and support to many families as we enter a new year together." },
+    { value: 6000, label: "$6,000", emoji: "🍎", title: "Sponsor Succos for 10 families", note: "Sponsor Succos for 10 families" },
+    { value: 1250, label: "$1,250", emoji: "🍯", title: "Sponsor Shabbas for 10 families", note: "Sponsor Shabbas for 10 families" },
+    { value: 250, label: "$250", emoji: "🍎", title: "Sponsor Rosh Hashanah for a family", note: "Sponsor Rosh Hashanah for a family" },
+    { value: 2500, label: "$2,500", emoji: "🍯", title: "Sponsor Rosh Hashanah for 10 families", note: "Sponsor Rosh Hashanah for 10 families" },
+    { value: 600, label: "$600", emoji: "🍎", title: "Sponsor Succos for a family", note: "Sponsor Succos for a family" },
+    { value: 125, label: "$125", emoji: "🍯", title: "Sponsor Shabbas for a family", note: "Sponsor Shabbas for a family" },
   ];
 
   return (
