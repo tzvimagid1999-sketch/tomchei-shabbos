@@ -218,14 +218,14 @@ export default function RoshHashanah() {
         onLoad={() => setScriptReady(true)}
       />
       {/* Hero - Premium Section */}
-      <div className="max-w-2xl mx-auto px-6 text-center mb-20">
-        <span className="font-caveat text-[#E57373] text-2xl sm:text-3xl tracking-wide block mb-4">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center mb-16 sm:mb-20">
+        <span className="font-caveat text-[#E57373] text-xl sm:text-3xl tracking-wide block mb-2 sm:mb-4">
           Rosh Hashanah Campaign
         </span>
-        <h1 className="font-playfair text-4xl sm:text-5xl font-bold text-[#2D2D2D] mt-6 leading-relaxed heading-animate">
+        <h1 className="font-playfair text-3xl sm:text-5xl font-bold text-[#2D2D2D] mt-4 sm:mt-6 leading-tight sm:leading-relaxed heading-animate">
           A New Year. A Fresh Start. A Chance to Make a Difference.
         </h1>
-        <p className="text-lg text-[#2D2D2D] mt-8 leading-relaxed max-w-xl mx-auto font-light">
+        <p className="text-sm sm:text-lg text-[#2D2D2D] mt-4 sm:mt-8 leading-relaxed max-w-xl mx-auto font-light">
           Every family deserves to celebrate the Jewish New Year with dignity, warmth, and the comfort of a complete Rosh Hashanah. Your donation directly provides food, joy, and hope to families in our community who need it most.
         </p>
         <button
@@ -233,7 +233,7 @@ export default function RoshHashanah() {
             const element = document.getElementById('donate-section');
             element?.scrollIntoView({ behavior: 'smooth' });
           }}
-          className="mt-10 bg-[#C8A75B] hover:bg-[#B8975B] text-white px-10 py-4 rounded-lg font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl heading-animate"
+          className="mt-6 sm:mt-10 bg-[#C8A75B] hover:bg-[#B8975B] text-white px-6 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl heading-animate w-full sm:w-auto"
           style={{ animationDelay: '0.2s' }}
         >
           Donate Now
@@ -241,25 +241,25 @@ export default function RoshHashanah() {
       </div>
 
       {/* Premium Goal Thermometer Section */}
-      <div className="max-w-4xl mx-auto px-6 mb-20 fade-in">
-        <div className="bg-white rounded-2xl shadow-lg p-8 scale-in" style={{ background: 'rgba(255, 255, 255, 0.95)' }}>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20 fade-in">
+        <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 scale-in" style={{ background: 'rgba(255, 255, 255, 0.95)' }}>
           {/* Header */}
-          <div className="grid grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
             <div className="text-center">
-              <p className="text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-2">Campaign Goal</p>
-              <p className="font-playfair text-3xl font-bold text-[#C8A75B]">
-                $500,000
+              <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Goal</p>
+              <p className="font-playfair text-2xl sm:text-3xl font-bold text-[#C8A75B]">
+                $500k
               </p>
             </div>
             <div className="text-center">
-              <p className="text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-2">Raised So Far</p>
-              <p className="font-playfair text-3xl font-bold text-[#2D2D2D]">
+              <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Raised</p>
+              <p className="font-playfair text-2xl sm:text-3xl font-bold text-[#2D2D2D]">
                 ${(totalDonated / 1000).toFixed(0)}k
               </p>
             </div>
             <div className="text-center">
-              <p className="text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-2">Progress</p>
-              <p className="font-playfair text-3xl font-bold text-[#C8A75B]">
+              <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Progress</p>
+              <p className="font-playfair text-2xl sm:text-3xl font-bold text-[#C8A75B]">
                 {Math.round(progressPercent)}%
               </p>
             </div>
@@ -290,9 +290,9 @@ export default function RoshHashanah() {
       </div>
 
       {/* Donation Cards Grid Section */}
-      <div id="donate-section" className="max-w-6xl mx-auto px-6 mb-20">
+      <div id="donate-section" className="max-w-6xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {tiers.map((tier, index) => (
             <button
               key={tier.value}
@@ -302,18 +302,18 @@ export default function RoshHashanah() {
                 const element = document.getElementById('donate-section');
                 element?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className={`group bg-white rounded-[20px] p-8 text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-2 border-[#C8A75B] fade-in-up fade-in-up-delay-${Math.min(index + 1, 6)}`}
+              className={`group bg-white rounded-[20px] p-5 sm:p-8 text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-2 border-[#C8A75B] fade-in-up fade-in-up-delay-${Math.min(index + 1, 6)}`}
               style={{
                 background: selectedTier === tier.value ? '#F8F4EC' : '#FFFFFF'
               }}
             >
               {/* Amount - Most Prominent */}
-              <p className="font-playfair text-5xl font-bold text-[#C8A75B] mb-4">
+              <p className="font-playfair text-4xl sm:text-5xl font-bold text-[#C8A75B] mb-3 sm:mb-4">
                 {tier.label}
               </p>
 
               {/* Title - Impact Focused */}
-              <h3 className="text-lg font-bold text-[#2D2D2D] mb-3 leading-snug">
+              <h3 className="text-base sm:text-lg font-bold text-[#2D2D2D] mb-2 sm:mb-3 leading-snug">
                 {tier.title}
               </h3>
 
