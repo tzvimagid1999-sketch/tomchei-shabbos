@@ -194,12 +194,12 @@ export default function RoshHashanah() {
   };
 
   const tiers = [
-    { value: 125, label: "$125", emoji: "🍯", title: "Shabbas for a family", note: "Shabbas for a family" },
-    { value: 250, label: "$250", emoji: "🍎", title: "Rosh Hashanah for a family", note: "Rosh Hashanah for a family" },
-    { value: 600, label: "$600", emoji: "🍎", title: "Succos for a family", note: "Succos for a family" },
-    { value: 1250, label: "$1,250", emoji: "🍯", title: "Shabbas for 10 families", note: "Shabbas for 10 families" },
-    { value: 2500, label: "$2,500", emoji: "🍯", title: "Rosh Hashanah for 10 families", note: "Rosh Hashanah for 10 families" },
-    { value: 6000, label: "$6,000", emoji: "🍎", title: "Succos for 10 families", note: "Succos for 10 families" },
+    { value: 125, label: "$125", emoji: "🍯", title: "Shabbas for a family", note: "" },
+    { value: 250, label: "$250", emoji: "🍎", title: "Rosh Hashanah for a family", note: "" },
+    { value: 600, label: "$600", emoji: "🍎", title: "Succos for a family", note: "" },
+    { value: 1250, label: "$1,250", emoji: "🍯", title: "Shabbas for 10 families", note: "" },
+    { value: 2500, label: "$2,500", emoji: "🍯", title: "Rosh Hashanah for 10 families", note: "" },
+    { value: 6000, label: "$6,000", emoji: "🍎", title: "Succos for 10 families", note: "" },
   ];
 
   return (
