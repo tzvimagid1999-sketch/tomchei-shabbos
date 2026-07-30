@@ -74,10 +74,10 @@ function ManageDonation() {
         ) : (
           <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 space-y-5">
             <p className="text-gray-500 text-sm text-center">
-              Enter your email and the cancellation code from your confirmation email.
+              Enter your email and the confirmation number from your confirmation email.
             </p>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Cancellation Code *</label>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Confirmation Number *</label>
               <input type="text" required value={custkey} onChange={(e) => setCustkey(e.target.value)} className={inputClass} />
             </div>
             <div>
@@ -90,7 +90,7 @@ function ManageDonation() {
               {loading ? "Cancelling..." : "Cancel My Monthly Donation"}
             </button>
             <p className="text-center text-xs text-gray-400">
-              Can&apos;t find your code? Email us at tomcheishabbosfl@gmail.com and we&apos;ll take care of it.
+              Can&apos;t find your confirmation number? Email us at tomcheishabbosfl@gmail.com and we&apos;ll take care of it.
             </p>
           </form>
         )}

@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
     const { custkey, email, sig } = await req.json();
     if (!custkey) {
-      return NextResponse.json({ error: "Missing your cancellation code." }, { status: 400 });
+      return NextResponse.json({ error: "Missing your confirmation number." }, { status: 400 });
     }
 
     const auth = () => {
@@ -38,14 +38,14 @@ export async function POST(req: NextRequest) {
       const customer = await lookup.json();
       if (!lookup.ok || !customer) {
         return NextResponse.json(
-          { error: "We couldn't find a donation with that code." },
+          { error: "We couldn't find a donation with that confirmation number." },
           { status: 404 }
         );
       }
       const recordEmail = String(customer.email || "").trim().toLowerCase();
       if (!recordEmail || recordEmail !== String(email).trim().toLowerCase()) {
         return NextResponse.json(
-          { error: "That email doesn't match this cancellation code." },
+          { error: "That email doesn't match this confirmation number." },
           { status: 403 }
         );
       }

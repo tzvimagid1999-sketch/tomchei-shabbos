@@ -46,7 +46,7 @@ export async function sendMonthlyConfirmation(opts: {
       <p style="margin:0 0 12px;font-size:15px">You can cancel anytime — one click, no questions:</p>
       <a href="${cancelUrl}" style="display:inline-block;background:#F5A020;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:bold">Cancel my monthly donation</a>
       <p style="margin:14px 0 0;font-size:12px;color:#8B7355">
-        Prefer to keep this handy? Your cancellation code is <strong>${opts.custkey}</strong> —
+        Prefer to keep this handy? Your confirmation number is <strong>${opts.custkey}</strong> —
         enter it with your email at ${opts.origin}/manage-donation anytime.
       </p>
     </div>
