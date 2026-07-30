@@ -127,13 +127,7 @@ export default function RoshHashanah() {
   ];
 
   return (
-    <main className="min-h-screen pt-20 pb-16" style={{
-      backgroundImage: "url(/rosh-hashanah-bg.png)",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundAttachment: "fixed",
-    }}>
-      <div className="absolute inset-0 bg-[#FDF9F7]/30"></div>
+    <main className="min-h-screen pt-20 pb-16 bg-white">
       <div className="relative z-10">
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
