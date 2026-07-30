@@ -42,7 +42,14 @@ export async function POST(req: NextRequest) {
     const firstName = nameParts[0] || "Donor";
     const lastName = nameParts.slice(1).join(" ") || nameParts[0] || "Donor";
 
-    void cardExpires;
+    const expiration = String(cardExpires || "").trim();
+    if (!/^(0[1-9]|1[0-2])\d{2}$/.test(expiration)) {
+      return NextResponse.json(
+        { error: "We couldn't read your card's expiration date. Please try again." },
+        { status: 400 }
+      );
+    }
+
     const billing = {
       firstname: firstName,
       lastname: lastName,
@@ -100,7 +107,7 @@ export async function POST(req: NextRequest) {
     }
 
     // STEP 2 — Create the recurring customer using the stored card. The saved-card
-    // token goes in the card NUMBER field with expiration "0000" (USAePay convention).
+    // token goes in the card NUMBER field, paired with the donor's real expiration.
     const nextBill = new Date().toISOString().slice(0, 10); // first scheduled charge: today
 
     const res = await fetch(`${endpoint}/customers`, {
@@ -120,7 +127,7 @@ export async function POST(req: NextRequest) {
           {
             method_name: "Card",
             pay_type: "cc",
-            creditcard: { number: cardRef, expiration: "0000" },
+            creditcard: { number: cardRef, expiration },
           },
         ],
         billing_address: billing,
