@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 
 // Fetch total donations from USAePay for the campaign progress bar
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const debug = req.nextUrl.searchParams.get("debug") === "1";
   try {
     const sourceKey = process.env.NEXT_PUBLIC_USAEPAY_SOURCE_KEY?.trim();
     const pin = process.env.USAEPAY_PIN?.trim();
@@ -23,6 +24,10 @@ export async function GET() {
     });
 
     if (!res.ok) {
+      const rawText = await res.text();
+      if (debug) {
+        return NextResponse.json({ total: 0, debug: { httpStatus: res.status, raw: rawText.slice(0, 1500) } });
+      }
       return NextResponse.json({ total: 0 });
     }
 
@@ -38,6 +43,17 @@ export async function GET() {
     const total = transactions
       .filter((t) => t.result_code === "A" || t.result === "Approved")
       .reduce((sum, t) => sum + (t.amount || 0), 0);
+
+    if (debug) {
+      return NextResponse.json({
+        total: Math.round(total),
+        debug: {
+          transactionCount: transactions.length,
+          sample: transactions.slice(0, 10),
+          rawKeys: Object.keys(data),
+        },
+      });
+    }
 
     return NextResponse.json({ total: Math.round(total) });
   } catch (err) {
