@@ -44,9 +44,12 @@ export async function POST(req: NextRequest) {
 
     // USAePay's tokenized payment_key never exposes the real card expiration back
     // to the merchant (PCI compliance), so billing against the saved cardref uses
-    // a syntactically valid placeholder date instead of the donor's real one — the
+    // a placeholder date a few years out instead of the donor's real one — the
     // stored card reference itself is what actually gets charged, not this field.
-    const expiration = "1299";
+    // (A far-future year like 99 fails USAePay's sanity range check, so use +5y.)
+    const future = new Date();
+    future.setFullYear(future.getFullYear() + 5);
+    const expiration = String(future.getMonth() + 1).padStart(2, "0") + String(future.getFullYear() % 100).padStart(2, "0");
 
     const billing = {
       firstname: firstName,
@@ -125,7 +128,7 @@ export async function POST(req: NextRequest) {
           {
             method_name: "Card",
             pay_type: "cc",
-            creditcard: { number: cardRef, expires: expiration },
+            creditcard: { number: cardRef, expiration },
           },
         ],
         billing_address: billing,
