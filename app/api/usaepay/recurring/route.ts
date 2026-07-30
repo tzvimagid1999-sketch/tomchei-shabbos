@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
           {
             method_name: "Card",
             pay_type: "cc",
-            creditcard: { number: cardRef, expiration },
+            creditcard: { number: cardRef, expires: expiration },
           },
         ],
         billing_address: billing,
