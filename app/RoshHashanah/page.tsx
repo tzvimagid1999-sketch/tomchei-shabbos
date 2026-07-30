@@ -35,6 +35,24 @@ export default function RoshHashanah() {
     return () => clearInterval(interval);
   }, []);
 
+  // pay.js is often already cached from a previous page, so it can finish
+  // loading before the Script component's onLoad listener attaches — poll
+  // for window.usaepay directly instead of relying on onLoad alone.
+  useEffect(() => {
+    if (scriptReady) return;
+    if ((window as any).usaepay) {
+      setScriptReady(true);
+      return;
+    }
+    const interval = setInterval(() => {
+      if ((window as any).usaepay) {
+        setScriptReady(true);
+        clearInterval(interval);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [scriptReady]);
+
   useEffect(() => {
     if (!scriptReady || !(window as any).usaepay || !publicKey || cardRef.current) return;
     const client = new (window as any).usaepay.Client(publicKey);

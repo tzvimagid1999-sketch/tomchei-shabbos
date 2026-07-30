@@ -121,6 +121,24 @@ function DonateForm() {
   const inputClass =
     "w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#1AABAB] transition font-medium text-gray-700 bg-white";
 
+  // pay.js is often already cached from a previous page, so it can finish
+  // loading before the Script component's onLoad listener attaches — poll
+  // for window.usaepay directly instead of relying on onLoad alone.
+  useEffect(() => {
+    if (scriptReady) return;
+    if (window.usaepay) {
+      setScriptReady(true);
+      return;
+    }
+    const interval = setInterval(() => {
+      if (window.usaepay) {
+        setScriptReady(true);
+        clearInterval(interval);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [scriptReady]);
+
   // Build the secure card entry once pay.js has loaded.
   useEffect(() => {
     if (!scriptReady || !window.usaepay || !publicKey || cardRef.current) return;
