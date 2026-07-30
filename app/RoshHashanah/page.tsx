@@ -133,7 +133,7 @@ export default function RoshHashanah() {
       backgroundPosition: "center",
       backgroundAttachment: "fixed",
     }}>
-      <div className="absolute inset-0 bg-[#FDF9F7]/80"></div>
+      <div className="absolute inset-0 bg-[#FDF9F7]/30"></div>
       <div className="relative z-10">
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
