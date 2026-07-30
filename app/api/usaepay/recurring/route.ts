@@ -153,7 +153,10 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      { error: (data.error as string) || "Your monthly donation could not be set up. Please try again." },
+      {
+        error: (data.error as string) || "Your monthly donation could not be set up. Please try again.",
+        debug: { step: "create-customer", httpStatus: res.status, sentExpiration: expiration, usaepayRaw: rawText.slice(0, 1000) },
+      },
       { status: 402 }
     );
   } catch (err: unknown) {
