@@ -50,7 +50,16 @@ export async function sendMonthlyConfirmation(opts: {
         enter it with your email at ${opts.origin}/manage-donation anytime.
       </p>
     </div>
-    <p style="font-size:13px;color:#8B7355">With gratitude,<br/>Tomchei Shabbos of Florida</p>
+    <div style="margin-top:20px;padding:15px;background-color:#fafafa;border-radius:5px;font-size:11px;color:#888">
+      <p style="margin:0 0 6px"><strong>Tax Deduction Information:</strong></p>
+      <p style="margin:0">
+        Tomchei Shabbos of Florida is a 501(c)(3) nonprofit organization (Tax ID: ${process.env.NONPROFIT_TAX_ID}).
+        Each monthly donation of $${opts.amount} is tax deductible to the extent allowed by law. No goods or
+        services were provided in exchange for this contribution. Please consult your tax advisor regarding the
+        deductibility of your contribution.
+      </p>
+    </div>
+    <p style="font-size:13px;color:#8B7355;margin-top:20px">With gratitude,<br/>Tomchei Shabbos of Florida</p>
   </div>`;
 
   try {
