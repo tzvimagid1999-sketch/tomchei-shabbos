@@ -35,14 +35,21 @@ export async function GET(req: NextRequest) {
     const transactions = (data.transactions || data.data || []) as Array<{
       result_code?: string;
       result?: string;
-      amount?: number;
-      total?: number;
+      amount?: string | number;
+      trantype?: string;
     }>;
 
-    // Sum only approved charges (result_code "A" or result "Approved")
+    // Sum only approved, non-voided, non-refunded sales. USAePay returns
+    // `amount` as a STRING ("1.00") — parseFloat it, since `+` on strings
+    // concatenates instead of adding and silently corrupts the total to NaN.
     const total = transactions
-      .filter((t) => t.result_code === "A" || t.result === "Approved")
-      .reduce((sum, t) => sum + (t.amount || 0), 0);
+      .filter((t) => {
+        const approved = t.result_code === "A" || t.result === "Approved";
+        const trantype = (t.trantype || "").toLowerCase();
+        const reversed = trantype.includes("void") || trantype.includes("refund");
+        return approved && !reversed;
+      })
+      .reduce((sum, t) => sum + (parseFloat(String(t.amount)) || 0), 0);
 
     if (debug) {
       return NextResponse.json({
