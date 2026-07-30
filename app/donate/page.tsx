@@ -170,7 +170,6 @@ function DonateForm() {
     // pay.js REJECTS with a JSON-string error on failure, and resolves with the
     // token on success (in .key, or occasionally the value itself).
     let paymentKey: string;
-    let cardExpires = "";
     let debugToken = "";
     try {
       const result = await clientRef.current.getPaymentKey(cardRef.current);
@@ -178,10 +177,6 @@ function DonateForm() {
       const token = result?.key || (typeof result === "string" ? result : "");
       if (!token) throw new Error("No payment token returned.");
       paymentKey = token;
-      // Capture expiration for stored (recurring) cards, normalized to MMYY.
-      const rawExp = String(result?.creditCard?.expiration || "").replace(/\D/g, "");
-      if (rawExp.length === 4) cardExpires = rawExp;
-      else if (rawExp.length === 6) cardExpires = rawExp.slice(0, 2) + rawExp.slice(4);
     } catch (err) {
       let msg = "Please check your card number, expiration, and CVV.";
       const raw = typeof err === "string" ? err : err instanceof Error ? err.message : "";
@@ -202,7 +197,7 @@ function DonateForm() {
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: donationAmount, paymentKey, cardExpires, name, email, street, city, state, zip }),
+        body: JSON.stringify({ amount: donationAmount, paymentKey, name, email, street, city, state, zip }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) {

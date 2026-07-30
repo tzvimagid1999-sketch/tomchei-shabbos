@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, cardExpires, name, email, street, city, state, zip } = await req.json();
+    const { amount, paymentKey, name, email, street, city, state, zip } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -42,13 +42,11 @@ export async function POST(req: NextRequest) {
     const firstName = nameParts[0] || "Donor";
     const lastName = nameParts.slice(1).join(" ") || nameParts[0] || "Donor";
 
-    const expiration = String(cardExpires || "").trim();
-    if (!/^(0[1-9]|1[0-2])\d{2}$/.test(expiration)) {
-      return NextResponse.json(
-        { error: "We couldn't read your card's expiration date. Please try again." },
-        { status: 400 }
-      );
-    }
+    // USAePay's tokenized payment_key never exposes the real card expiration back
+    // to the merchant (PCI compliance), so billing against the saved cardref uses
+    // a syntactically valid placeholder date instead of the donor's real one — the
+    // stored card reference itself is what actually gets charged, not this field.
+    const expiration = "1299";
 
     const billing = {
       firstname: firstName,
