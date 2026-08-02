@@ -151,17 +151,28 @@ export default function RoshHashanah() {
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
         {/* Hero */}
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center mb-16 sm:mb-20">
-          <h1 className="text-3xl sm:text-5xl font-bold text-[#2D2D2D] mt-4 sm:mt-6 leading-tight">
-            A New Year. A Fresh Start. A Chance to Make a Difference.
-          </h1>
-          <p className="text-sm sm:text-lg text-[#2D2D2D] mt-4 sm:mt-8 leading-relaxed max-w-xl mx-auto font-light">
-            Every family deserves to celebrate the Jewish New Year with dignity, warmth, and the comfort of a complete Rosh Hashanah. Your donation directly provides food, joy, and hope to families in our community who need it most.
-          </p>
-          <button onClick={() => document.getElementById('donate-section')?.scrollIntoView({ behavior: 'smooth' })}
-            className="mt-6 sm:mt-10 bg-[#C8A75B] hover:bg-[#B8975B] text-white px-6 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto">
-            Donate Now
-          </button>
+        <div className="relative text-center mb-16 sm:mb-20 py-16 sm:py-24 px-4 sm:px-6 overflow-hidden">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: "url(/rosh-hashanah-apples-honey.png)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+          <div className="absolute inset-0 bg-white/75" />
+          <div className="relative max-w-2xl mx-auto">
+            <h1 className="text-3xl sm:text-5xl font-bold text-[#2D2D2D] mt-4 sm:mt-6 leading-tight">
+              A New Year. A Fresh Start. A Chance to Make a Difference.
+            </h1>
+            <p className="text-sm sm:text-lg text-[#2D2D2D] mt-4 sm:mt-8 leading-relaxed max-w-xl mx-auto font-light">
+              Every family deserves to celebrate the Jewish New Year with dignity, warmth, and the comfort of a complete Rosh Hashanah. Your donation directly provides food, joy, and hope to families in our community who need it most.
+            </p>
+            <button onClick={() => document.getElementById('donate-section')?.scrollIntoView({ behavior: 'smooth' })}
+              className="mt-6 sm:mt-10 bg-[#C8A75B] hover:bg-[#B8975B] text-white px-6 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto">
+              Donate Now
+            </button>
+          </div>
         </div>
 
         {/* Thermometer */}
