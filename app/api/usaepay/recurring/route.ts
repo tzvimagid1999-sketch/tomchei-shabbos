@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, name, email, street, city, state, zip } = await req.json();
+    const { amount, paymentKey, cardExpires, name, email, street, city, state, zip } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -29,6 +29,10 @@ export async function POST(req: NextRequest) {
     }
     if (!paymentKey) {
       return NextResponse.json({ error: "Missing card details." }, { status: 400 });
+    }
+    const expiration = String(cardExpires || "").trim();
+    if (!/^(0[1-9]|1[0-2])\d{2}$/.test(expiration)) {
+      return NextResponse.json({ error: "Please enter a valid card expiration date (MM/YY)." }, { status: 400 });
     }
 
     // USAePay v2 auth hash.
@@ -41,15 +45,6 @@ export async function POST(req: NextRequest) {
     const nameParts = String(name || "").trim().split(/\s+/).filter(Boolean);
     const firstName = nameParts[0] || "Donor";
     const lastName = nameParts.slice(1).join(" ") || nameParts[0] || "Donor";
-
-    // USAePay's tokenized payment_key never exposes the real card expiration back
-    // to the merchant (PCI compliance), so billing against the saved cardref uses
-    // a placeholder date a few years out instead of the donor's real one — the
-    // stored card reference itself is what actually gets charged, not this field.
-    // (A far-future year like 99 fails USAePay's sanity range check, so use +5y.)
-    const future = new Date();
-    future.setFullYear(future.getFullYear() + 5);
-    const expiration = String(future.getMonth() + 1).padStart(2, "0") + String(future.getFullYear() % 100).padStart(2, "0");
 
     const billing = {
       firstname: firstName,
