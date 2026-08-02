@@ -146,22 +146,19 @@ export default function RoshHashanah() {
   ];
 
   return (
-    <main className="min-h-screen pt-20 pb-16 bg-white">
+    <main className="min-h-screen pt-20 pb-16 relative" style={{
+      backgroundImage: "url(/rosh-hashanah-apples-honey.png)",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundAttachment: "fixed",
+    }}>
+      <div className="absolute inset-0 bg-white/70" />
       <div className="relative z-10">
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
         {/* Hero */}
-        <div className="relative text-center mb-16 sm:mb-20 py-16 sm:py-24 px-4 sm:px-6 overflow-hidden">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: "url(/rosh-hashanah-apples-honey.png)",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          />
-          <div className="absolute inset-0 bg-white/75" />
-          <div className="relative max-w-2xl mx-auto">
+        <div className="text-center mb-16 sm:mb-20 px-4 sm:px-6">
+          <div className="max-w-2xl mx-auto">
             <h1 className="text-3xl sm:text-5xl font-bold text-[#2D2D2D] mt-4 sm:mt-6 leading-tight">
               A New Year. A Fresh Start. A Chance to Make a Difference.
             </h1>
