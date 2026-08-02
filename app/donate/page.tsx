@@ -27,16 +27,12 @@ interface USAePayCard {
 }
 
 const amounts = [
-  { value: 125,   label: "$125",   note: "A family for one week" },
-  { value: 10000, label: "$10k",   note: "A week of Shabbos for our whole community" },
-  { value: 5400,  label: "$5,400", note: "Sustains a family for three full months" },
-  { value: 3600,  label: "$3,600", note: "Become a community partner" },
-  { value: 1800,  label: "$1,800", note: "Yom Tov joy for a large family" },
-  { value: 1200,  label: "$1,200", note: "Yom Tov joy for a small family" },
-  { value: 180,   label: "$180",   note: "A large family, every Shabbos this month" },
-  { value: 360,   label: "$360",   note: "A medium family, every Shabbos this month" },
-  { value: 520,   label: "$520",   note: "A small family, every Shabbos this month" },
-  { value: 700,   label: "$700",   note: "One family's Shabbos table this week" },
+  { value: 125,  label: "$125",   note: "A small family for 1 Shabbos" },
+  { value: 225,  label: "$225",   note: "A medium family for 1 Shabbos" },
+  { value: 350,  label: "$350",   note: "A large family for 1 Shabbos" },
+  { value: 500,  label: "$500",   note: "A small family for 1 month of Shabbos" },
+  { value: 900,  label: "$900",   note: "A medium family for 1 month of Shabbos" },
+  { value: 1400, label: "$1,400", note: "A large family for 1 month of Shabbosim" },
 ];
 
 function SuccessScreen({ name, amount, email, monthly, custnum }: { name: string; amount: number; email: string; monthly: boolean; custnum: string }) {
@@ -258,7 +254,7 @@ function DonateForm() {
       <div>
         <p className="text-xs font-bold uppercase tracking-widest text-[#1AABAB] mb-3">Sponsorships</p>
         <div className="flex flex-col gap-3 mb-5">
-          {[[0, 1], [1, 3], [3, 6], [6, 10]].map(([start, end], rowIdx) => (
+          {[[0, 3], [3, 6]].map(([start, end], rowIdx) => (
             <div key={rowIdx} className="flex justify-center gap-3">
               {amounts.slice(start, end).map((a) => {
                 const active = selected === a.value && !custom;
