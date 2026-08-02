@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, firstName, lastName, email, street, city, state, zip } = await req.json();
+    const { amount, paymentKey, firstName, lastName, email, street, city, state, zip, campaign } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -47,7 +47,9 @@ export async function POST(req: NextRequest) {
         amount: numericAmount.toFixed(2),
         payment_key: paymentKey,
         email: email || undefined,
-        description: "Donation to Tomchei Shabbos of Florida",
+        description: campaign === "rosh-hashanah"
+          ? "Rosh Hashanah Campaign donation to Tomchei Shabbos of Florida"
+          : "Donation to Tomchei Shabbos of Florida",
         billing_address: {
           firstname: firstName || undefined,
           lastname: lastName || undefined,

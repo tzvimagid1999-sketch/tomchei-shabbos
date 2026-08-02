@@ -37,17 +37,19 @@ export async function GET(req: NextRequest) {
       result?: string;
       amount?: string | number;
       trantype?: string;
+      description?: string;
     }>;
 
-    // Sum only approved, non-voided, non-refunded sales. USAePay returns
-    // `amount` as a STRING ("1.00") — parseFloat it, since `+` on strings
-    // concatenates instead of adding and silently corrupts the total to NaN.
+    // Only count donations explicitly tagged as Rosh Hashanah Campaign — otherwise
+    // this sums the merchant account's entire donation history (mail, phone, the
+    // general donate page, etc.), not just this specific campaign.
     const total = transactions
       .filter((t) => {
         const approved = t.result_code === "A" || t.result === "Approved";
         const trantype = (t.trantype || "").toLowerCase();
         const reversed = trantype.includes("void") || trantype.includes("refund");
-        return approved && !reversed;
+        const tagged = (t.description || "").toLowerCase().includes("rosh hashanah campaign");
+        return approved && !reversed && tagged;
       })
       .reduce((sum, t) => sum + (parseFloat(String(t.amount)) || 0), 0);
 
