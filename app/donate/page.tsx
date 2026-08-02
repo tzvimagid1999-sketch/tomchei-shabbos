@@ -27,6 +27,7 @@ interface USAePayCard {
 }
 
 const amounts = [
+  { value: 125,   label: "$125",   note: "A family for one week" },
   { value: 10000, label: "$10k",   note: "A week of Shabbos for our whole community" },
   { value: 5400,  label: "$5,400", note: "Sustains a family for three full months" },
   { value: 3600,  label: "$3,600", note: "Become a community partner" },
@@ -248,7 +249,7 @@ function DonateForm() {
       <div>
         <p className="text-xs font-bold uppercase tracking-widest text-[#1AABAB] mb-3">Sponsorships</p>
         <div className="flex flex-col gap-3 mb-5">
-          {[[0, 2], [2, 5], [5, 9]].map(([start, end], rowIdx) => (
+          {[[0, 1], [1, 3], [3, 6], [6, 10]].map(([start, end], rowIdx) => (
             <div key={rowIdx} className="flex justify-center gap-3">
               {amounts.slice(start, end).map((a) => {
                 const active = selected === a.value && !custom;
