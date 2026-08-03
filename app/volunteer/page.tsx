@@ -70,9 +70,11 @@ export default function VolunteerPage() {
 
       {/* Hero */}
       <section className="relative min-h-[420px] flex items-center justify-center text-center overflow-hidden">
+        <Image src="/volunteer-header.jpg" alt="" fill className="object-cover blur-2xl scale-110" aria-hidden priority sizes="100vw" />
+        <div className="absolute inset-0 bg-black/40" />
         <Image src="/volunteer-header.jpg" alt="Tomchei Shabbos volunteers packing boxes"
-          fill className="object-cover" style={{ objectPosition: "50% 46%" }} priority sizes="100vw" />
-        <div className="absolute inset-0 bg-[#1AABAB]/25" />
+          fill className="object-contain" priority sizes="100vw" />
+        <div className="absolute inset-0 bg-[#1AABAB]/10" />
         <div className="relative z-10 max-w-4xl mx-auto px-6">
           <h1 className="font-playfair text-5xl sm:text-6xl lg:text-7xl font-bold text-white my-4 leading-[1.08]">Volunteer With Us</h1>
         </div>
