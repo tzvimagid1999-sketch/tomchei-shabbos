@@ -146,31 +146,39 @@ export default function RoshHashanah() {
   ];
 
   return (
-    <main className="min-h-screen pt-20 pb-16 relative" style={{
-      backgroundImage: "url(/rosh-hashanah-apples-honey.png)",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundAttachment: "fixed",
-    }}>
-      <div className="absolute inset-0 bg-white/70" />
+    <main className="min-h-screen pb-16 bg-white">
       <div className="relative z-10">
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
         {/* Hero */}
-        <div className="text-center mb-16 sm:mb-20 px-4 sm:px-6">
-          <div className="max-w-2xl mx-auto">
-            <h1 className="text-3xl sm:text-5xl font-bold text-[#2D2D2D] mt-4 sm:mt-6 leading-tight">
-              A New Year. A Fresh Start. A Chance to Make a Difference.
+        <div className="relative text-center pt-32 pb-20 sm:pt-40 sm:pb-28 px-4 sm:px-6 overflow-hidden">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: "url(/rosh-hashanah-apples-honey.png)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+          <div className="absolute inset-0" style={{ background: "rgba(15, 23, 42, 0.55)" }} />
+          <div className="relative max-w-3xl mx-auto">
+            <h1 className="font-playfair text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight">
+              A New Year. A Fresh Start. A Chance to Make a <span style={{ color: "#D4A017" }}>Difference.</span>
             </h1>
-            <p className="text-sm sm:text-lg text-[#2D2D2D] mt-4 sm:mt-8 leading-relaxed max-w-xl mx-auto font-light">
-              Every family deserves to celebrate the Jewish New Year with dignity, warmth, and the comfort of a complete Rosh Hashanah. Your donation directly provides food, joy, and hope to families in our community who need it most.
+            <p className="mt-8 text-white/90 max-w-xl mx-auto" style={{ fontFamily: "var(--font-manrope)", fontSize: "22px", lineHeight: 1.6 }}>
+              Every family deserves to celebrate Rosh Hashanah with dignity. Your generosity provides food, hope, and joy to families who need it most.
             </p>
             <button onClick={() => document.getElementById('donate-section')?.scrollIntoView({ behavior: 'smooth' })}
-              className="mt-6 sm:mt-10 bg-[#C8A75B] hover:bg-[#B8975B] text-white px-6 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto">
-              Donate Now
+              className="mt-10 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto"
+              style={{ backgroundColor: "#D4A017" }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#B8860B")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#D4A017")}>
+              Donate Now →
             </button>
           </div>
         </div>
+
+        <div className="h-16 sm:h-20" />
 
         {/* Thermometer */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
