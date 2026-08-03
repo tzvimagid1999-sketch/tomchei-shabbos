@@ -27,16 +27,13 @@ interface USAePayCard {
 }
 
 const amounts = [
-  { value: 125,   label: "$125",    note: "A small family for 1 Shabbos" },
-  { value: 225,   label: "$225",    note: "A medium family for 1 Shabbos" },
-  { value: 375,   label: "$375",    note: "A large family for 1 Shabbos" },
-  { value: 300,   label: "$300",    note: "A small family for 2 Shabbosim" },
-  { value: 800,   label: "$800",    note: "A small family for 1 month of Shabbos" },
-  { value: 700,   label: "$700",    note: "A medium family for 2 Shabbosim" },
-  { value: 1200,  label: "$1,200",  note: "A medium family for 1 month of Shabbos" },
-  { value: 900,   label: "$900",    note: "A large family for 2 Shabbosim" },
-  { value: 2600,  label: "$2,600",  note: "A large family for 1 month of Shabbosim" },
-  { value: 30000, label: "$30,000", note: "Sponsor Shabbos for our whole community" },
+  { value: 125,  label: "$125",   note: "A small family for a week" },
+  { value: 225,  label: "$225",   note: "A medium family for a week" },
+  { value: 350,  label: "$350",   note: "A large family for a week" },
+  { value: 600,  label: "$600",   note: "A small family for a month" },
+  { value: 900,  label: "$900",   note: "A medium family for a month" },
+  { value: 1350, label: "$1,350", note: "A large family for a month" },
+  { value: 6000, label: "$6,000", note: "A family for a year" },
 ];
 
 function SuccessScreen({ name, amount, email, monthly, custnum }: { name: string; amount: number; email: string; monthly: boolean; custnum: string }) {
@@ -258,7 +255,7 @@ function DonateForm() {
       <div>
         <p className="text-xs font-bold uppercase tracking-widest text-[#1AABAB] mb-3">Sponsorships</p>
         <div className="flex flex-col gap-3 mb-5">
-          {[[0, 1], [1, 3], [3, 6], [6, 10]].map(([start, end], rowIdx) => (
+          {[[0, 1], [1, 3], [3, 7]].map(([start, end], rowIdx) => (
             <div key={rowIdx} className="flex justify-center gap-3">
               {amounts.slice(start, end).map((a) => {
                 const active = selected === a.value && !custom;
