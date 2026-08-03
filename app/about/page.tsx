@@ -84,7 +84,7 @@ export default function AboutPage() {
             </div>
 
             <div className="rounded-2xl overflow-hidden shadow-xl h-[520px] relative">
-              <Image src="/photos/photo-2.jpg" alt="Tomchei Shabbos volunteers packing food" fill className="object-cover" />
+              <Image src="/photos/photo-2.jpg" alt="Tomchei Shabbos volunteers packing food" fill className="object-cover" style={{ objectPosition: "50% 25%" }} />
             </div>
           </div>
         </div>
