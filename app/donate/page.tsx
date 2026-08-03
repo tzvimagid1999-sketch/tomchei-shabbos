@@ -97,7 +97,6 @@ function DonateForm() {
   const [custom, setCustom] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [expiration, setExpiration] = useState("");
   const [street, setStreet] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -162,14 +161,6 @@ function DonateForm() {
       setError("The payment form is still loading. Please try again in a moment.");
       return;
     }
-    // Monthly donations need the card's real expiration to set up recurring
-    // billing — USAePay's secure card field never exposes this back to us,
-    // so it's collected here as a plain (non-sensitive) MM/YY field.
-    const expirationDigits = expiration.replace(/\D/g, "");
-    if (frequency === "monthly" && !/^(0[1-9]|1[0-2])\d{2}$/.test(expirationDigits)) {
-      setError("Please enter your card's expiration date as MM/YY.");
-      return;
-    }
     setLoading(true);
     setError("");
 
@@ -204,7 +195,7 @@ function DonateForm() {
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: donationAmount, paymentKey, cardExpires: expirationDigits, name, email, street, city, state, zip }),
+        body: JSON.stringify({ amount: donationAmount, paymentKey, name, email, street, city, state, zip }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
@@ -340,19 +331,6 @@ function DonateForm() {
         </div>
       </div>
 
-      {frequency === "monthly" && (
-        <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Card Expiration (MM/YY) *</label>
-          <input type="text" required inputMode="numeric" placeholder="MM/YY" maxLength={5}
-            value={expiration}
-            onChange={(e) => {
-              const digits = e.target.value.replace(/\D/g, "").slice(0, 4);
-              setExpiration(digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits);
-            }}
-            className={inputClass} />
-          <p className="text-xs text-gray-400 mt-1">Needed to set up your monthly billing — this isn&apos;t your full card number.</p>
-        </div>
-      )}
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
 

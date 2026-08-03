@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, cardExpires, name, email, street, city, state, zip } = await req.json();
+    const { amount, paymentKey, name, email, street, city, state, zip } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -30,10 +30,9 @@ export async function POST(req: NextRequest) {
     if (!paymentKey) {
       return NextResponse.json({ error: "Missing card details." }, { status: 400 });
     }
-    const expiration = String(cardExpires || "").trim();
-    if (!/^(0[1-9]|1[0-2])\d{2}$/.test(expiration)) {
-      return NextResponse.json({ error: "Please enter a valid card expiration date (MM/YY)." }, { status: 400 });
-    }
+    // Per USAePay support: use "0000" as the expiration placeholder when billing
+    // against a saved card reference token instead of a raw card number.
+    const expiration = "0000";
 
     // USAePay v2 auth hash.
     const seed = crypto.randomBytes(16).toString("hex");
