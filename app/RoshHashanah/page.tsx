@@ -95,12 +95,11 @@ export default function RoshHashanah() {
       const paymentKey = result?.key || (typeof result === "string" ? result : "");
       if (!paymentKey) throw new Error("No payment token returned.");
 
-      const amountCents = Math.round(parseFloat(checkoutAmount) * 100);
       const response = await fetch("/api/usaepay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: amountCents,
+          amount: parseFloat(checkoutAmount),
           paymentKey,
           firstName,
           lastName,

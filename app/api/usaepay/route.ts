@@ -83,11 +83,11 @@ export async function POST(req: NextRequest) {
               <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                 <h2 style="color: #C9A961;">Thank You for Your Donation!</h2>
                 <p>Dear ${firstName},</p>
-                <p>We have received your generous donation of <strong>$${(numericAmount / 100).toFixed(2)}</strong> to Tomchei Shabbos of Florida for our Rosh Hashanah campaign.</p>
+                <p>We have received your generous donation of <strong>$${numericAmount.toFixed(2)}</strong> to Tomchei Shabbos of Florida for our Rosh Hashanah campaign.</p>
 
                 <div style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #C9A961; margin: 20px 0;">
                   <p><strong>Confirmation Number:</strong> ${data.refnum || data.authcode}</p>
-                  <p><strong>Amount:</strong> $${(numericAmount / 100).toFixed(2)}</p>
+                  <p><strong>Amount:</strong> $${numericAmount.toFixed(2)}</p>
                   <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
                   <p><strong>Email:</strong> ${maskedEmail}</p>
                   <p><strong>Address:</strong> ${maskedStreet}, ${maskedCity}, ${state} ${maskedZip}</p>
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
 
                 <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 11px; color: #888; background-color: #fafafa; padding: 15px; border-radius: 5px;">
                   <p><strong>Tax Deduction Information:</strong></p>
-                  <p>Tomchei Shabbos of Florida is a 501(c)(3) nonprofit organization (Tax ID: ${process.env.NONPROFIT_TAX_ID}). Your donation of $${(numericAmount / 100).toFixed(2)} is tax deductible to the extent allowed by law. No goods or services were provided in exchange for this contribution. Please consult your tax advisor regarding the deductibility of your contribution.</p>
+                  <p>Tomchei Shabbos of Florida is a 501(c)(3) nonprofit organization (Tax ID: ${process.env.NONPROFIT_TAX_ID}). Your donation of $${numericAmount.toFixed(2)} is tax deductible to the extent allowed by law. No goods or services were provided in exchange for this contribution. Please consult your tax advisor regarding the deductibility of your contribution.</p>
                 </div>
 
                 <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666;">
