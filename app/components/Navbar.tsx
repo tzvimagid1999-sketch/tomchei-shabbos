@@ -10,6 +10,7 @@ const links = [
   { href: "/about",     label: "About Us" },
   { href: "/volunteer", label: "Volunteer" },
   { href: "/blog",      label: "Blog" },
+  { href: "/apply-for-assistance", label: "Apply for Assistance" },
 ];
 
 export default function Navbar() {
