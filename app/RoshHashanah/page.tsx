@@ -2,6 +2,55 @@
 import { useState, useEffect, useRef } from "react";
 import Script from "next/script";
 import Image from "next/image";
+import { CheckCircle } from "lucide-react";
+import confetti from "canvas-confetti";
+
+function ThankYouScreen({ name, amount, email, onClose }: { name: string; amount: string; email: string; onClose: () => void }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    const myConfetti = confetti.create(canvasRef.current, { resize: true, useWorker: true });
+    const colors = ["#C8A75B", "#D9B870", "#ffffff", "#8B6F3A"];
+    const duration = 3500;
+    const end = Date.now() + duration;
+    const fire = () => {
+      myConfetti({ particleCount: 40, angle: 60, spread: 70, origin: { x: 0, y: 0.6 }, colors });
+      myConfetti({ particleCount: 40, angle: 120, spread: 70, origin: { x: 1, y: 0.6 }, colors });
+      myConfetti({ particleCount: 25, angle: 90, spread: 55, origin: { x: 0.5, y: 0 }, colors });
+      if (Date.now() < end) setTimeout(fire, 250);
+    };
+    fire();
+  }, []);
+
+  return (
+    <div className="fixed inset-0 bg-white flex items-center justify-center text-center px-6" style={{ zIndex: 9999 }}>
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
+      <div className="relative" style={{ zIndex: 1 }}>
+        <CheckCircle className="w-20 h-20 text-[#C8A75B] mx-auto mb-6" />
+        <h3 className="font-playfair text-3xl font-bold text-[#2D2D2D] mb-3">
+          Thank You{name ? `, ${name.split(" ")[0]}` : ""}!
+        </h3>
+        <p className="text-gray-600 text-lg mb-2">
+          Your <strong>${amount}</strong> donation has been received.
+        </p>
+        <p className="text-gray-500 text-sm mb-8">
+          You&apos;re helping a family celebrate Rosh Hashanah with dignity and joy.
+        </p>
+        {email && <p className="text-gray-400 text-xs mb-8">A confirmation email has been sent to {email}</p>}
+        <button onClick={onClose}
+          className="bg-[#C8A75B] hover:bg-[#B8975B] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300">
+          Continue
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function RoshHashanah() {
   const [totalDonated, setTotalDonated] = useState(0);
@@ -10,6 +59,7 @@ export default function RoshHashanah() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
+  const [thankYou, setThankYou] = useState<{ name: string; amount: string; email: string } | null>(null);
 
   const clientRef = useRef<any>(null);
   const cardRef = useRef<any>(null);
@@ -114,7 +164,8 @@ export default function RoshHashanah() {
 
       const data = await response.json();
       if (data.success) {
-        alert(`Donation of $${checkoutAmount} received! Thank you. A confirmation email has been sent to ${email}`);
+        setThankYou({ name: firstName, amount: checkoutAmount, email });
+        window.scrollTo({ top: 0, behavior: "smooth" });
         setCheckoutAmount("");
         (document.getElementById("firstName") as HTMLInputElement).value = "";
         (document.getElementById("lastName") as HTMLInputElement).value = "";
@@ -143,6 +194,10 @@ export default function RoshHashanah() {
     { value: 2500, label: "$2,500", title: "Rosh Hashanah for 10 families" },
     { value: 6000, label: "$6,000", title: "Succos for 10 families" },
   ];
+
+  if (thankYou) {
+    return <ThankYouScreen name={thankYou.name} amount={thankYou.amount} email={thankYou.email} onClose={() => setThankYou(null)} />;
+  }
 
   return (
     <main className="min-h-screen pb-16 bg-white">
