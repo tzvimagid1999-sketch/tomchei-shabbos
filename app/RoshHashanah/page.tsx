@@ -244,7 +244,9 @@ export default function RoshHashanah() {
               </div>
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Raised</p>
-                <p className="font-bold text-2xl sm:text-3xl text-[#2D2D2D]">${(totalDonated / 1000).toFixed(0)}k</p>
+                <p className="font-bold text-2xl sm:text-3xl text-[#2D2D2D]">
+                  {totalDonated >= 1000 ? `$${(totalDonated / 1000).toFixed(0)}k` : `$${totalDonated.toLocaleString()}`}
+                </p>
               </div>
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Progress</p>
