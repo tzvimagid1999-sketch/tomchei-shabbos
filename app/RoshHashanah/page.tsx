@@ -61,6 +61,13 @@ export default function RoshHashanah() {
   const [scriptReady, setScriptReady] = useState(false);
   const [thankYou, setThankYou] = useState<{ name: string; amount: string; email: string } | null>(null);
 
+  // TEMP: preview the thank-you screen without a real payment via ?preview_thankyou=1
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("preview_thankyou") === "1") {
+      setThankYou({ name: "Tzvi", amount: "125", email: "tzvimagid1999@gmail.com" });
+    }
+  }, []);
+
   const clientRef = useRef<any>(null);
   const cardRef = useRef<any>(null);
   const publicKey = process.env.NEXT_PUBLIC_USAEPAY_PUBLIC_KEY;
