@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import { CheckCircle } from "lucide-react";
 
 const initialForm = {
@@ -90,7 +91,9 @@ export default function ApplyForAssistancePage() {
   return (
     <main className="pt-20">
       {/* Hero */}
-      <section className="relative min-h-[280px] flex items-center justify-center text-center overflow-hidden bg-[#1AABAB]">
+      <section className="relative min-h-[280px] flex items-center justify-center text-center overflow-hidden">
+        <Image src="/apply-header.jpg" alt="" fill className="object-cover" priority sizes="100vw" />
+        <div className="absolute inset-0 bg-[#1AABAB]/60" />
         <div className="relative z-10 max-w-4xl mx-auto px-6">
           <h1 className="font-playfair text-4xl sm:text-6xl font-bold text-white my-4 leading-[1.08]">Apply for Assistance</h1>
           <p className="text-white/90 max-w-xl mx-auto">
