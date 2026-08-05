@@ -23,6 +23,7 @@ const initialForm = {
   rabbiPhone: "",
   rabbiCongregation: "",
   otherOrgAssistance: "",
+  otherOrgAssistanceDetails: "",
   additionalInfo: "",
 };
 
@@ -239,8 +240,21 @@ export default function ApplyForAssistancePage() {
 
           {/* Other */}
           <div>
-            <label className={labelClass}>Other Organization Assistance *</label>
-            <textarea name="otherOrgAssistance" required rows={2} value={form.otherOrgAssistance} onChange={handleChange} className={inputClass} />
+            <label className={labelClass}>Are you receiving assistance from other organization(s)? *</label>
+            <div className="flex gap-4 mt-1">
+              {["Yes", "No"].map((opt) => (
+                <label key={opt} className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <input type="radio" name="otherOrgAssistance" value={opt} checked={form.otherOrgAssistance === opt} onChange={handleChange} required />
+                  {opt}
+                </label>
+              ))}
+            </div>
+            {form.otherOrgAssistance === "Yes" && (
+              <div className="mt-3">
+                <label className={labelClass}>Which organization(s)? *</label>
+                <textarea name="otherOrgAssistanceDetails" required rows={2} value={form.otherOrgAssistanceDetails} onChange={handleChange} className={inputClass} />
+              </div>
+            )}
           </div>
           <div>
             <label className={labelClass}>Additional Information</label>

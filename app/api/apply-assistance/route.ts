@@ -41,7 +41,8 @@ export async function POST(req: NextRequest) {
           ${row("Local Rabbi", data.rabbiName)}
           ${row("Rabbi's Phone", data.rabbiPhone)}
           ${row("Rabbi's Congregation", data.rabbiCongregation)}
-          ${row("Other Organization Assistance", data.otherOrgAssistance)}
+          ${row("Receiving Assistance from Other Organization(s)", data.otherOrgAssistance)}
+          ${row("Which Organization(s)", data.otherOrgAssistanceDetails || "")}
           ${row("Additional Info", data.additionalInfo || "")}
         </table>
       </div>`;
