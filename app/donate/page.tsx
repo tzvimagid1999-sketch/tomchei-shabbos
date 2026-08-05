@@ -4,6 +4,7 @@ import Image from "next/image";
 import Script from "next/script";
 import { Lock, Shield, CheckCircle } from "lucide-react";
 import confetti from "canvas-confetti";
+import OtherWaysToGive from "../components/OtherWaysToGive";
 
 // pay.js (loaded from USAePay) attaches a global `usaepay` object.
 declare global {
@@ -353,6 +354,17 @@ function DonateForm() {
   );
 }
 
+function DonateFormWithOtherWays() {
+  return (
+    <>
+      <DonateForm />
+      <div className="mt-10 pt-8 border-t border-gray-100">
+        <OtherWaysToGive />
+      </div>
+    </>
+  );
+}
+
 export default function DonatePage() {
   return (
     <main className="pt-20">
@@ -395,7 +407,7 @@ export default function DonatePage() {
 
             {/* Right: payment form */}
             <div>
-              <DonateForm />
+              <DonateFormWithOtherWays />
             </div>
 
           </div>

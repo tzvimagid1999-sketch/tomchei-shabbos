@@ -4,6 +4,7 @@ import Script from "next/script";
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
 import confetti from "canvas-confetti";
+import OtherWaysToGive from "../components/OtherWaysToGive";
 
 function ThankYouScreen({ name, amount, email, onClose }: { name: string; amount: string; email: string; onClose: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -321,6 +322,10 @@ export default function RoshHashanah() {
               <button onClick={handleCheckoutPayment} disabled={checkoutLoading} className="w-full bg-[#C8A75B] hover:bg-[#B8975B] text-white py-4 rounded-lg font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 mt-8">
                 {checkoutLoading ? "Processing..." : "Complete Donation"}
               </button>
+            </div>
+
+            <div className="mt-8">
+              <OtherWaysToGive />
             </div>
           </div>
         </div>

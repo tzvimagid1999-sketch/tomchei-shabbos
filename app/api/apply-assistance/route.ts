@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     const resend = new Resend(apiKey);
     await resend.emails.send({
       from: process.env.RESEND_FROM || "Tomchei Shabbos <onboarding@resend.dev>",
-      to: "tomcheishabbosfl@gmail.com",
+      to: "admin@tomcheishabbosflorida.org",
       replyTo: data.email,
       subject: `Assistance Application — ${data.firstName} ${data.lastName}`,
       html,
