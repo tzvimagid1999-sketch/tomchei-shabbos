@@ -17,6 +17,12 @@ const methods = [
     bg: "#00D64F",
     letter: "$",
   },
+  {
+    name: "PayPal",
+    href: "https://www.paypal.com/donate",
+    bg: "#003087",
+    letter: "P",
+  },
 ];
 
 export default function OtherWaysToGive() {

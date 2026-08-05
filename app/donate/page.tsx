@@ -414,31 +414,6 @@ export default function DonatePage() {
         </div>
       </section>
 
-      {/* Other methods */}
-      <section className="bg-[#FDF9F7] py-24">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <span className="text-[#1AABAB] font-semibold text-xs uppercase tracking-widest">Other Options</span>
-            <h2 className="font-playfair text-4xl sm:text-5xl font-bold text-[#1AABAB] mt-3 leading-[1.1]">Other Ways to Give</h2>
-          </div>
-          <div className="grid sm:grid-cols-3 gap-6">
-            {[
-              { name: "PayPal",      desc: "Fast & secure via PayPal",  href: "https://www.paypal.com/donate", btnText: "Donate via PayPal" },
-              { name: "Zelle",       desc: "Zelle to: (Your info here)", href: "#",                            btnText: "Send via Zelle" },
-              { name: "Donors Fund", desc: "Donate through your DAF",    href: "#",                            btnText: "Donors Fund" },
-            ].map(({ name, desc, href, btnText }) => (
-              <div key={name} className="bg-white rounded-2xl p-7 text-center shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <h3 className="font-bold text-[#1AABAB] text-lg mb-2">{name}</h3>
-                <p className="text-gray-500 text-sm mb-6">{desc}</p>
-                <a href={href} className="block w-full bg-[#F5A020] text-white py-3 rounded-lg font-semibold text-sm hover:bg-[#D48810] transition">
-                  {btnText}
-                </a>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Trust bar */}
       <section className="bg-[#1AABAB] py-12 text-center">
         <div className="max-w-3xl mx-auto px-6">
