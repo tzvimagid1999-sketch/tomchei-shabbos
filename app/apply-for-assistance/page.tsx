@@ -28,6 +28,7 @@ const initialForm = {
 
 export default function ApplyForAssistancePage() {
   const [form, setForm] = useState(initialForm);
+  const [childAges, setChildAges] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -36,8 +37,18 @@ export default function ApplyForAssistancePage() {
     "w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#1AABAB] transition font-medium text-gray-700 bg-white";
   const labelClass = "block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide";
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleNumChildrenChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const n = Number(e.target.value);
+    setForm({ ...form, numChildren: e.target.value });
+    setChildAges((prev) => Array.from({ length: n }, (_, i) => prev[i] || ""));
+  };
+
+  const handleAgeChange = (index: number, value: string) => {
+    setChildAges((prev) => prev.map((a, i) => (i === index ? value : a)));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +58,7 @@ export default function ApplyForAssistancePage() {
       const res = await fetch("/api/apply-assistance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, childrenAges: childAges.join(", ") }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || "Something went wrong. Please try again.");
@@ -172,16 +183,28 @@ export default function ApplyForAssistancePage() {
           {/* Children */}
           <div>
             <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Children</h3>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className={labelClass}>Number of Children at Home *</label>
-                <input name="numChildren" required value={form.numChildren} onChange={handleChange} className={inputClass} />
-              </div>
-              <div>
-                <label className={labelClass}>Ages of Children *</label>
-                <input name="childrenAges" required value={form.childrenAges} onChange={handleChange} className={inputClass} />
-              </div>
+            <div>
+              <label className={labelClass}>Number of Children at Home *</label>
+              <select name="numChildren" required value={form.numChildren} onChange={handleNumChildrenChange} className={inputClass}>
+                <option value="" disabled>Select</option>
+                {Array.from({ length: 16 }, (_, i) => i).map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
             </div>
+
+            {childAges.length > 0 && (
+              <div className="mt-3">
+                <label className={labelClass}>Ages of Children *</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {childAges.map((age, i) => (
+                    <input key={i} type="number" min={0} max={30} required placeholder={`#${i + 1}`}
+                      value={age} onChange={(e) => handleAgeChange(i, e.target.value)}
+                      className={`${inputClass} text-center`} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Assistance type */}
