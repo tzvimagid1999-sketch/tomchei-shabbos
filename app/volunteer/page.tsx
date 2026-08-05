@@ -46,6 +46,8 @@ export default function VolunteerPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  const [submitError, setSubmitError] = useState("");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (interests.length === 0) {
@@ -54,12 +56,19 @@ export default function VolunteerPage() {
       return;
     }
     setLoading(true);
-    await fetch("https://formspree.io/f/mykqpdoz", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ ...form, interests: interests.join(", ") }),
-    });
-    setSubmitted(true);
+    setSubmitError("");
+    try {
+      const res = await fetch("/api/volunteer-signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, interests }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || "Something went wrong. Please try again.");
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    }
     setLoading(false);
   };
 
@@ -189,6 +198,8 @@ export default function VolunteerPage() {
                 <textarea name="message" rows={4} value={form.message} onChange={handleChange}
                   className={inputClass + " resize-none"} />
               </div>
+
+              {submitError && <p className="text-red-500 text-sm">{submitError}</p>}
 
               <button type="submit" disabled={loading}
                 className="w-full bg-[#F5A020] text-white py-4 rounded-lg font-semibold text-sm hover:bg-[#D48810] transition flex items-center justify-center gap-2 disabled:opacity-60">
