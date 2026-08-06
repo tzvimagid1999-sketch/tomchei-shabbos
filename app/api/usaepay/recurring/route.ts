@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { sendMonthlyConfirmation } from "../../../lib/donation-email";
 
-// Sets up a MONTHLY recurring donation in USAePay by creating a customer
-// record with a monthly billing schedule. USAePay then auto-charges the
-// saved card every month until the schedule is disabled (see /api/usaepay/cancel).
-//
-// NOTE: This must be tested against a live account before launch — confirm the
-// customer + schedule appear in the USAePay console and that the first charge runs.
+// Sets up a MONTHLY recurring donation. Per USAePay support, this is a 3-step
+// flow (NOT a single "create customer with embedded payment method" call):
+//   1. Create a Customer record.
+//   2. Charge the first payment as a normal sale, tagged with save_customer_paymethod
+//      so the card gets attached to that customer as a saved payment method.
+//   3. Create a recurring Schedule on that customer for FUTURE payments — this
+//      references the customer's already-saved payment method, no card data needed.
 export async function POST(req: NextRequest) {
   try {
     const sourceKey = process.env.NEXT_PUBLIC_USAEPAY_SOURCE_KEY?.trim();
@@ -30,17 +31,13 @@ export async function POST(req: NextRequest) {
     if (!paymentKey) {
       return NextResponse.json({ error: "Missing card details." }, { status: 400 });
     }
-    // Per USAePay support: use "0000" as the expiration placeholder when billing
-    // against a saved card reference token instead of a raw card number.
-    const expiration = "0000";
 
-    // USAePay v2 auth hash.
-    const seed = crypto.randomBytes(16).toString("hex");
-    const hash = crypto.createHash("sha256").update(sourceKey + seed + pin).digest("hex");
-    const authHeader =
-      "Basic " + Buffer.from(`${sourceKey}:s2/${seed}/${hash}`).toString("base64");
+    const auth = () => {
+      const seed = crypto.randomBytes(16).toString("hex");
+      const hash = crypto.createHash("sha256").update(sourceKey + seed + pin).digest("hex");
+      return "Basic " + Buffer.from(`${sourceKey}:s2/${seed}/${hash}`).toString("base64");
+    };
 
-    // USAePay requires a non-blank first AND last name on the customer record.
     const nameParts = String(name || "").trim().split(/\s+/).filter(Boolean);
     const firstName = nameParts[0] || "Donor";
     const lastName = nameParts.slice(1).join(" ") || nameParts[0] || "Donor";
@@ -55,104 +52,99 @@ export async function POST(req: NextRequest) {
       country: "US",
     };
 
-    // STEP 1 — Authorize (a HOLD, not a charge) with save_card to get a reusable
-    // card reference, then immediately VOID the hold so the donor isn't charged.
-    // (During setup this keeps testing free; the recurring schedule does the real charging.)
-    const saveRes = await fetch(`${endpoint}/transactions`, {
+    // STEP 1 — Create the customer record.
+    const custRes = await fetch(`${endpoint}/customers`, {
       method: "POST",
-      headers: { Authorization: authHeader, "Content-Type": "application/json" },
+      headers: { Authorization: auth(), "Content-Type": "application/json" },
       body: JSON.stringify({
-        command: "cc:authonly",
-        amount: numericAmount.toFixed(2),
-        payment_key: paymentKey,
-        save_card: true,
+        firstname: firstName,
+        lastname: lastName,
         email: email || undefined,
-        description: "Card verification for monthly donation",
         billing_address: billing,
       }),
     });
-    const saveRaw = await saveRes.text();
-    let save: Record<string, unknown> = {};
-    try { save = JSON.parse(saveRaw); } catch { /* non-JSON */ }
+    const custRaw = await custRes.text();
+    let cust: Record<string, unknown> = {};
+    try { cust = JSON.parse(custRaw); } catch { /* non-JSON */ }
+    const custkey = cust.key ?? cust.custkey ?? cust.custnum ?? cust.customer_id;
 
-    const sc = (save.savedcard || {}) as Record<string, unknown>;
-    const cardRef = sc.cardref ?? save.cardref ?? sc.key ?? (save.creditcard as Record<string, unknown>)?.cardref;
-    const approved = save.result === "Approved" || save.result_code === "A";
-    const authRefnum = save.refnum;
-
-    if (!saveRes.ok || !approved || !cardRef) {
+    if (!custRes.ok || !custkey) {
       return NextResponse.json(
         {
-          error: (save.error as string) || "Could not verify your card. Please try again.",
-          debug: { step: "authorize", httpStatus: saveRes.status, cardRefFound: cardRef || null, usaepayRaw: saveRaw.slice(0, 700) },
+          error: "Could not set up your donor profile. Please try again.",
+          debug: { step: "create-customer", httpStatus: custRes.status, usaepayRaw: custRaw.slice(0, 700) },
         },
         { status: 402 }
       );
     }
 
-    // Release the authorization hold (best-effort — don't fail the flow if void errors).
-    if (authRefnum) {
-      try {
-        await fetch(`${endpoint}/transactions`, {
-          method: "POST",
-          headers: { Authorization: authHeader, "Content-Type": "application/json" },
-          body: JSON.stringify({ command: "cc:void", refnum: authRefnum }),
-        });
-      } catch { /* ignore */ }
-    }
-
-    // STEP 2 — Create the recurring customer using the stored card. The saved-card
-    // token goes in the card NUMBER field, paired with the donor's real expiration.
-    const nextBill = new Date().toISOString().slice(0, 10); // first scheduled charge: today
-
-    const res = await fetch(`${endpoint}/customers`, {
+    // STEP 2 — Charge the first payment for real, and save the card to the customer.
+    const saleRes = await fetch(`${endpoint}/transactions`, {
       method: "POST",
-      headers: { Authorization: authHeader, "Content-Type": "application/json" },
+      headers: { Authorization: auth(), "Content-Type": "application/json" },
       body: JSON.stringify({
-        enabled: true,
-        schedule: "monthly",
-        next: nextBill,
+        command: "cc:sale",
         amount: numericAmount.toFixed(2),
-        description: "Monthly donation to Tomchei Shabbos of Florida",
+        payment_key: paymentKey,
+        custkey: String(custkey),
+        save_customer_paymethod: true,
         email: email || undefined,
-        firstname: firstName,
-        lastname: lastName,
-        company: name || "Monthly Donor",
-        payment_methods: [
-          {
-            method_name: "Card",
-            pay_type: "cc",
-            creditcard: { number: cardRef, expiration },
-          },
-        ],
+        description: "Monthly donation to Tomchei Shabbos of Florida (first payment)",
         billing_address: billing,
       }),
     });
+    const saleRaw = await saleRes.text();
+    let sale: Record<string, unknown> = {};
+    try { sale = JSON.parse(saleRaw); } catch { /* non-JSON */ }
+    const saleApproved = sale.result === "Approved" || sale.result_code === "A";
 
-    const rawText = await res.text();
-    let data: Record<string, unknown> = {};
-    try { data = JSON.parse(rawText); } catch { /* non-JSON */ }
-
-    const custnum = data.key ?? data.custkey ?? data.custnum ?? data.customer_id;
-
-    if (res.ok && custnum) {
-      await sendMonthlyConfirmation({
-        origin: new URL(req.url).origin,
-        custkey: String(custnum),
-        email: email || "",
-        name: name || "",
-        amount: numericAmount,
-      });
-      return NextResponse.json({ success: true, custnum });
+    if (!saleRes.ok || !saleApproved) {
+      return NextResponse.json(
+        {
+          error: (sale.error as string) || "Your card was declined. Please try another card.",
+          debug: { step: "first-charge", httpStatus: saleRes.status, usaepayRaw: saleRaw.slice(0, 700) },
+        },
+        { status: 402 }
+      );
     }
 
-    return NextResponse.json(
-      {
-        error: (data.error as string) || "Your monthly donation could not be set up. Please try again.",
-        debug: { step: "create-customer", httpStatus: res.status, sentExpiration: expiration, usaepayRaw: rawText.slice(0, 1000) },
-      },
-      { status: 402 }
-    );
+    // STEP 3 — Create the recurring schedule for future payments (starts next month;
+    // this month's payment was already charged in Step 2).
+    const nextMonth = new Date();
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    const nextBill = nextMonth.toISOString().slice(0, 10);
+
+    const schedRes = await fetch(`${endpoint}/customers/${custkey}/schedules`, {
+      method: "POST",
+      headers: { Authorization: auth(), "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: numericAmount.toFixed(2),
+        frequency: "monthly",
+        start_date: nextBill,
+        description: "Monthly donation to Tomchei Shabbos of Florida",
+      }),
+    });
+    const schedRaw = await schedRes.text();
+    let sched: Record<string, unknown> = {};
+    try { sched = JSON.parse(schedRaw); } catch { /* non-JSON */ }
+
+    if (!schedRes.ok) {
+      // The first payment already succeeded — don't tell the donor it failed.
+      // Log it for follow-up so staff can create the schedule manually if needed.
+      console.error("Recurring schedule creation failed after successful first charge:", {
+        custkey, httpStatus: schedRes.status, usaepayRaw: schedRaw.slice(0, 700),
+      });
+    }
+
+    await sendMonthlyConfirmation({
+      origin: new URL(req.url).origin,
+      custkey: String(custkey),
+      email: email || "",
+      name: name || "",
+      amount: numericAmount,
+    });
+
+    return NextResponse.json({ success: true, custnum: custkey });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("USAePay recurring error:", message);
