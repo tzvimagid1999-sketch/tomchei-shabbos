@@ -28,13 +28,13 @@ interface USAePayCard {
 }
 
 const amounts = [
-  { value: 125,  label: "$125",   note: "A small family for a week" },
-  { value: 225,  label: "$225",   note: "A medium family for a week" },
-  { value: 350,  label: "$350",   note: "A large family for a week" },
-  { value: 600,  label: "$600",   note: "A small family for a month" },
-  { value: 900,  label: "$900",   note: "A medium family for a month" },
-  { value: 1350, label: "$1,350", note: "A large family for a month" },
-  { value: 6000, label: "$6,000", note: "A family for a year" },
+  { value: 125,  monthlyValue: 613, label: "$125",   note: "A small family for a week" },
+  { value: 225,  monthlyValue: 500, label: "$225",   note: "A medium family for a week" },
+  { value: 350,  monthlyValue: 325, label: "$350",   note: "A large family for a week" },
+  { value: 600,  monthlyValue: 200, label: "$600",   note: "A small family for a month" },
+  { value: 900,  monthlyValue: 180, label: "$900",   note: "A medium family for a month" },
+  { value: 1350, monthlyValue: 72,  label: "$1,350", note: "A large family for a month" },
+  { value: 6000, monthlyValue: 36,  label: "$6,000", note: "A family for a year" },
 ];
 
 function SuccessScreen({ name, amount, email, monthly, custnum }: { name: string; amount: number; email: string; monthly: boolean; custnum: string }) {
@@ -250,17 +250,25 @@ function DonateForm() {
           {[[0, 1], [1, 3], [3, 7]].map(([start, end], rowIdx) => (
             <div key={rowIdx} className="flex justify-center gap-3">
               {amounts.slice(start, end).map((a) => {
-                const active = selected === a.value && !custom;
+                const tierValue = frequency === "monthly" ? a.monthlyValue : a.value;
+                const active = selected === tierValue && !custom;
                 return (
                   <button type="button" key={a.value}
-                    onClick={() => { setSelected(a.value); setCustom(""); }}
+                    onClick={() => { setSelected(tierValue); setCustom(""); }}
                     style={{
                       borderColor: active ? "#1AABAB" : "#E5E7EB",
                       backgroundColor: active ? "#F0FBFB" : "#FFFFFF",
                     }}
                     className="flex-1 max-w-[150px] rounded-xl border-2 p-3 text-center transition-all hover:border-[#1AABAB] flex flex-col items-center justify-start">
-                    <span className="font-playfair text-xl font-bold mb-1" style={{ color: active ? "#1AABAB" : "#0D8585" }}>{a.label}</span>
+                    <span className="font-playfair text-xl font-bold mb-1" style={{ color: active ? "#1AABAB" : "#0D8585" }}>
+                      {frequency === "monthly" ? `$${a.monthlyValue}/mo` : a.label}
+                    </span>
                     <span className="text-[11px] leading-snug" style={{ color: active ? "#1AABAB" : "#6B7280" }}>{a.note}</span>
+                    {frequency === "monthly" && (
+                      <span className="text-[10px] leading-snug mt-1 font-semibold" style={{ color: active ? "#1AABAB" : "#9CA3AF" }}>
+                        Per year: ${a.value.toLocaleString()}
+                      </span>
+                    )}
                   </button>
                 );
               })}
