@@ -263,11 +263,12 @@ function DonateForm() {
                     <span className="font-playfair text-xl font-bold mb-1" style={{ color: active ? "#1AABAB" : "#0D8585" }}>
                       {frequency === "monthly" ? `$${a.monthlyValue}/mo` : a.label}
                     </span>
-                    <span className="text-[11px] leading-snug" style={{ color: active ? "#1AABAB" : "#6B7280" }}>{a.note}</span>
-                    {frequency === "monthly" && (
-                      <span className="text-[10px] leading-snug mt-1 font-semibold" style={{ color: active ? "#1AABAB" : "#9CA3AF" }}>
-                        Per year: ${a.value.toLocaleString()}
+                    {frequency === "monthly" ? (
+                      <span className="text-[11px] leading-snug font-semibold" style={{ color: active ? "#1AABAB" : "#9CA3AF" }}>
+                        Per year: ${(a.monthlyValue * 12).toLocaleString()}
                       </span>
+                    ) : (
+                      <span className="text-[11px] leading-snug" style={{ color: active ? "#1AABAB" : "#6B7280" }}>{a.note}</span>
                     )}
                   </button>
                 );
