@@ -19,7 +19,7 @@ const methods = [
   },
   {
     name: "PayPal",
-    href: "https://www.paypal.com/donate",
+    href: "https://www.paypal.com/donate/?hosted_button_id=XGHDR4EE3ND2U",
     bg: "#003087",
     letter: "P",
   },
