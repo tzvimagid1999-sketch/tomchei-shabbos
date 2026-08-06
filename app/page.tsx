@@ -8,7 +8,7 @@ export default function Home() {
     <main className="pt-20">
 
       {/* Hero */}
-      <section className="relative min-h-[90vh] flex flex-col overflow-hidden">
+      <section className="relative min-h-[65vh] sm:min-h-[90vh] flex flex-col overflow-hidden">
         <video
           autoPlay
           muted
