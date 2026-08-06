@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         firstname: firstName,
         lastname: lastName,
+        company: name || `${firstName} ${lastName}`,
         email: email || undefined,
         billing_address: billing,
       }),
