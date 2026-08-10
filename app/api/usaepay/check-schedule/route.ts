@@ -31,3 +31,38 @@ export async function GET(req: NextRequest) {
     schedules: { status: schedRes.status, body: JSON.parse(schedules || "{}") },
   });
 }
+
+// TEMP: attempt to create a schedule on an existing customer to see the real error.
+export async function POST(req: NextRequest) {
+  const custkey = req.nextUrl.searchParams.get("custkey");
+  if (!custkey) return NextResponse.json({ error: "Missing custkey" }, { status: 400 });
+
+  const sourceKey = process.env.NEXT_PUBLIC_USAEPAY_SOURCE_KEY?.trim();
+  const pin = process.env.USAEPAY_PIN?.trim();
+  const endpoint = process.env.USAEPAY_ENDPOINT || "https://usaepay.com/api/v2";
+  if (!sourceKey || !pin) return NextResponse.json({ error: "Not configured" }, { status: 500 });
+
+  const seed = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.createHash("sha256").update(sourceKey + seed + pin).digest("hex");
+  const authHeader = "Basic " + Buffer.from(`${sourceKey}:s2/${seed}/${hash}`).toString("base64");
+
+  const nextMonth = new Date();
+  nextMonth.setMonth(nextMonth.getMonth() + 1);
+  const nextBill = nextMonth.toISOString().slice(0, 10);
+
+  const body = {
+    amount: "1.00",
+    frequency: "monthly",
+    start_date: nextBill,
+    description: "TEST schedule creation",
+  };
+
+  const res = await fetch(`${endpoint}/customers/${custkey}/schedules`, {
+    method: "POST",
+    headers: { Authorization: authHeader, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const raw = await res.text();
+
+  return NextResponse.json({ sentBody: body, status: res.status, raw });
+}
