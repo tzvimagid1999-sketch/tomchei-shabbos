@@ -120,13 +120,14 @@ export async function POST(req: NextRequest) {
       nextMonth.setMonth(nextMonth.getMonth() + 1);
       const nextBill = nextMonth.toISOString().slice(0, 10);
 
-      const schedRes = await fetch(`${endpoint}/customers/${custkey}/schedules`, {
+      const schedRes = await fetch(`${endpoint}/customers/${custkey}/billing_schedules`, {
         method: "POST",
         headers: { Authorization: auth(), "Content-Type": "application/json" },
         body: JSON.stringify({
           amount: numericAmount.toFixed(2),
           frequency: "monthly",
           start_date: nextBill,
+          enabled: true,
           description: "Monthly donation to Tomchei Shabbos of Florida",
         }),
       });
