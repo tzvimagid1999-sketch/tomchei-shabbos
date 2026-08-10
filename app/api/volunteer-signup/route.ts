@@ -41,13 +41,15 @@ export async function POST(req: NextRequest) {
         ${message ? `<p><strong>Message:</strong> ${message}</p>` : ""}
       </div>`;
 
+    const from = process.env.RESEND_FROM || "Tomchei Shabbos <onboarding@resend.dev>";
+
     // Send a separate email per matching team, so e.g. Deliver never sees
     // Fundraise's address (and vice versa) in an all-recipients "To" field.
     const resend = new Resend(apiKey);
     await Promise.all(
       recipients.map((to) =>
         resend.emails.send({
-          from: process.env.RESEND_FROM || "Tomchei Shabbos <onboarding@resend.dev>",
+          from,
           to,
           replyTo: email,
           subject: `Volunteer Signup — ${firstName} ${lastName} (${interestList.join(", ")})`,
@@ -55,6 +57,28 @@ export async function POST(req: NextRequest) {
         })
       )
     );
+
+    // Confirm to the volunteer themselves that their signup went through —
+    // best-effort, don't fail the whole signup if just this email fails.
+    try {
+      await resend.emails.send({
+        from,
+        to: email,
+        subject: "Thanks for signing up to volunteer! 💙",
+        html: `
+          <div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto">
+            <h2 style="color:#1AABAB">Thank you, ${firstName}!</h2>
+            <p style="font-size:16px;line-height:1.6">
+              We've received your signup to help with <strong>${interestList.join(", ")}</strong>.
+              A member of our team will personally reach out soon to learn a bit more about you
+              and find the right way for you to help.
+            </p>
+            <p style="font-size:13px;color:#8B7355">With gratitude,<br/>Tomchei Shabbos of Florida</p>
+          </div>`,
+      });
+    } catch (confirmErr: unknown) {
+      console.error("Volunteer confirmation email failed (non-fatal):", confirmErr instanceof Error ? confirmErr.message : confirmErr);
+    }
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
