@@ -70,8 +70,9 @@ export async function POST(req: NextRequest) {
     ...(pmkey ? { payment_method: pmkey } : {}),
   };
 
+  const method = req.nextUrl.searchParams.get("method") || "POST";
   const res = await fetch(`${endpoint}${path}`, {
-    method: "POST",
+    method,
     headers: { Authorization: authHeader, "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
