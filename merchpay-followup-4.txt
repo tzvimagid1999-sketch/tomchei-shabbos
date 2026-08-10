@@ -1,0 +1,19 @@
+Subject: RE: Recurring — schedule created, but "next date" shows 00/00/0000
+
+Hi Ben,
+
+Quick update — thank you, we found it: POST /customers/{custkey}/billing_schedules
+(with a "start_date" field) worked. We successfully created a real schedule.
+
+One thing we want to confirm before we trust this for real donors: in the merchant
+console, the schedule shows "00/00/0000" in the date column, even though we set
+start_date to a real future date (2026-09-10) and the schedule shows as enabled
+with the correct amount ($1.00) and frequency (Monthly).
+
+Can you confirm: will this schedule actually process automatically on 2026-09-10
+and each month after, despite the date column showing 00/00/0000? Or does
+something else need to happen for the "next date" to populate and for billing
+to actually run?
+
+Thank you,
+Tzvi
