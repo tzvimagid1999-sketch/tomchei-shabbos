@@ -1,0 +1,20 @@
+Subject: RE: Recurring Customer setup - "0000" still gives the same error
+
+Hi,
+
+Thanks for the suggestion to try "0000" for the expiration. We just tested it, and we're still getting the exact same error as before:
+
+{"error":"The field 'expires' is not a valid MMYY format","errorcode":51}
+
+To summarize where we're stuck: we've now tried every value you or we could think of (0000, a real valid expiration like 0631, and other placeholder dates), and every single one gives this identical error. Since changing the value never changes the error, we don't think this is really about the expiration format.
+
+Here's exactly what we're doing:
+1. We run a card verification transaction (cc:authonly with save_card:true) to get a saved card reference.
+2. We then try to create a recurring Customer (POST /api/v2/customers) using that saved card reference in the "number" field of the creditcard object, alongside an "expiration" value.
+3. Step 3 always fails with the error above, regardless of what we put in "expiration."
+
+We believe the real issue is with how we're passing the saved card reference itself (not a raw card number) into that "number" field. Would it be possible for someone to look directly at the request logs on our account for this error, so we can see exactly what's happening on your end? We're glad to hop on a call if that's easier than email.
+
+Thank you,
+Tzvi Magid
+Tomchei Shabbos of Florida

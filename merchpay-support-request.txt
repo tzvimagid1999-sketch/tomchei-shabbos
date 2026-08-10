@@ -1,0 +1,51 @@
+Subject: REST API v2 - Correct schema for creating a recurring Customer with a saved card reference
+
+Hi,
+
+We're integrating recurring (monthly) donations using the REST API v2 on our live account. We can successfully:
+1. Tokenize a card via pay.js and charge one-time sales (cc:sale with payment_key) — this works fine.
+2. Run a cc:authonly transaction with save_card:true to get a saved card reference (cardref).
+
+However, when we try to create a recurring Customer billing schedule using that saved card reference, we consistently get this error, no matter what we change:
+
+  {"error":"The field 'expires' is not a valid MMYY format","errorcode":51}
+
+We have tried ALL of the following, and every single one returned that exact same error:
+1. expiration: "0000" (a placeholder)
+2. expiration: "1299" (year 2099)
+3. Renamed the field from "expiration" to "expires" (matching what your GET cardref endpoint calls it), value "0731"
+4. Reverted the field name back to "expiration" (per your Common Objects docs) with a valid near-future date, "0731" (July 2031)
+
+Since changing the actual value never changed the error, we suspect the issue isn't really the expiration format at all, but rather how the saved card reference token should be referenced in the payment_methods/creditcard object for a NEW recurring Customer (as opposed to a raw card number + expiration).
+
+Our request to POST /api/v2/customers currently looks like this:
+
+{
+  "enabled": true,
+  "schedule": "monthly",
+  "next": "<date>",
+  "amount": "<amount>",
+  "email": "<donor email>",
+  "firstname": "<first>",
+  "lastname": "<last>",
+  "payment_methods": [
+    {
+      "method_name": "Card",
+      "pay_type": "cc",
+      "creditcard": { "number": "<cardref from save_card>", "expiration": "<MMYY>" }
+    }
+  ],
+  "billing_address": { ... }
+}
+
+Question: What is the correct JSON structure/field names for creating a recurring Customer using a card reference token (from save_card:true) instead of a raw card number + expiration? Should the token go in a different field (e.g. "cardref" instead of "number")? Is "expiration" even required when using a token?
+
+Could you provide a working example payload for this exact scenario (saved card reference + recurring monthly schedule)?
+
+For reference, here is the exact raw error text shown to us on our most recent attempt:
+
+The field 'expires' is not a valid MMYY format || TOKEN: {"type":"payment_key","key":"ACWjTOrQDv2jpcVa6NEzs9","creditcard":{"number":"414720xxxxxx9077","cardtype":"Visa"}} || SERVER: {"step":"create-customer","httpStatus":400,"sentExpiration":"0731","usaepayRaw":"{\"error\":\"The field 'expires' is not a valid MMYY format\",\"errorcode\":51}"}
+
+Thank you,
+Tzvi Magid
+Tomchei Shabbos of Florida

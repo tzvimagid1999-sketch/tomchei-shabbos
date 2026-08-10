@@ -1,0 +1,15 @@
+Subject: RE: Recurring Customer setup - still getting the same error
+
+Hi,
+
+Thanks for the last example. We tried it exactly as shown, using our donor's real, correct card expiration date (06/31), but we're still getting the exact same error as before:
+
+{"error":"The field 'expires' is not a valid MMYY format","errorcode":51}
+
+Since we used a real, correct expiration date this time and it still gives the same error, it doesn't seem like the expiration date itself is actually the problem. We think it might have to do with how we're passing in the saved card reference (the "cardref" we get after running a card verification with save_card:true) instead of a raw card number.
+
+Could you take a look and let us know what we're doing wrong?
+
+Thank you,
+Tzvi Magid
+Tomchei Shabbos of Florida

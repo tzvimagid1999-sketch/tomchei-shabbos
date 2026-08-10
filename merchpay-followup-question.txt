@@ -1,0 +1,20 @@
+Subject: RE: Recurring Customer setup - how to reference a tokenized card (not raw card number)
+
+Hi,
+
+Thank you for the example — that confirms the "creditcard" object structure (number + expiration + cvc), but that example uses a RAW card number ("4111111111111111"). We are not able to do that.
+
+For PCI compliance, our website never sees or stores the donor's actual card number. We only ever receive a tokenized "payment_key" from your own pay.js library in the browser (this already works perfectly for one-time charges — we pass payment_key directly and it charges successfully).
+
+Our question is specifically: when creating a recurring Customer/billing schedule, how do we reference that tokenized payment_key (or the "cardref" returned from a cc:authonly transaction with save_card:true) instead of a raw card number + expiration?
+
+Specifically:
+1. Does the "payment_key" token go directly into creditcard.number (with expiration required or not)?
+2. Or does it go into a different top-level field, similar to how "payment_key" works for regular transactions (outside the "creditcard" object)?
+3. Or should we use the "cardref" value returned from a cc:authonly + save_card:true transaction instead — and if so, in which exact field?
+
+Could you send us a working example JSON payload for POST /api/v2/customers that uses a TOKEN (payment_key or cardref) instead of a raw card number, for setting up a monthly recurring billing schedule?
+
+Thank you,
+Tzvi Magid
+Tomchei Shabbos of Florida

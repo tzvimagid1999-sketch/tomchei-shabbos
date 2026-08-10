@@ -1,0 +1,39 @@
+BANNER SPECIFICATIONS — Tomchei Shabbos of Florida
+
+===========================================
+1. ROSH HASHANAH CAMPAIGN PAGE — HERO HEADER
+===========================================
+Where it's used: The large image at the very top of the Rosh Hashanah donation
+campaign page (behind the headline "A New Year. A Fresh Start. A Chance to
+Make a Difference.").
+
+Recommended size: 1920 x 700 px (landscape, roughly 2.7:1 aspect ratio)
+Format: JPG or PNG
+
+Notes:
+- This image sits behind a dark overlay with white text on top of it, so it
+  should work well when darkened/dimmed slightly.
+- The section stretches the full width of the screen, so avoid important
+  details (faces, text) near the very left/right edges, since it may be
+  cropped differently on very wide or very narrow screens.
+- Suggested theme: Rosh Hashanah / warm, hopeful imagery (apples, honey,
+  pomegranates, shofar, etc.)
+
+===========================================
+2. POP-UP BANNER (site-wide announcement)
+===========================================
+Where it's used: A pop-up window that appears on the site after a few
+seconds, announcing the Rosh Hashanah campaign, with a "Learn More & Donate"
+button.
+
+Recommended size: 1200 x 660 px (landscape, roughly 1.8:1 aspect ratio)
+Format: JPG or PNG
+
+Notes:
+- This image fills the top portion of a popup card that is about 512px wide
+  on screen — so submitting at 1200x660 gives enough resolution for it to
+  look sharp (not blurry) on high-resolution/retina screens.
+- A colored overlay (gold, ~70% opacity) sits on top of this image, with
+  white text over it, so the image doesn't need to be dark — just needs to
+  hold up okay with a tint over it.
+- Same theme as above works well: Rosh Hashanah imagery, warm/inviting.
