@@ -94,14 +94,13 @@ function SuccessScreen({ name, amount, email, monthly, pledgeMonths, custnum }: 
   );
 }
 
-const PLEDGE_MONTH_OPTIONS = [3, 6, 12, 18, 24, 36];
+const SPLIT_MONTH_OPTIONS = [3, 6, 12, 18, 24, 36];
 
 function DonateForm() {
-  const [frequency, setFrequency] = useState<"once" | "monthly" | "pledge">("once");
+  const [frequency, setFrequency] = useState<"once" | "monthly">("once");
   const [selected, setSelected] = useState(0);
   const [custom, setCustom] = useState("");
-  const [pledgeTotal, setPledgeTotal] = useState("");
-  const [pledgeMonths, setPledgeMonths] = useState(12);
+  const [splitMonths, setSplitMonths] = useState<number | null>(null); // null = ongoing until cancelled
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [street, setStreet] = useState("");
@@ -121,9 +120,8 @@ function DonateForm() {
   // charge uses the Source Key + PIN. These are two different values.
   const publicKey = process.env.NEXT_PUBLIC_USAEPAY_PUBLIC_KEY;
 
-  const pledgeMonthlyAmount = pledgeTotal ? Math.round((Number(pledgeTotal) / pledgeMonths) * 100) / 100 : 0;
-  const donationAmount = frequency === "pledge" ? pledgeMonthlyAmount : (Number(custom) || selected);
-  const isRecurringFreq = frequency === "monthly" || frequency === "pledge";
+  const donationAmount = Number(custom) || selected;
+  const isRecurringFreq = frequency === "monthly";
 
   const inputClass =
     "w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#1AABAB] transition font-medium text-gray-700 bg-white";
@@ -207,7 +205,7 @@ function DonateForm() {
         body: JSON.stringify({
           amount: donationAmount,
           paymentKey, name, email, street, city, state, zip,
-          ...(frequency === "pledge" ? { numPayments: pledgeMonths } : {}),
+          ...(frequency === "monthly" && splitMonths ? { numPayments: splitMonths } : {}),
         }),
       });
       const data = await res.json();
@@ -227,7 +225,7 @@ function DonateForm() {
   };
 
   if (success) {
-    return <SuccessScreen name={name} amount={donationAmount} email={email} monthly={isRecurringFreq} pledgeMonths={frequency === "pledge" ? pledgeMonths : undefined} custnum={custnum} />;
+    return <SuccessScreen name={name} amount={donationAmount} email={email} monthly={isRecurringFreq} pledgeMonths={splitMonths || undefined} custnum={custnum} />;
   }
 
   return (
@@ -237,105 +235,82 @@ function DonateForm() {
         onLoad={() => setScriptReady(true)}
       />
 
-      {/* One-time / Monthly / Pledge toggle */}
+      {/* One-time / Monthly toggle */}
       <div className="flex rounded-xl overflow-hidden border-2 border-gray-200">
-        {(["once", "monthly", "pledge"] as const).map((f) => (
+        {(["once", "monthly"] as const).map((f) => (
           <button type="button" key={f} onClick={() => setFrequency(f)}
             className={`flex-1 py-3 text-sm font-bold tracking-wide transition-all ${
               frequency === f ? "bg-[#1AABAB] text-white" : "bg-white text-gray-500 hover:bg-gray-50"
             }`}>
-            {f === "once" ? "One-Time" : f === "monthly" ? "Monthly" : "Pledge"}
+            {f === "once" ? "One-Time" : "Monthly"}
           </button>
         ))}
       </div>
 
-      {frequency === "pledge" && (
-        <p className="text-center text-xs text-[#1AABAB] font-semibold bg-[#1AABAB]/10 rounded-lg py-2 px-4">
-          Split a larger gift into equal monthly payments — automatically ends after the last payment.
-        </p>
-      )}
-
       {frequency === "monthly" && (
-        <p className="text-center text-xs text-[#1AABAB] font-semibold bg-[#1AABAB]/10 rounded-lg py-2 px-4">
-          You&apos;ll be charged this amount every month. Cancel anytime at /manage-donation.
-        </p>
-      )}
-
-      {/* Amount selector */}
-      {frequency === "pledge" ? (
-        <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-[#1AABAB] mb-3">Pledge Details</p>
-          <div className="mb-4">
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Total Pledge Amount</label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">$</span>
-              <input type="number" min="1" placeholder="e.g. 100000" value={pledgeTotal}
-                onChange={(e) => setPledgeTotal(e.target.value)}
-                className="w-full border-2 border-gray-200 rounded-lg pl-7 pr-4 py-3 focus:outline-none focus:border-[#1AABAB] font-medium text-sm transition" />
-            </div>
-          </div>
-          <div className="mb-4">
+        <>
+          <p className="text-center text-xs text-[#1AABAB] font-semibold bg-[#1AABAB]/10 rounded-lg py-2 px-4">
+            {splitMonths
+              ? `You'll be charged this amount monthly for ${splitMonths} months, then it automatically stops.`
+              : "You'll be charged this amount every month. Cancel anytime at /manage-donation."}
+          </p>
+          <div>
             <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Split Over</label>
-            <select value={pledgeMonths} onChange={(e) => setPledgeMonths(Number(e.target.value))}
+            <select value={splitMonths ?? ""} onChange={(e) => setSplitMonths(e.target.value ? Number(e.target.value) : null)}
               className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-[#1AABAB] font-medium text-sm transition bg-white">
-              {PLEDGE_MONTH_OPTIONS.map((m) => (
+              <option value="">Ongoing (until cancelled)</option>
+              {SPLIT_MONTH_OPTIONS.map((m) => (
                 <option key={m} value={m}>{m} months</option>
               ))}
             </select>
           </div>
-          {pledgeMonthlyAmount > 0 && (
-            <div className="bg-[#F0FBFB] border-2 border-[#1AABAB] rounded-lg px-4 py-3 text-center">
-              <p className="text-sm text-gray-600">You&apos;ll be charged</p>
-              <p className="font-playfair text-2xl font-bold text-[#1AABAB]">${pledgeMonthlyAmount.toLocaleString()}/month</p>
-              <p className="text-xs text-gray-500 mt-1">for {pledgeMonths} months</p>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-[#1AABAB] mb-3">Sponsorships</p>
-          <div className="flex flex-col gap-3 mb-5">
-            {[[0, 1], [1, 3], [3, 7]].map(([start, end], rowIdx) => (
-              <div key={rowIdx} className="flex justify-center gap-3">
-                {amounts.slice(start, end).map((a) => {
-                  const tierValue = frequency === "monthly" ? a.monthlyValue : a.value;
-                  const active = selected === tierValue && !custom;
-                  return (
-                    <button type="button" key={a.value}
-                      onClick={() => { setSelected(tierValue); setCustom(""); }}
-                      style={{
-                        borderColor: active ? "#1AABAB" : "#E5E7EB",
-                        backgroundColor: active ? "#F0FBFB" : "#FFFFFF",
-                      }}
-                      className="flex-1 max-w-[150px] rounded-xl border-2 p-3 text-center transition-all hover:border-[#1AABAB] flex flex-col items-center justify-start">
-                      <span className="font-playfair text-xl font-bold mb-1" style={{ color: active ? "#1AABAB" : "#0D8585" }}>
-                        {frequency === "monthly" ? `$${a.monthlyValue}/mo` : a.label}
-                      </span>
-                      {frequency === "monthly" ? (
-                        <span className="text-[11px] leading-snug font-semibold" style={{ color: active ? "#1AABAB" : "#9CA3AF" }}>
-                          Per year: ${(a.monthlyValue * 12).toLocaleString()}
-                        </span>
-                      ) : (
-                        <span className="text-[11px] leading-snug" style={{ color: active ? "#1AABAB" : "#6B7280" }}>{a.note}</span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="text-gray-500 text-sm font-medium whitespace-nowrap">Custom amount:</span>
-            <div className="relative flex-1">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">$</span>
-              <input type="number" min="1" placeholder="Enter amount" value={custom}
-                onChange={(e) => { setCustom(e.target.value); setSelected(0); }}
-                className="w-full border-2 border-gray-200 rounded-lg pl-7 pr-4 py-3 focus:outline-none focus:border-[#1AABAB] font-medium text-sm transition" />
-            </div>
-          </div>
-        </div>
+        </>
       )}
+
+      {/* Amount selector */}
+      <div>
+        <p className="text-xs font-bold uppercase tracking-widest text-[#1AABAB] mb-3">Sponsorships</p>
+        <div className="flex flex-col gap-3 mb-5">
+          {[[0, 1], [1, 3], [3, 7]].map(([start, end], rowIdx) => (
+            <div key={rowIdx} className="flex justify-center gap-3">
+              {amounts.slice(start, end).map((a) => {
+                const tierValue = frequency === "monthly" ? a.monthlyValue : a.value;
+                const active = selected === tierValue && !custom;
+                return (
+                  <button type="button" key={a.value}
+                    onClick={() => { setSelected(tierValue); setCustom(""); }}
+                    style={{
+                      borderColor: active ? "#1AABAB" : "#E5E7EB",
+                      backgroundColor: active ? "#F0FBFB" : "#FFFFFF",
+                    }}
+                    className="flex-1 max-w-[150px] rounded-xl border-2 p-3 text-center transition-all hover:border-[#1AABAB] flex flex-col items-center justify-start">
+                    <span className="font-playfair text-xl font-bold mb-1" style={{ color: active ? "#1AABAB" : "#0D8585" }}>
+                      {frequency === "monthly" ? `$${a.monthlyValue}/mo` : a.label}
+                    </span>
+                    {frequency === "monthly" ? (
+                      <span className="text-[11px] leading-snug font-semibold" style={{ color: active ? "#1AABAB" : "#9CA3AF" }}>
+                        Per year: ${(a.monthlyValue * 12).toLocaleString()}
+                      </span>
+                    ) : (
+                      <span className="text-[11px] leading-snug" style={{ color: active ? "#1AABAB" : "#6B7280" }}>{a.note}</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="text-gray-500 text-sm font-medium whitespace-nowrap">Custom amount:</span>
+          <div className="relative flex-1">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">$</span>
+            <input type="number" min="1" placeholder="Enter amount" value={custom}
+              onChange={(e) => { setCustom(e.target.value); setSelected(0); }}
+              className="w-full border-2 border-gray-200 rounded-lg pl-7 pr-4 py-3 focus:outline-none focus:border-[#1AABAB] font-medium text-sm transition" />
+          </div>
+        </div>
+      </div>
 
       {/* Divider */}
       <div className="border-t border-gray-100 pt-2">
