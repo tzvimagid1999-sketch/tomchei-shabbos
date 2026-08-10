@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, name, email, street, city, state, zip } = await req.json();
+    const { amount, paymentKey, name, email, street, city, state, zip, numPayments } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -31,6 +31,10 @@ export async function POST(req: NextRequest) {
     if (!paymentKey) {
       return NextResponse.json({ error: "Missing card details." }, { status: 400 });
     }
+    // For a capped pledge (e.g. "$100k over 12 months"), Step 2 below already
+    // charges payment #1 — the schedule only needs to cover the remaining ones.
+    const totalPayments = numPayments ? Number(numPayments) : undefined;
+    const remainingPayments = totalPayments && totalPayments > 1 ? totalPayments - 1 : undefined;
 
     const auth = () => {
       const seed = crypto.randomBytes(16).toString("hex");
@@ -90,7 +94,9 @@ export async function POST(req: NextRequest) {
         custkey: String(custkey),
         save_customer_paymethod: true,
         email: email || undefined,
-        description: "Monthly donation to Tomchei Shabbos of Florida (first payment)",
+        description: totalPayments
+          ? `Pledge payment 1 of ${totalPayments} to Tomchei Shabbos of Florida`
+          : "Monthly donation to Tomchei Shabbos of Florida (first payment)",
         billing_address: billing,
       }),
     });
@@ -115,32 +121,38 @@ export async function POST(req: NextRequest) {
     // able to block the confirmation email or turn this into an error response.
     let scheduleOk = false;
     let scheduleDebug: Record<string, unknown> = {};
-    try {
-      const nextMonth = new Date();
-      nextMonth.setMonth(nextMonth.getMonth() + 1);
-      const nextBill = nextMonth.toISOString().slice(0, 10);
+    const skipSchedule = totalPayments === 1; // single-payment pledge — nothing further to schedule
+    if (!skipSchedule) {
+      try {
+        const nextMonth = new Date();
+        nextMonth.setMonth(nextMonth.getMonth() + 1);
+        const nextBill = nextMonth.toISOString().slice(0, 10);
 
-      const schedRes = await fetch(`${endpoint}/customers/${custkey}/billing_schedules`, {
-        method: "POST",
-        headers: { Authorization: auth(), "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: numericAmount.toFixed(2),
-          frequency: "monthly",
-          start_date: nextBill,
-          enabled: true,
-          description: "Monthly donation to Tomchei Shabbos of Florida",
-        }),
-      });
-      const schedRaw = await schedRes.text();
-      scheduleOk = schedRes.ok;
-      scheduleDebug = { httpStatus: schedRes.status, usaepayRaw: schedRaw.slice(0, 700) };
+        const schedRes = await fetch(`${endpoint}/customers/${custkey}/billing_schedules`, {
+          method: "POST",
+          headers: { Authorization: auth(), "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: numericAmount.toFixed(2),
+            frequency: "monthly",
+            start_date: nextBill,
+            enabled: true,
+            description: totalPayments
+              ? `Pledge (${totalPayments} monthly payments) to Tomchei Shabbos of Florida`
+              : "Monthly donation to Tomchei Shabbos of Florida",
+            ...(remainingPayments ? { numleft: remainingPayments } : {}),
+          }),
+        });
+        const schedRaw = await schedRes.text();
+        scheduleOk = schedRes.ok;
+        scheduleDebug = { httpStatus: schedRes.status, usaepayRaw: schedRaw.slice(0, 700) };
 
-      if (!schedRes.ok) {
-        console.error("Recurring schedule creation failed after successful first charge:", { custkey, ...scheduleDebug });
+        if (!schedRes.ok) {
+          console.error("Recurring schedule creation failed after successful first charge:", { custkey, ...scheduleDebug });
+        }
+      } catch (schedErr: unknown) {
+        scheduleDebug = { threw: schedErr instanceof Error ? schedErr.message : String(schedErr) };
+        console.error("Recurring schedule creation threw after successful first charge:", { custkey, ...scheduleDebug });
       }
-    } catch (schedErr: unknown) {
-      scheduleDebug = { threw: schedErr instanceof Error ? schedErr.message : String(schedErr) };
-      console.error("Recurring schedule creation threw after successful first charge:", { custkey, ...scheduleDebug });
     }
 
     try {
