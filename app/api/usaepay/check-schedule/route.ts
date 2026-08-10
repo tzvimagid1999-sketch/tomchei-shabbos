@@ -33,6 +33,8 @@ export async function GET(req: NextRequest) {
 }
 
 // TEMP: attempt to create a schedule on an existing customer to see the real error.
+// Body and path are overridable via query params so we can try variations
+// without redeploying: ?custkey=X&path=/customers/X/schedules&pmkey=Y
 export async function POST(req: NextRequest) {
   const custkey = req.nextUrl.searchParams.get("custkey");
   if (!custkey) return NextResponse.json({ error: "Missing custkey" }, { status: 400 });
@@ -50,19 +52,32 @@ export async function POST(req: NextRequest) {
   nextMonth.setMonth(nextMonth.getMonth() + 1);
   const nextBill = nextMonth.toISOString().slice(0, 10);
 
-  const body = {
+  const pmkey = req.nextUrl.searchParams.get("pmkey");
+  const pathOverride = req.nextUrl.searchParams.get("path");
+  const path = pathOverride || `/customers/${custkey}/schedules`;
+
+  let bodyOverride: Record<string, unknown> | null = null;
+  try {
+    const text = await req.text();
+    if (text) bodyOverride = JSON.parse(text);
+  } catch { /* no body sent, use default */ }
+
+  const body = bodyOverride || {
     amount: "1.00",
     frequency: "monthly",
     start_date: nextBill,
     description: "TEST schedule creation",
+    ...(pmkey ? { payment_method: pmkey } : {}),
   };
 
-  const res = await fetch(`${endpoint}/customers/${custkey}/schedules`, {
+  const res = await fetch(`${endpoint}${path}`, {
     method: "POST",
     headers: { Authorization: authHeader, "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   const raw = await res.text();
+  const headers: Record<string, string> = {};
+  res.headers.forEach((v, k) => { headers[k] = v; });
 
-  return NextResponse.json({ sentBody: body, status: res.status, raw });
+  return NextResponse.json({ url: `${endpoint}${path}`, sentBody: body, status: res.status, headers, raw });
 }
