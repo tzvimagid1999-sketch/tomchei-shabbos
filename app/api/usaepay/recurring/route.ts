@@ -110,42 +110,51 @@ export async function POST(req: NextRequest) {
     }
 
     // STEP 3 — Create the recurring schedule for future payments (starts next month;
-    // this month's payment was already charged in Step 2).
-    const nextMonth = new Date();
-    nextMonth.setMonth(nextMonth.getMonth() + 1);
-    const nextBill = nextMonth.toISOString().slice(0, 10);
+    // this month's payment was already charged in Step 2). Wrapped in its own
+    // try/catch: the donor was already charged, so nothing here should ever be
+    // able to block the confirmation email or turn this into an error response.
+    let scheduleOk = false;
+    let scheduleDebug: Record<string, unknown> = {};
+    try {
+      const nextMonth = new Date();
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      const nextBill = nextMonth.toISOString().slice(0, 10);
 
-    const schedRes = await fetch(`${endpoint}/customers/${custkey}/schedules`, {
-      method: "POST",
-      headers: { Authorization: auth(), "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount: numericAmount.toFixed(2),
-        frequency: "monthly",
-        start_date: nextBill,
-        description: "Monthly donation to Tomchei Shabbos of Florida",
-      }),
-    });
-    const schedRaw = await schedRes.text();
-    let sched: Record<string, unknown> = {};
-    try { sched = JSON.parse(schedRaw); } catch { /* non-JSON */ }
-
-    if (!schedRes.ok) {
-      // The first payment already succeeded — don't tell the donor it failed.
-      // Log it for follow-up so staff can create the schedule manually if needed.
-      console.error("Recurring schedule creation failed after successful first charge:", {
-        custkey, httpStatus: schedRes.status, usaepayRaw: schedRaw.slice(0, 700),
+      const schedRes = await fetch(`${endpoint}/customers/${custkey}/schedules`, {
+        method: "POST",
+        headers: { Authorization: auth(), "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: numericAmount.toFixed(2),
+          frequency: "monthly",
+          start_date: nextBill,
+          description: "Monthly donation to Tomchei Shabbos of Florida",
+        }),
       });
+      const schedRaw = await schedRes.text();
+      scheduleOk = schedRes.ok;
+      scheduleDebug = { httpStatus: schedRes.status, usaepayRaw: schedRaw.slice(0, 700) };
+
+      if (!schedRes.ok) {
+        console.error("Recurring schedule creation failed after successful first charge:", { custkey, ...scheduleDebug });
+      }
+    } catch (schedErr: unknown) {
+      scheduleDebug = { threw: schedErr instanceof Error ? schedErr.message : String(schedErr) };
+      console.error("Recurring schedule creation threw after successful first charge:", { custkey, ...scheduleDebug });
     }
 
-    await sendMonthlyConfirmation({
-      origin: new URL(req.url).origin,
-      custkey: String(custkey),
-      email: email || "",
-      name: name || "",
-      amount: numericAmount,
-    });
+    try {
+      await sendMonthlyConfirmation({
+        origin: new URL(req.url).origin,
+        custkey: String(custkey),
+        email: email || "",
+        name: name || "",
+        amount: numericAmount,
+      });
+    } catch (emailErr: unknown) {
+      console.error("Confirmation email threw:", emailErr instanceof Error ? emailErr.message : emailErr);
+    }
 
-    return NextResponse.json({ success: true, custnum: custkey });
+    return NextResponse.json({ success: true, custnum: custkey, scheduleOk, debug: scheduleDebug });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("USAePay recurring error:", message);
