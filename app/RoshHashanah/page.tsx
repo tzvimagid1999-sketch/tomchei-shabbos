@@ -6,7 +6,7 @@ import { CheckCircle } from "lucide-react";
 import confetti from "canvas-confetti";
 import OtherWaysToGive from "../components/OtherWaysToGive";
 
-function ThankYouScreen({ name, amount, email, onClose }: { name: string; amount: string; email: string; onClose: () => void }) {
+function ThankYouScreen({ name, amount, email, monthly, onClose }: { name: string; amount: string; email: string; monthly?: boolean; onClose: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -38,7 +38,9 @@ function ThankYouScreen({ name, amount, email, onClose }: { name: string; amount
           Thank You{name ? `, ${name.split(" ")[0]}` : ""}!
         </h3>
         <p className="text-gray-600 text-lg mb-2">
-          Your <strong>${amount}</strong> donation has been received.
+          {monthly
+            ? <>Your <strong>${amount}/month</strong> donation is set up.</>
+            : <>Your <strong>${amount}</strong> donation has been received.</>}
         </p>
         <p className="text-gray-500 text-sm mb-8">
           You&apos;re helping a family celebrate Rosh Hashanah with dignity and joy.
@@ -60,7 +62,8 @@ export default function RoshHashanah() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
-  const [thankYou, setThankYou] = useState<{ name: string; amount: string; email: string } | null>(null);
+  const [thankYou, setThankYou] = useState<{ name: string; amount: string; email: string; monthly?: boolean } | null>(null);
+  const [checkoutFrequency, setCheckoutFrequency] = useState<"once" | "monthly">("once");
 
   const clientRef = useRef<any>(null);
   const cardRef = useRef<any>(null);
@@ -146,26 +149,27 @@ export default function RoshHashanah() {
       const paymentKey = result?.key || (typeof result === "string" ? result : "");
       if (!paymentKey) throw new Error("No payment token returned.");
 
-      const response = await fetch("/api/usaepay", {
+      const isMonthly = checkoutFrequency === "monthly";
+      const response = await fetch(isMonthly ? "/api/usaepay/recurring" : "/api/usaepay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           amount: parseFloat(checkoutAmount),
           paymentKey,
-          firstName,
-          lastName,
+          ...(isMonthly
+            ? { name: `${firstName} ${lastName}` }
+            : { firstName, lastName, campaign: "rosh-hashanah" }),
           email,
           street,
           city,
           state,
           zip,
-          campaign: "rosh-hashanah",
         }),
       });
 
       const data = await response.json();
       if (data.success) {
-        setThankYou({ name: firstName, amount: checkoutAmount, email });
+        setThankYou({ name: firstName, amount: checkoutAmount, email, monthly: isMonthly });
         window.scrollTo({ top: 0, behavior: "smooth" });
         setCheckoutAmount("");
         (document.getElementById("firstName") as HTMLInputElement).value = "";
@@ -197,7 +201,7 @@ export default function RoshHashanah() {
   ];
 
   if (thankYou) {
-    return <ThankYouScreen name={thankYou.name} amount={thankYou.amount} email={thankYou.email} onClose={() => setThankYou(null)} />;
+    return <ThankYouScreen name={thankYou.name} amount={thankYou.amount} email={thankYou.email} monthly={thankYou.monthly} onClose={() => setThankYou(null)} />;
   }
 
   return (
@@ -282,6 +286,23 @@ export default function RoshHashanah() {
 
           <div className="bg-white rounded-2xl border-2 border-[#C8A75B] shadow-lg p-10">
             <div className="space-y-6">
+              {/* One-Time / Monthly toggle */}
+              <div className="flex rounded-xl overflow-hidden border-2 border-[#E5E5E5]">
+                {(["once", "monthly"] as const).map((f) => (
+                  <button type="button" key={f} onClick={() => setCheckoutFrequency(f)}
+                    className={`flex-1 py-3 text-sm font-bold tracking-wide transition-all ${
+                      checkoutFrequency === f ? "bg-[#C8A75B] text-white" : "bg-white text-gray-500 hover:bg-gray-50"
+                    }`}>
+                    {f === "once" ? "One-Time" : "Monthly"}
+                  </button>
+                ))}
+              </div>
+              {checkoutFrequency === "monthly" && (
+                <p className="text-center text-xs text-[#C8A75B] font-semibold bg-[#C8A75B]/10 rounded-lg py-2 px-4">
+                  You&apos;ll be charged this amount every month. Cancel anytime at /manage-donation.
+                </p>
+              )}
+
               {checkoutAmount && (
                 <div className="bg-gradient-to-br from-[#F8F4EC] to-white border-2 border-[#C8A75B] rounded-xl p-6 mb-6">
                   <p className="text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-2">Donation Amount</p>
@@ -320,7 +341,11 @@ export default function RoshHashanah() {
               </div>
 
               <button onClick={handleCheckoutPayment} disabled={checkoutLoading} className="w-full bg-[#C8A75B] hover:bg-[#B8975B] text-white py-4 rounded-lg font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 mt-8">
-                {checkoutLoading ? "Processing..." : "Complete Donation"}
+                {checkoutLoading
+                  ? "Processing..."
+                  : checkoutFrequency === "monthly"
+                    ? `Give $${checkoutAmount || "0"}/Month`
+                    : "Complete Donation"}
               </button>
             </div>
 
