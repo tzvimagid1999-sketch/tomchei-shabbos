@@ -135,6 +135,7 @@ export async function POST(req: NextRequest) {
             amount: numericAmount.toFixed(2),
             frequency: "monthly",
             start_date: nextBill,
+            next_date: nextBill,
             enabled: true,
             description: totalPayments
               ? `Pledge (${totalPayments} monthly payments) to Tomchei Shabbos of Florida`
