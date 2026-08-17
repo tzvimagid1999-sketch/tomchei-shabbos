@@ -157,12 +157,15 @@ export async function POST(req: NextRequest) {
     }
 
     try {
+      const cardNumber = (sale.creditcard as Record<string, unknown> | undefined)?.number as string | undefined;
       await sendMonthlyConfirmation({
         origin: new URL(req.url).origin,
         custkey: String(custkey),
         email: email || "",
         name: name || "",
         amount: numericAmount,
+        refnum: (sale.refnum as string) || (sale.authcode as string) || undefined,
+        cardLast4: cardNumber ? cardNumber.slice(-4) : undefined,
       });
     } catch (emailErr: unknown) {
       console.error("Confirmation email threw:", emailErr instanceof Error ? emailErr.message : emailErr);

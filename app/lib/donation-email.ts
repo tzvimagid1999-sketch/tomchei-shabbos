@@ -26,6 +26,8 @@ export async function sendMonthlyConfirmation(opts: {
   email: string;
   name: string;
   amount: number;
+  refnum?: string;
+  cardLast4?: string;
 }): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey || !opts.email) return;
@@ -42,6 +44,12 @@ export async function sendMonthlyConfirmation(opts: {
       Your <strong>$${opts.amount}/month</strong> donation to Tomchei Shabbos of Florida is set up.
       Every month, you're helping a family celebrate Shabbos with dignity.
     </p>
+    <div style="background:#f5f5f5;border-radius:8px;padding:16px 20px;margin:20px 0;font-size:14px">
+      ${opts.refnum ? `<p style="margin:0 0 6px"><strong>Reference #:</strong> ${opts.refnum}</p>` : ""}
+      ${opts.cardLast4 ? `<p style="margin:0 0 6px"><strong>Card:</strong> xxxx xxxx xxxx ${opts.cardLast4}</p>` : ""}
+      <p style="margin:0 0 6px"><strong>Amount:</strong> $${opts.amount}/month</p>
+      <p style="margin:0"><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+    </div>
     <div style="background:#FAF3E8;border:1px solid #E8D9C0;border-radius:12px;padding:20px;margin:20px 0">
       <p style="margin:0 0 12px;font-size:15px">You can cancel anytime — one click, no questions:</p>
       <a href="${cancelUrl}" style="display:inline-block;background:#F5A020;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:bold">Cancel my monthly donation</a>
