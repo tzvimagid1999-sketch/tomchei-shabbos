@@ -48,7 +48,8 @@ export async function sendMonthlyConfirmation(opts: {
       ${opts.refnum ? `<p style="margin:0 0 6px"><strong>Reference #:</strong> ${opts.refnum}</p>` : ""}
       ${opts.cardLast4 ? `<p style="margin:0 0 6px"><strong>Card:</strong> xxxx xxxx xxxx ${opts.cardLast4}</p>` : ""}
       <p style="margin:0 0 6px"><strong>Amount:</strong> $${opts.amount}/month</p>
-      <p style="margin:0"><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+      <p style="margin:0 0 6px"><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+      <p style="margin:0"><strong>Tax ID:</strong> ${process.env.NONPROFIT_TAX_ID}</p>
     </div>
     <div style="background:#FAF3E8;border:1px solid #E8D9C0;border-radius:12px;padding:20px;margin:20px 0">
       <p style="margin:0 0 12px;font-size:15px">You can cancel anytime — one click, no questions:</p>

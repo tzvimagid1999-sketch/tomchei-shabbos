@@ -89,7 +89,8 @@ export async function POST(req: NextRequest) {
                   <p style="margin:0 0 6px;font-size:14px"><strong>Confirmation Number:</strong> ${data.refnum || data.authcode}</p>
                   <p style="margin:0 0 6px;font-size:14px"><strong>Amount:</strong> $${numericAmount.toFixed(2)}</p>
                   <p style="margin:0 0 6px;font-size:14px"><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
-                  <p style="margin:0;font-size:14px"><strong>Email:</strong> ${maskedEmail}</p>
+                  <p style="margin:0 0 6px;font-size:14px"><strong>Email:</strong> ${maskedEmail}</p>
+                  <p style="margin:0;font-size:14px"><strong>Tax ID:</strong> ${process.env.NONPROFIT_TAX_ID}</p>
                 </div>
                 <div style="margin-top:20px;padding:15px;background-color:#fafafa;border-radius:5px;font-size:11px;color:#888">
                   <p style="margin:0 0 6px"><strong>Tax Deduction Information:</strong></p>
