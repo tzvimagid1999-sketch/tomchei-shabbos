@@ -68,44 +68,39 @@ export async function POST(req: NextRequest) {
       // Send confirmation email if Resend is configured
       if (process.env.RESEND_API_KEY && email) {
         try {
-          // Mask email and address for privacy
+          // Mask email for privacy
           const maskedEmail = email.replace(/(.{2})(.*)(@.*)/, "$1***$3");
-          const maskedStreet = street ? street.substring(0, 3) + "***" : "***";
-          const maskedCity = city ? city.substring(0, 2) + "***" : "***";
-          const maskedZip = zip ? zip.substring(0, 2) + "***" : "***";
 
           const resend = new Resend(process.env.RESEND_API_KEY);
+          const from = process.env.RESEND_FROM || "Tomchei Shabbos <onboarding@resend.dev>";
+          const first = (firstName || "Friend").toString();
           await resend.emails.send({
-            from: "Tomchei Shabbos <donations@tomchei-shabbos.com>",
+            from,
             to: email,
-            subject: "Donation Confirmation - Tomchei Shabbos of Florida",
+            subject: "Thank you for your donation 💙",
             html: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #C9A961;">Thank You for Your Donation!</h2>
-                <p>Dear ${firstName},</p>
-                <p>We have received your generous donation of <strong>$${numericAmount.toFixed(2)}</strong> to Tomchei Shabbos of Florida for our Rosh Hashanah campaign.</p>
-
-                <div style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #C9A961; margin: 20px 0;">
-                  <p><strong>Confirmation Number:</strong> ${data.refnum || data.authcode}</p>
-                  <p><strong>Amount:</strong> $${numericAmount.toFixed(2)}</p>
-                  <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
-                  <p><strong>Email:</strong> ${maskedEmail}</p>
-                  <p><strong>Address:</strong> ${maskedStreet}, ${maskedCity}, ${state} ${maskedZip}</p>
+              <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#2F3A44">
+                <h2 style="color:#0F9FAE;margin:0 0 8px">Thank you, ${first}!</h2>
+                <p style="font-size:16px;line-height:1.6">
+                  Your <strong>$${numericAmount.toFixed(2)}</strong> donation to Tomchei Shabbos of Florida is confirmed.
+                  You're helping a family celebrate Shabbos with dignity.
+                </p>
+                <div style="background:#FAF3E8;border:1px solid #E8D9C0;border-radius:12px;padding:20px;margin:20px 0">
+                  <p style="margin:0 0 6px;font-size:14px"><strong>Confirmation Number:</strong> ${data.refnum || data.authcode}</p>
+                  <p style="margin:0 0 6px;font-size:14px"><strong>Amount:</strong> $${numericAmount.toFixed(2)}</p>
+                  <p style="margin:0 0 6px;font-size:14px"><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                  <p style="margin:0;font-size:14px"><strong>Email:</strong> ${maskedEmail}</p>
                 </div>
-
-                <p>Your donation will help us ensure every family in our community has a meaningful Rosh Hashanah celebration.</p>
-
-                <p>Thank you for your support and may you have a sweet and blessed new year!</p>
-
-                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 11px; color: #888; background-color: #fafafa; padding: 15px; border-radius: 5px;">
-                  <p><strong>Tax Deduction Information:</strong></p>
-                  <p>Tomchei Shabbos of Florida is a 501(c)(3) nonprofit organization (Tax ID: ${process.env.NONPROFIT_TAX_ID}). Your donation of $${numericAmount.toFixed(2)} is tax deductible to the extent allowed by law. No goods or services were provided in exchange for this contribution. Please consult your tax advisor regarding the deductibility of your contribution.</p>
+                <div style="margin-top:20px;padding:15px;background-color:#fafafa;border-radius:5px;font-size:11px;color:#888">
+                  <p style="margin:0 0 6px"><strong>Tax Deduction Information:</strong></p>
+                  <p style="margin:0">
+                    Tomchei Shabbos of Florida is a 501(c)(3) nonprofit organization (Tax ID: ${process.env.NONPROFIT_TAX_ID}).
+                    Your donation of $${numericAmount.toFixed(2)} is tax deductible to the extent allowed by law. No goods or
+                    services were provided in exchange for this contribution. Please consult your tax advisor regarding the
+                    deductibility of your contribution.
+                  </p>
                 </div>
-
-                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666;">
-                  <p>Tomchei Shabbos of Florida<br/>
-                  Serving our community with dignity and care</p>
-                </div>
+                <p style="font-size:13px;color:#8B7355;margin-top:20px">With gratitude,<br/>Tomchei Shabbos of Florida</p>
               </div>
             `,
           });
