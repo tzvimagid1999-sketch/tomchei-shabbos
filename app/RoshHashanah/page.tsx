@@ -210,7 +210,7 @@ export default function RoshHashanah() {
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
         {/* Hero */}
-        <div className="relative text-center pt-24 pb-12 sm:pt-28 sm:pb-16 px-4 sm:px-6 overflow-hidden">
+        <div className="relative text-center pt-16 pb-8 sm:pt-20 sm:pb-10 px-4 sm:px-6 overflow-hidden">
           <div
             className="absolute inset-0"
             style={{
@@ -221,14 +221,14 @@ export default function RoshHashanah() {
           />
           <div className="absolute inset-0" style={{ background: "rgba(15, 23, 42, 0.55)" }} />
           <div className="relative max-w-3xl mx-auto">
-            <h1 className="font-playfair text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight">
+            <h1 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
               A New Year. A Fresh Start. A Chance to Make a <span style={{ color: "#D4A017" }}>Difference.</span>
             </h1>
-            <p className="mt-8 text-white/90 max-w-xl mx-auto" style={{ fontFamily: "var(--font-manrope)", fontSize: "22px", lineHeight: 1.6 }}>
+            <p className="mt-5 text-white/90 max-w-xl mx-auto" style={{ fontFamily: "var(--font-manrope)", fontSize: "16px", lineHeight: 1.6 }}>
               Every family deserves to celebrate Rosh Hashanah with dignity. Your generosity provides food, hope, and joy to families who need it most.
             </p>
             <button onClick={() => document.getElementById('donate-section')?.scrollIntoView({ behavior: 'smooth' })}
-              className="mt-10 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto"
+              className="mt-6 text-white px-8 sm:px-10 py-3 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto"
               style={{ backgroundColor: "#D4A017" }}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#B8860B")}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#D4A017")}>

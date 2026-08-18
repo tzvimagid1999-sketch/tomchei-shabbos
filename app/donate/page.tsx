@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import Script from "next/script";
 import { Lock, CheckCircle } from "lucide-react";
 import confetti from "canvas-confetti";
@@ -226,32 +227,17 @@ export default function DonatePage() {
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
         {/* Hero */}
-        <div className="relative text-center pt-24 pb-12 sm:pt-28 sm:pb-16 px-4 sm:px-6 overflow-hidden">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: "url(/donate-header.jpg)",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          />
-          <div className="absolute inset-0" style={{ background: "rgba(38, 29, 22, 0.6)" }} />
-          <div className="relative max-w-3xl mx-auto">
-            <h1 className="font-playfair text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight">
-              Your Gift Puts Food on a Family&apos;s <span style={{ color: "#1AABAB" }}>Shabbos Table.</span>
-            </h1>
-            <p className="mt-8 text-white/90 max-w-xl mx-auto" style={{ fontFamily: "var(--font-manrope)", fontSize: "22px", lineHeight: 1.6 }}>
-              Every dollar counts. Your generosity provides food, hope, and dignity to families who need it most, every week of the year.
+        <section className="relative min-h-[300px] flex items-center justify-center text-center overflow-hidden">
+          <Image src="/donate-header.jpg" alt="Tomchei Shabbos volunteers with food"
+            fill className="object-cover object-center" priority sizes="100vw" />
+          <div className="absolute inset-0 bg-[#1AABAB]/25" />
+          <div className="relative z-10 max-w-4xl mx-auto px-6">
+            <h1 className="font-playfair text-5xl sm:text-6xl lg:text-7xl font-bold text-white mt-4 mb-5 leading-[1.08]">Donate Today</h1>
+            <p className="text-white/90 text-lg max-w-xl mx-auto leading-relaxed">
+              Your gift puts food on a family&apos;s Shabbos table this week. Every dollar counts.
             </p>
-            <button onClick={() => document.getElementById("donate-section")?.scrollIntoView({ behavior: "smooth" })}
-              className="mt-10 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto"
-              style={{ backgroundColor: "#F5A020" }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D48810")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#F5A020")}>
-              Donate Now →
-            </button>
           </div>
-        </div>
+        </section>
 
         <div className="h-8 sm:h-10" />
 
