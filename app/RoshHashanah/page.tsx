@@ -210,15 +210,11 @@ export default function RoshHashanah() {
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
         {/* Hero */}
-        <div className="relative text-center min-h-[420px] flex flex-col items-center justify-center px-4 sm:px-6 overflow-hidden" style={{ backgroundColor: "#0F172A" }}>
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: "url(/rosh-hashanah-campaign-hero.jpeg)",
-              backgroundSize: "contain",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-            }}
+        <div className="w-full">
+          <img
+            src="/rosh-hashanah-campaign-hero.jpeg"
+            alt="Rosh Hashanah Campaign"
+            className="w-full h-auto block"
           />
         </div>
 
