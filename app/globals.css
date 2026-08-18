@@ -3,18 +3,15 @@
 @tailwind utilities;
 
 html { scroll-behavior: smooth; }
-body { background-color: #ffffff; font-family: var(--font-dmsans), Arial, sans-serif; }
+body { background-color: #ffffff; font-family: var(--font-nunito), sans-serif; }
 
-h1, h2, h3 { font-family: var(--font-lora), Georgia, serif; }
+h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
 
-/* One display serif (Lora) for headlines/quotes, one UI sans (DM Sans) for
-   everything else. Old class names kept so existing pages don't need edits. */
-.font-playfair { font-family: var(--font-lora), Georgia, serif; }
-.font-caveat   { font-family: var(--font-dmsans), Arial, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.8125rem !important; }
-.font-manrope,
-.font-josefin,
-.font-figtree,
-.font-nunito   { font-family: var(--font-dmsans), Arial, sans-serif; }
+.font-playfair { font-family: var(--font-playfair), Georgia, serif; }
+.font-caveat   { font-family: var(--font-caveat), cursive; }
+.font-manrope  { font-family: var(--font-manrope), sans-serif; }
+.font-josefin  { font-family: var(--font-josefin), sans-serif; }
+.font-figtree  { font-family: var(--font-figtree), sans-serif; }
 
 /* Subtle paper / linen texture overlay */
 .paper-texture {

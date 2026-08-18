@@ -99,6 +99,7 @@ const SPLIT_MONTH_OPTIONS = [3, 6, 12, 18, 24, 36];
 function DonateForm() {
   const [frequency, setFrequency] = useState<"once" | "monthly">("once");
   const [selected, setSelected] = useState(0);
+  const [showMoreAmounts, setShowMoreAmounts] = useState(false);
   const [custom, setCustom] = useState("");
   const [splitMonths, setSplitMonths] = useState<number | null>(null); // null = ongoing until cancelled
   const [name, setName] = useState("");
@@ -270,8 +271,8 @@ function DonateForm() {
       {/* Amount selector */}
       <div>
         <p className="text-xs font-bold uppercase tracking-widest text-[#1AABAB] mb-3">Sponsorships</p>
-        <div className="flex flex-col gap-3 mb-5">
-          {[[0, 2], [2, 4], [4, 7]].map(([start, end], rowIdx) => (
+        <div className="flex flex-col gap-3 mb-3">
+          {[[0, 2], [2, 4]].map(([start, end], rowIdx) => (
             <div key={rowIdx} className="flex justify-center gap-3">
               {amounts.slice(start, end).map((a) => {
                 const tierValue = frequency === "monthly" ? a.monthlyValue : a.value;
@@ -306,6 +307,48 @@ function DonateForm() {
             </div>
           ))}
         </div>
+
+        <button type="button" onClick={() => setShowMoreAmounts((v) => !v)}
+          className="text-xs font-semibold text-[#1AABAB] hover:underline mb-3 block mx-auto">
+          {showMoreAmounts ? "Show fewer options" : "More sponsorship options"}
+        </button>
+
+        {showMoreAmounts && (
+          <div className="flex flex-col gap-3 mb-5">
+            <div className="flex justify-center gap-3 flex-wrap">
+              {amounts.slice(4).map((a) => {
+                const tierValue = frequency === "monthly" ? a.monthlyValue : a.value;
+                const active = selected === tierValue && !custom;
+                return (
+                  <button type="button" key={a.value}
+                    onClick={() => { setSelected(tierValue); setCustom(""); }}
+                    style={{
+                      borderColor: active ? "#1AABAB" : "#E5E7EB",
+                      backgroundColor: active ? "#E6F3F1" : "#FFFFFF",
+                    }}
+                    className="relative flex-1 max-w-[150px] rounded-xl border-2 p-3 text-center transition-all hover:border-[#1AABAB] flex flex-col items-center justify-start">
+                    {active && (
+                      <span className="absolute top-2 right-2 flex items-center gap-1 text-[10px] font-bold text-[#0F6B6B]">
+                        <CheckCircle className="w-3.5 h-3.5" />
+                      </span>
+                    )}
+                    <span className="font-playfair text-xl font-bold mb-1" style={{ color: active ? "#0F6B6B" : "#0D8585" }}>
+                      {frequency === "monthly" ? `$${a.monthlyValue}/mo` : a.label}
+                    </span>
+                    {frequency === "monthly" ? (
+                      <span className="text-[11px] leading-snug font-semibold" style={{ color: active ? "#0F6B6B" : "#9CA3AF" }}>
+                        Per year: ${(a.monthlyValue * 12).toLocaleString()}
+                      </span>
+                    ) : (
+                      <span className="text-[11px] leading-snug" style={{ color: active ? "#0F6B6B" : "#6B7280" }}>{a.note}</span>
+                    )}
+                    {active && <span className="text-[10px] font-bold text-[#0F6B6B] mt-1">Selected</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center gap-3">
           <span className="text-gray-500 text-sm font-medium whitespace-nowrap">Custom amount:</span>
