@@ -214,7 +214,7 @@ export default function RoshHashanah() {
           <img
             src="/rosh-hashanah-campaign-hero.jpeg"
             alt="Rosh Hashanah Campaign"
-            className="max-w-full max-h-[80vh] w-auto h-auto mx-auto block"
+            className="max-w-full max-h-[320px] sm:max-h-[380px] w-auto h-auto mx-auto block"
           />
         </div>
 
