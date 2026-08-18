@@ -243,7 +243,7 @@ export default function DonatePage() {
 
         {/* Sponsorship tier cards */}
         <div id="donate-section" className="max-w-6xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
             {amounts.map((a) => {
               const tierValue = frequency === "monthly" ? a.monthlyValue : a.value;
               const active = selected === tierValue && !custom;
@@ -257,7 +257,7 @@ export default function DonatePage() {
                       document.getElementById("donation-amount-bar")?.scrollIntoView({ behavior: "smooth", block: "center" });
                     });
                   }}
-                  className="group bg-white rounded-[20px] p-5 sm:p-8 text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-2 border-[#1AABAB]"
+                  className="group bg-white rounded-[20px] p-5 sm:p-8 text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-2 border-[#1AABAB] w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]"
                   style={{ background: active ? "#F0FBFB" : "#FFFFFF" }}>
                   <p className="font-bold text-4xl sm:text-5xl text-[#1AABAB] mb-3 sm:mb-4">
                     {frequency === "monthly" ? `$${a.monthlyValue}/mo` : a.label}
