@@ -269,11 +269,28 @@ export default function RoshHashanah() {
         <div id="donate-section" className="max-w-6xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {tiers.map((tier) => (
-              <button key={tier.value} onClick={() => setCheckoutAmount(tier.value.toString())}
-                className="group bg-white rounded-[20px] p-5 sm:p-8 text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-2 border-[#C8A75B]"
-                style={{ background: selectedTier === tier.value ? '#F8F4EC' : '#FFFFFF' }}>
+              <button key={tier.value}
+                onClick={() => {
+                  setCheckoutAmount(tier.value.toString());
+                  setSelectedTier(tier.value);
+                  // Wait a tick for the amount bar to render (it's conditional on checkoutAmount) before scrolling to it.
+                  requestAnimationFrame(() => {
+                    document.getElementById("donation-amount-bar")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  });
+                }}
+                className="group bg-white rounded-[20px] p-5 sm:p-8 text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-2"
+                style={{
+                  background: selectedTier === tier.value ? '#F8F4EC' : '#FFFFFF',
+                  borderColor: selectedTier === tier.value ? '#B8975B' : '#C8A75B',
+                  boxShadow: selectedTier === tier.value ? '0 0 0 3px rgba(200,167,91,0.35)' : undefined,
+                }}>
                 <p className="font-bold text-4xl sm:text-5xl text-[#C8A75B] mb-3 sm:mb-4">{tier.label}</p>
                 <h3 className="text-base sm:text-lg font-bold text-[#2D2D2D] mb-2 sm:mb-3 leading-snug">{tier.title}</h3>
+                {selectedTier === tier.value && (
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-[#B8975B] mt-1">
+                    <CheckCircle className="w-4 h-4" /> Selected
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -304,7 +321,7 @@ export default function RoshHashanah() {
               )}
 
               {checkoutAmount && (
-                <div className="bg-gradient-to-br from-[#F8F4EC] to-white border-2 border-[#C8A75B] rounded-xl p-6 mb-6">
+                <div id="donation-amount-bar" className="bg-gradient-to-br from-[#F8F4EC] to-white border-2 border-[#C8A75B] rounded-xl p-6 mb-6 scroll-mt-24">
                   <p className="text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-2">Donation Amount</p>
                   <p className="font-bold text-5xl text-[#C8A75B]">${checkoutAmount}</p>
                 </div>
