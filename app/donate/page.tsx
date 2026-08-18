@@ -1,8 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import Script from "next/script";
-import { Lock, Shield, CheckCircle } from "lucide-react";
+import { Lock, CheckCircle } from "lucide-react";
 import confetti from "canvas-confetti";
 import OtherWaysToGive from "../components/OtherWaysToGive";
 
@@ -28,16 +27,18 @@ interface USAePayCard {
 }
 
 const amounts = [
-  { value: 125,  monthlyValue: 613, label: "$125",   note: "A small family for a week" },
-  { value: 225,  monthlyValue: 500, label: "$225",   note: "A medium family for a week" },
-  { value: 350,  monthlyValue: 325, label: "$350",   note: "A large family for a week" },
-  { value: 600,  monthlyValue: 200, label: "$600",   note: "A small family for a month" },
-  { value: 900,  monthlyValue: 180, label: "$900",   note: "A medium family for a month" },
-  { value: 1350, monthlyValue: 72,  label: "$1,350", note: "A large family for a month" },
-  { value: 6000, monthlyValue: 36,  label: "$6,000", note: "A family for a year" },
+  { value: 125,  monthlyValue: 613, label: "$125",   title: "A small family for a week" },
+  { value: 225,  monthlyValue: 500, label: "$225",   title: "A medium family for a week" },
+  { value: 350,  monthlyValue: 325, label: "$350",   title: "A large family for a week" },
+  { value: 600,  monthlyValue: 200, label: "$600",   title: "A small family for a month" },
+  { value: 900,  monthlyValue: 180, label: "$900",   title: "A medium family for a month" },
+  { value: 1350, monthlyValue: 72,  label: "$1,350", title: "A large family for a month" },
+  { value: 6000, monthlyValue: 36,  label: "$6,000", title: "A family for a year" },
 ];
 
-function SuccessScreen({ name, amount, email, monthly, pledgeMonths, custnum }: { name: string; amount: number; email: string; monthly: boolean; pledgeMonths?: number; custnum: string }) {
+const SPLIT_MONTH_OPTIONS = [3, 6, 12, 18, 24, 36];
+
+function SuccessScreen({ name, amount, email, monthly, pledgeMonths, onClose }: { name: string; amount: number; email: string; monthly: boolean; pledgeMonths?: number; onClose: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -64,8 +65,8 @@ function SuccessScreen({ name, amount, email, monthly, pledgeMonths, custnum }: 
     <div className="fixed inset-0 bg-white flex items-center justify-center text-center px-6" style={{ zIndex: 9999 }}>
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
       <div className="relative" style={{ zIndex: 1 }}>
-        <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
-        <h3 className="font-playfair text-3xl font-bold text-[#1AABAB] mb-3">
+        <CheckCircle className="w-20 h-20 text-[#1AABAB] mx-auto mb-6" />
+        <h3 className="font-playfair text-3xl font-bold text-[#2D2D2D] mb-3">
           Thank You{name ? `, ${name.split(" ")[0]}` : ""}!
         </h3>
         <p className="text-gray-600 text-lg mb-2">
@@ -75,28 +76,20 @@ function SuccessScreen({ name, amount, email, monthly, pledgeMonths, custnum }: 
             ? <>Your <strong>${amount}/month</strong> donation is set up.</>
             : <>Your <strong>${amount}</strong> donation has been received.</>}
         </p>
-        <p className="text-gray-500 text-sm">
+        <p className="text-gray-500 text-sm mb-8">
           You&apos;re making a real difference for families in our community.
         </p>
-        {monthly && (
-          <div className="mt-5 bg-[#FAF3E8] border border-[#E8D9C0] rounded-xl px-5 py-4 text-sm">
-            <p className="text-gray-600">
-              We&apos;ve emailed your confirmation to <strong>{email}</strong> with a
-              one-click link to <strong>cancel anytime</strong> — no number to remember.
-            </p>
-          </div>
-        )}
-        {!monthly && email && (
-          <p className="text-gray-400 text-xs mt-4">A receipt will be sent to {email}</p>
-        )}
+        {email && <p className="text-gray-400 text-xs mb-8">A confirmation email has been sent to {email}</p>}
+        <button onClick={onClose}
+          className="bg-[#F5A020] hover:bg-[#D48810] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300">
+          Continue
+        </button>
       </div>
     </div>
   );
 }
 
-const SPLIT_MONTH_OPTIONS = [3, 6, 12, 18, 24, 36];
-
-function DonateForm() {
+export default function DonatePage() {
   const [frequency, setFrequency] = useState<"once" | "monthly">("once");
   const [selected, setSelected] = useState(0);
   const [custom, setCustom] = useState("");
@@ -110,21 +103,17 @@ function DonateForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [custnum, setCustnum] = useState("");
   const [scriptReady, setScriptReady] = useState(false);
 
   const clientRef = useRef<InstanceType<NonNullable<Window["usaepay"]>["Client"]> | null>(null);
   const cardRef = useRef<USAePayCard | null>(null);
-
-  // pay.js (the card field) authenticates with the PUBLIC key; the server
-  // charge uses the Source Key + PIN. These are two different values.
   const publicKey = process.env.NEXT_PUBLIC_USAEPAY_PUBLIC_KEY;
 
   const donationAmount = Number(custom) || selected;
   const isRecurringFreq = frequency === "monthly";
 
   const inputClass =
-    "w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#1AABAB] transition font-medium text-gray-700 bg-white";
+    "w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1AABAB] focus:border-transparent bg-white text-[#2D2D2D]";
 
   // pay.js is often already cached from a previous page, so it can finish
   // loading before the Script component's onLoad listener attaches — poll
@@ -171,14 +160,9 @@ function DonateForm() {
     setLoading(true);
     setError("");
 
-    // Tokenize the card in the browser — the raw number never touches our server.
-    // pay.js REJECTS with a JSON-string error on failure, and resolves with the
-    // token on success (in .key, or occasionally the value itself).
     let paymentKey: string;
-    let debugToken = "";
     try {
       const result = await clientRef.current.getPaymentKey(cardRef.current);
-      debugToken = JSON.stringify(result); // TEMP DEBUG
       const token = result?.key || (typeof result === "string" ? result : "");
       if (!token) throw new Error("No payment token returned.");
       paymentKey = token;
@@ -196,7 +180,6 @@ function DonateForm() {
       return;
     }
 
-    // One-time charges hit /api/usaepay; monthly and pledge set up a recurring schedule.
     const endpoint = isRecurringFreq ? "/api/usaepay/recurring" : "/api/usaepay";
     try {
       const res = await fetch(endpoint, {
@@ -210,12 +193,8 @@ function DonateForm() {
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        const dbg = isRecurringFreq
-          ? " || TOKEN: " + debugToken + " || SERVER: " + JSON.stringify(data.debug || {})
-          : "";
-        throw new Error((data.error || "Your donation could not be processed.") + dbg);
+        throw new Error(data.error || "Your donation could not be processed.");
       }
-      if (data.custnum) setCustnum(String(data.custnum));
       setSuccess(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
@@ -225,236 +204,190 @@ function DonateForm() {
   };
 
   if (success) {
-    return <SuccessScreen name={name} amount={donationAmount} email={email} monthly={isRecurringFreq} pledgeMonths={splitMonths || undefined} custnum={custnum} />;
+    return (
+      <SuccessScreen
+        name={name}
+        amount={donationAmount}
+        email={email}
+        monthly={isRecurringFreq}
+        pledgeMonths={splitMonths || undefined}
+        onClose={() => {
+          setSuccess(false);
+          setName(""); setEmail(""); setStreet(""); setCity(""); setState(""); setZip("");
+          setSelected(0); setCustom(""); setSplitMonths(null); setFrequency("once");
+        }}
+      />
+    );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <Script
-        src="https://www.usaepay.com/js/v2/pay.js"
-        onLoad={() => setScriptReady(true)}
-      />
+    <main className="min-h-screen pb-16 bg-white">
+      <div className="relative z-10">
+        <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
-      {/* One-time / Monthly toggle */}
-      <div className="flex rounded-xl overflow-hidden border-2 border-gray-200">
-        {(["once", "monthly"] as const).map((f) => (
-          <button type="button" key={f} onClick={() => setFrequency(f)}
-            className={`flex-1 py-3 text-sm font-bold tracking-wide transition-all ${
-              frequency === f ? "bg-[#1AABAB] text-white" : "bg-white text-gray-500 hover:bg-gray-50"
-            }`}>
-            {f === "once" ? "One-Time" : "Monthly"}
-          </button>
-        ))}
-      </div>
-
-      {frequency === "monthly" && (
-        <>
-          <p className="text-center text-xs text-[#1AABAB] font-semibold bg-[#1AABAB]/10 rounded-lg py-2 px-4">
-            {splitMonths
-              ? `You'll be charged this amount monthly for ${splitMonths} months, then it automatically stops.`
-              : "You'll be charged this amount every month. Cancel anytime at /manage-donation."}
-          </p>
-          <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Split Over</label>
-            <select value={splitMonths ?? ""} onChange={(e) => setSplitMonths(e.target.value ? Number(e.target.value) : null)}
-              className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-[#1AABAB] font-medium text-sm transition bg-white">
-              <option value="">Ongoing (until cancelled)</option>
-              {SPLIT_MONTH_OPTIONS.map((m) => (
-                <option key={m} value={m}>{m} months</option>
-              ))}
-            </select>
+        {/* Hero */}
+        <div className="relative text-center pt-32 pb-20 sm:pt-40 sm:pb-28 px-4 sm:px-6 overflow-hidden">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: "url(/donate-header.jpg)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+          <div className="absolute inset-0" style={{ background: "rgba(15, 23, 42, 0.55)" }} />
+          <div className="relative max-w-3xl mx-auto">
+            <h1 className="font-playfair text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight">
+              Your Gift Puts Food on a Family&apos;s <span style={{ color: "#F5A020" }}>Shabbos Table.</span>
+            </h1>
+            <p className="mt-8 text-white/90 max-w-xl mx-auto" style={{ fontFamily: "var(--font-manrope)", fontSize: "22px", lineHeight: 1.6 }}>
+              Every dollar counts. Your generosity provides food, hope, and dignity to families who need it most, every week of the year.
+            </p>
+            <button onClick={() => document.getElementById("donate-section")?.scrollIntoView({ behavior: "smooth" })}
+              className="mt-10 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto"
+              style={{ backgroundColor: "#F5A020" }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D48810")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#F5A020")}>
+              Donate Now →
+            </button>
           </div>
-        </>
-      )}
+        </div>
 
-      {/* Amount selector */}
-      <div>
-        <p className="text-xs font-bold uppercase tracking-widest text-[#1AABAB] mb-3">Sponsorships</p>
-        <div className="flex flex-col gap-3 mb-5">
-          {[[0, 1], [1, 3], [3, 7]].map(([start, end], rowIdx) => (
-            <div key={rowIdx} className="flex justify-center gap-3">
-              {amounts.slice(start, end).map((a) => {
-                const tierValue = frequency === "monthly" ? a.monthlyValue : a.value;
-                const active = selected === tierValue && !custom;
-                return (
-                  <button type="button" key={a.value}
-                    onClick={() => { setSelected(tierValue); setCustom(""); }}
-                    style={{
-                      borderColor: active ? "#1AABAB" : "#E5E7EB",
-                      backgroundColor: active ? "#F0FBFB" : "#FFFFFF",
-                    }}
-                    className="flex-1 max-w-[150px] rounded-xl border-2 p-3 text-center transition-all hover:border-[#1AABAB] flex flex-col items-center justify-start">
-                    <span className="font-playfair text-xl font-bold mb-1" style={{ color: active ? "#1AABAB" : "#0D8585" }}>
-                      {frequency === "monthly" ? `$${a.monthlyValue}/mo` : a.label}
+        <div className="h-16 sm:h-20" />
+
+        {/* Sponsorship tier cards */}
+        <div id="donate-section" className="max-w-6xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {amounts.map((a) => {
+              const tierValue = frequency === "monthly" ? a.monthlyValue : a.value;
+              const active = selected === tierValue && !custom;
+              return (
+                <button key={a.value} onClick={() => { setSelected(tierValue); setCustom(""); }}
+                  className="group bg-white rounded-[20px] p-5 sm:p-8 text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-2 border-[#1AABAB]"
+                  style={{ background: active ? "#F0FBFB" : "#FFFFFF" }}>
+                  <p className="font-bold text-4xl sm:text-5xl text-[#1AABAB] mb-3 sm:mb-4">
+                    {frequency === "monthly" ? `$${a.monthlyValue}/mo` : a.label}
+                  </p>
+                  <h3 className="text-base sm:text-lg font-bold text-[#2D2D2D] mb-2 sm:mb-3 leading-snug">
+                    {frequency === "monthly" ? `Per year: $${(a.monthlyValue * 12).toLocaleString()}` : a.title}
+                  </h3>
+                  {active && (
+                    <span className="inline-flex items-center gap-1 text-xs font-bold text-[#1AABAB]">
+                      <CheckCircle className="w-4 h-4" /> Selected
                     </span>
-                    {frequency === "monthly" ? (
-                      <span className="text-[11px] leading-snug font-semibold" style={{ color: active ? "#1AABAB" : "#9CA3AF" }}>
-                        Per year: ${(a.monthlyValue * 12).toLocaleString()}
-                      </span>
-                    ) : (
-                      <span className="text-[11px] leading-snug" style={{ color: active ? "#1AABAB" : "#6B7280" }}>{a.note}</span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-3">
-          <span className="text-gray-500 text-sm font-medium whitespace-nowrap">Custom amount:</span>
-          <div className="relative flex-1">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">$</span>
-            <input type="number" min="1" placeholder="Enter amount" value={custom}
-              onChange={(e) => { setCustom(e.target.value); setSelected(0); }}
-              className="w-full border-2 border-gray-200 rounded-lg pl-7 pr-4 py-3 focus:outline-none focus:border-[#1AABAB] font-medium text-sm transition" />
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
-      </div>
 
-      {/* Divider */}
-      <div className="border-t border-gray-100 pt-2">
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Payment Details</p>
-      </div>
+        {/* Payment Form */}
+        <div className="max-w-3xl mx-auto px-6 mb-12">
+          <h2 className="text-4xl font-bold text-[#2D2D2D] mb-3">Complete Your Donation</h2>
+          <p className="text-[#2D2D2D] text-lg mb-8 font-light">Secure payment &bull; All information is encrypted</p>
 
-      {/* Name */}
-      <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Full Name *</label>
-        <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
-      </div>
+          <div className="bg-white rounded-2xl border-2 border-[#1AABAB] shadow-lg p-6 sm:p-10">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* One-Time / Monthly toggle */}
+              <div className="flex rounded-xl overflow-hidden border-2 border-[#E5E5E5]">
+                {(["once", "monthly"] as const).map((f) => (
+                  <button type="button" key={f} onClick={() => setFrequency(f)}
+                    className={`flex-1 py-3 text-sm font-bold tracking-wide transition-all ${
+                      frequency === f ? "bg-[#1AABAB] text-white" : "bg-white text-gray-500 hover:bg-gray-50"
+                    }`}>
+                    {f === "once" ? "One-Time" : "Monthly"}
+                  </button>
+                ))}
+              </div>
 
-      {/* Email */}
-      <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Email *</label>
-        <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} />
-      </div>
-
-      {/* Billing address */}
-      <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Billing Address *</label>
-        <input type="text" required value={street} onChange={(e) => setStreet(e.target.value)}
-          placeholder="Street address" className={inputClass} />
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">City *</label>
-          <input type="text" required value={city} onChange={(e) => setCity(e.target.value)} className={inputClass} />
-        </div>
-        <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">State *</label>
-          <input type="text" required value={state}
-            onChange={(e) => setState(e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 2))}
-            placeholder="FL" className={inputClass} />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Billing ZIP *</label>
-        <input type="text" inputMode="numeric" required value={zip}
-          onChange={(e) => setZip(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
-          placeholder="12345" className={inputClass} />
-      </div>
-
-      {/* Card */}
-      <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Card Details *</label>
-        <div className="border-2 border-gray-200 rounded-lg px-4 py-3.5 focus-within:border-[#1AABAB] transition bg-white min-h-[52px]">
-          <div id="usaepay-card-container" />
-          {!scriptReady && <p className="text-gray-400 text-sm">Loading secure card field…</p>}
-        </div>
-      </div>
-
-
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-
-      <button type="submit" disabled={loading || !name || !email || !street || !city || state.length < 2 || zip.length < 5 || donationAmount < 1 || !scriptReady}
-        className="w-full bg-[#F5A020] text-white py-4 rounded-lg font-semibold text-lg hover:bg-[#D48810] transition flex items-center justify-center gap-2 disabled:opacity-50 mt-2">
-        <Lock className="w-4 h-4" />
-        {loading
-          ? "Processing..."
-          : isRecurringFreq
-            ? `Give $${donationAmount}/Month`
-            : `Donate $${donationAmount} Securely`}
-      </button>
-
-      <div className="flex items-center justify-center gap-1.5 text-xs text-gray-400">
-        <Shield className="w-3.5 h-3.5" />
-        256-bit SSL Encrypted &middot; Powered by USAePay
-      </div>
-      <p className="text-center text-xs text-gray-400">Visa &middot; Mastercard &middot; Amex &middot; Discover</p>
-    </form>
-  );
-}
-
-function DonateFormWithOtherWays() {
-  return (
-    <>
-      <DonateForm />
-      <div className="mt-10 pt-8 border-t border-gray-100">
-        <OtherWaysToGive />
-      </div>
-    </>
-  );
-}
-
-export default function DonatePage() {
-  return (
-    <main className="pt-20">
-
-      {/* Hero */}
-      <section className="relative min-h-[300px] flex items-center justify-center text-center overflow-hidden">
-        <Image src="/donate-header.jpg" alt="Tomchei Shabbos volunteers with food"
-          fill className="object-cover object-center" priority sizes="100vw" />
-        <div className="absolute inset-0 bg-[#1AABAB]/25" />
-        <div className="relative z-10 max-w-4xl mx-auto px-6">
-          <h1 className="font-playfair text-5xl sm:text-6xl lg:text-7xl font-bold text-white mt-4 mb-5 leading-[1.08]">Donate Today</h1>
-          <p className="text-white/90 text-lg max-w-xl mx-auto leading-relaxed">
-            Your gift puts food on a family&apos;s Shabbos table this week. Every dollar counts.
-          </p>
-        </div>
-      </section>
-
-      {/* Form + Testimonials side by side */}
-      <section id="payment" className="bg-white py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16 items-start">
-
-            {/* Left: testimonials */}
-            <div className="lg:sticky lg:top-28">
-              <span className="font-caveat text-[#C17642] text-3xl sm:text-4xl tracking-wide">From Our Families</span>
-              <h2 className="font-playfair text-4xl sm:text-5xl font-bold text-gray-900 mt-2 mb-10 leading-[1.1]">Why It Matters</h2>
-              <div className="flex flex-col gap-6">
-                <div className="bg-[#FAF3E8] rounded-2xl p-8 border border-[#E8D9C0]">
-                  <p className="font-playfair italic text-gray-700 text-lg leading-relaxed">
-                    &ldquo;From the application process to having food delivered right to our door every week &mdash; Tomchei Shabbos has taken away our greatest stress. There are no words to describe our gratitude.&rdquo;
+              {frequency === "monthly" && (
+                <>
+                  <p className="text-center text-xs text-[#1AABAB] font-semibold bg-[#1AABAB]/10 rounded-lg py-2 px-4">
+                    {splitMonths
+                      ? `You'll be charged this amount monthly for ${splitMonths} months, then it automatically stops.`
+                      : "You'll be charged this amount every month. Cancel anytime at /manage-donation."}
                   </p>
+                  <div>
+                    <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">Split Over</label>
+                    <select value={splitMonths ?? ""} onChange={(e) => setSplitMonths(e.target.value ? Number(e.target.value) : null)}
+                      className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1AABAB] focus:border-transparent bg-white text-[#2D2D2D]">
+                      <option value="">Ongoing (until cancelled)</option>
+                      {SPLIT_MONTH_OPTIONS.map((m) => (
+                        <option key={m} value={m}>{m} months</option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
+
+              {donationAmount > 0 && (
+                <div className="bg-gradient-to-br from-[#F0FBFB] to-white border-2 border-[#1AABAB] rounded-xl p-6 mb-2">
+                  <p className="text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-2">Donation Amount</p>
+                  <p className="font-bold text-5xl text-[#1AABAB]">${donationAmount}{isRecurringFreq ? "/mo" : ""}</p>
                 </div>
-                <div className="bg-[#FAF3E8] rounded-2xl p-8 border border-[#E8D9C0]">
-                  <p className="font-playfair italic text-gray-700 text-lg leading-relaxed">
-                    &ldquo;What would we do without Tomchei Shabbos? They have restored happiness and calm to our home. Shabbos is something we look forward to again. Thank you from the bottom of our hearts.&rdquo;
-                  </p>
+              )}
+
+              <div>
+                <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">Amount</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-4 text-[#1AABAB] font-semibold text-lg">$</span>
+                  <input type="number" min="1" placeholder="0.00" value={custom}
+                    onChange={(e) => { setCustom(e.target.value); setSelected(0); }}
+                    className="w-full pl-10 pr-4 py-3 text-lg border-2 border-[#E5E5E5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1AABAB] focus:border-transparent bg-white" />
                 </div>
               </div>
-            </div>
 
-            {/* Right: payment form */}
-            <div>
-              <DonateFormWithOtherWays />
-            </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">Card Number</label>
+                <div className="border-2 border-[#E5E5E5] rounded-lg p-4 bg-white focus-within:ring-2 focus-within:ring-[#1AABAB] min-h-[52px]">
+                  <div id="usaepay-card-container" />
+                  {!scriptReady && <p className="text-gray-400 text-sm">Loading secure card field…</p>}
+                </div>
+              </div>
 
+              <div className="pt-4">
+                <h3 className="text-sm font-semibold text-[#2D2D2D] mb-4 uppercase tracking-wider">Billing Information</h3>
+                <div className="mb-4">
+                  <input type="text" required placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
+                </div>
+                <input type="email" required placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} className={`${inputClass} mb-4`} />
+                <input type="text" required placeholder="Street Address" value={street} onChange={(e) => setStreet(e.target.value)} className={`${inputClass} mb-4`} />
+                <div className="grid grid-cols-2 gap-4">
+                  <input type="text" required placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} className={inputClass} />
+                  <input type="text" required placeholder="State" maxLength={2} value={state}
+                    onChange={(e) => setState(e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 2))} className={inputClass} />
+                </div>
+                <input type="text" required inputMode="numeric" placeholder="ZIP Code" maxLength={5} value={zip}
+                  onChange={(e) => setZip(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))} className={`${inputClass} mt-4`} />
+              </div>
+
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+
+              <button type="submit"
+                disabled={loading || !name || !email || !street || !city || state.length < 2 || zip.length < 5 || donationAmount < 1 || !scriptReady}
+                className="w-full bg-[#F5A020] hover:bg-[#D48810] text-white py-4 rounded-lg font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 mt-8 flex items-center justify-center gap-2">
+                <Lock className="w-4 h-4" />
+                {loading
+                  ? "Processing..."
+                  : donationAmount < 1
+                    ? "Choose an amount to continue"
+                    : isRecurringFreq
+                      ? `Give $${donationAmount}/Month`
+                      : `Donate $${donationAmount} Securely`}
+              </button>
+
+              <p className="text-center text-xs text-gray-400">
+                Secure checkout &middot; Donation is tax-deductible &middot; 501(c)(3) Tax ID: 83-2155012
+              </p>
+            </form>
+
+            <div className="mt-8">
+              <OtherWaysToGive />
+            </div>
           </div>
         </div>
-      </section>
-
-      {/* Trust bar */}
-      <section className="bg-[#1AABAB] py-12 text-center">
-        <div className="max-w-3xl mx-auto px-6">
-          <p className="text-white font-semibold text-base mb-2">Your donation is safe, secure, and tax-deductible</p>
-          <p className="text-white/90 text-sm">501(c)(3) Non-Profit &middot; Tax ID: 83-2155012 &middot; 100% goes to families</p>
-        </div>
-      </section>
-
+      </div>
     </main>
   );
 }
