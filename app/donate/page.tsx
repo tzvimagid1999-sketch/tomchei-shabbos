@@ -235,7 +235,7 @@ export default function DonatePage() {
               backgroundPosition: "center",
             }}
           />
-          <div className="absolute inset-0" style={{ background: "rgba(15, 23, 42, 0.55)" }} />
+          <div className="absolute inset-0" style={{ background: "rgba(38, 29, 22, 0.6)" }} />
           <div className="relative max-w-3xl mx-auto">
             <h1 className="font-playfair text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight">
               Your Gift Puts Food on a Family&apos;s <span style={{ color: "#F5A020" }}>Shabbos Table.</span>
