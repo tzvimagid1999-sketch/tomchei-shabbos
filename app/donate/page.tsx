@@ -99,6 +99,7 @@ const SPLIT_MONTH_OPTIONS = [3, 6, 12, 18, 24, 36];
 function DonateForm() {
   const [frequency, setFrequency] = useState<"once" | "monthly">("once");
   const [selected, setSelected] = useState(0);
+  const [showMoreAmounts, setShowMoreAmounts] = useState(false);
   const [custom, setCustom] = useState("");
   const [splitMonths, setSplitMonths] = useState<number | null>(null); // null = ongoing until cancelled
   const [name, setName] = useState("");
@@ -270,8 +271,8 @@ function DonateForm() {
       {/* Amount selector */}
       <div>
         <p className="text-xs font-bold uppercase tracking-widest text-[#1AABAB] mb-3">Sponsorships</p>
-        <div className="flex flex-col gap-3 mb-5">
-          {[[0, 1], [1, 3], [3, 7]].map(([start, end], rowIdx) => (
+        <div className="flex flex-col gap-3 mb-3">
+          {[[0, 2], [2, 4]].map(([start, end], rowIdx) => (
             <div key={rowIdx} className="flex justify-center gap-3">
               {amounts.slice(start, end).map((a) => {
                 const tierValue = frequency === "monthly" ? a.monthlyValue : a.value;
@@ -281,25 +282,73 @@ function DonateForm() {
                     onClick={() => { setSelected(tierValue); setCustom(""); }}
                     style={{
                       borderColor: active ? "#1AABAB" : "#E5E7EB",
-                      backgroundColor: active ? "#F0FBFB" : "#FFFFFF",
+                      backgroundColor: active ? "#E6F3F1" : "#FFFFFF",
                     }}
-                    className="flex-1 max-w-[150px] rounded-xl border-2 p-3 text-center transition-all hover:border-[#1AABAB] flex flex-col items-center justify-start">
-                    <span className="font-playfair text-xl font-bold mb-1" style={{ color: active ? "#1AABAB" : "#0D8585" }}>
+                    className="relative flex-1 max-w-[150px] rounded-xl border-2 p-3 text-center transition-all hover:border-[#1AABAB] flex flex-col items-center justify-start">
+                    {active && (
+                      <span className="absolute top-2 right-2 flex items-center gap-1 text-[10px] font-bold text-[#0F6B6B]">
+                        <CheckCircle className="w-3.5 h-3.5" />
+                      </span>
+                    )}
+                    <span className="font-playfair text-xl font-bold mb-1" style={{ color: active ? "#0F6B6B" : "#0D8585" }}>
                       {frequency === "monthly" ? `$${a.monthlyValue}/mo` : a.label}
                     </span>
                     {frequency === "monthly" ? (
-                      <span className="text-[11px] leading-snug font-semibold" style={{ color: active ? "#1AABAB" : "#9CA3AF" }}>
+                      <span className="text-[11px] leading-snug font-semibold" style={{ color: active ? "#0F6B6B" : "#9CA3AF" }}>
                         Per year: ${(a.monthlyValue * 12).toLocaleString()}
                       </span>
                     ) : (
-                      <span className="text-[11px] leading-snug" style={{ color: active ? "#1AABAB" : "#6B7280" }}>{a.note}</span>
+                      <span className="text-[11px] leading-snug" style={{ color: active ? "#0F6B6B" : "#6B7280" }}>{a.note}</span>
                     )}
+                    {active && <span className="text-[10px] font-bold text-[#0F6B6B] mt-1">Selected</span>}
                   </button>
                 );
               })}
             </div>
           ))}
         </div>
+
+        <button type="button" onClick={() => setShowMoreAmounts((v) => !v)}
+          className="text-xs font-semibold text-[#1AABAB] hover:underline mb-3 block mx-auto">
+          {showMoreAmounts ? "Show fewer options" : "More sponsorship options"}
+        </button>
+
+        {showMoreAmounts && (
+          <div className="flex flex-col gap-3 mb-5">
+            <div className="flex justify-center gap-3 flex-wrap">
+              {amounts.slice(4).map((a) => {
+                const tierValue = frequency === "monthly" ? a.monthlyValue : a.value;
+                const active = selected === tierValue && !custom;
+                return (
+                  <button type="button" key={a.value}
+                    onClick={() => { setSelected(tierValue); setCustom(""); }}
+                    style={{
+                      borderColor: active ? "#1AABAB" : "#E5E7EB",
+                      backgroundColor: active ? "#E6F3F1" : "#FFFFFF",
+                    }}
+                    className="relative flex-1 max-w-[150px] rounded-xl border-2 p-3 text-center transition-all hover:border-[#1AABAB] flex flex-col items-center justify-start">
+                    {active && (
+                      <span className="absolute top-2 right-2 flex items-center gap-1 text-[10px] font-bold text-[#0F6B6B]">
+                        <CheckCircle className="w-3.5 h-3.5" />
+                      </span>
+                    )}
+                    <span className="font-playfair text-xl font-bold mb-1" style={{ color: active ? "#0F6B6B" : "#0D8585" }}>
+                      {frequency === "monthly" ? `$${a.monthlyValue}/mo` : a.label}
+                    </span>
+                    {frequency === "monthly" ? (
+                      <span className="text-[11px] leading-snug font-semibold" style={{ color: active ? "#0F6B6B" : "#9CA3AF" }}>
+                        Per year: ${(a.monthlyValue * 12).toLocaleString()}
+                      </span>
+                    ) : (
+                      <span className="text-[11px] leading-snug" style={{ color: active ? "#0F6B6B" : "#6B7280" }}>{a.note}</span>
+                    )}
+                    {active && <span className="text-[10px] font-bold text-[#0F6B6B] mt-1">Selected</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center gap-3">
           <span className="text-gray-500 text-sm font-medium whitespace-nowrap">Custom amount:</span>
@@ -369,15 +418,20 @@ function DonateForm() {
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
       <button type="submit" disabled={loading || !name || !email || !street || !city || state.length < 2 || zip.length < 5 || donationAmount < 1 || !scriptReady}
-        className="w-full bg-[#F5A020] text-white py-4 rounded-lg font-semibold text-lg hover:bg-[#D48810] transition flex items-center justify-center gap-2 disabled:opacity-50 mt-2">
+        className="w-full bg-[#F5A020] text-white py-4 rounded-lg font-semibold text-lg hover:bg-[#D48810] transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:bg-gray-300 mt-2">
         <Lock className="w-4 h-4" />
         {loading
           ? "Processing..."
-          : isRecurringFreq
-            ? `Give $${donationAmount}/Month`
-            : `Donate $${donationAmount} Securely`}
+          : donationAmount < 1
+            ? "Choose an amount to continue"
+            : isRecurringFreq
+              ? `Give $${donationAmount}/Month`
+              : `Donate $${donationAmount} Securely`}
       </button>
 
+      <p className="text-center text-xs text-gray-400">
+        Secure checkout &middot; Donation is tax-deductible &middot; 501(c)(3) Tax ID: 83-2155012
+      </p>
       <div className="flex items-center justify-center gap-1.5 text-xs text-gray-400">
         <Shield className="w-3.5 h-3.5" />
         256-bit SSL Encrypted &middot; Powered by USAePay
@@ -415,35 +469,23 @@ export default function DonatePage() {
         </div>
       </section>
 
-      {/* Form + Testimonials side by side */}
+      {/* Payment form (the primary focus of this page) */}
       <section id="payment" className="bg-white py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16 items-start">
-
-            {/* Left: testimonials */}
-            <div className="lg:sticky lg:top-28">
-              <span className="font-caveat text-[#C17642] text-3xl sm:text-4xl tracking-wide">From Our Families</span>
-              <h2 className="font-playfair text-4xl sm:text-5xl font-bold text-gray-900 mt-2 mb-10 leading-[1.1]">Why It Matters</h2>
-              <div className="flex flex-col gap-6">
-                <div className="bg-[#FAF3E8] rounded-2xl p-8 border border-[#E8D9C0]">
-                  <p className="font-playfair italic text-gray-700 text-lg leading-relaxed">
-                    &ldquo;From the application process to having food delivered right to our door every week &mdash; Tomchei Shabbos has taken away our greatest stress. There are no words to describe our gratitude.&rdquo;
-                  </p>
-                </div>
-                <div className="bg-[#FAF3E8] rounded-2xl p-8 border border-[#E8D9C0]">
-                  <p className="font-playfair italic text-gray-700 text-lg leading-relaxed">
-                    &ldquo;What would we do without Tomchei Shabbos? They have restored happiness and calm to our home. Shabbos is something we look forward to again. Thank you from the bottom of our hearts.&rdquo;
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: payment form */}
-            <div>
-              <DonateFormWithOtherWays />
-            </div>
-
+        <div className="max-w-xl mx-auto px-6">
+          <div className="bg-[#FCF7ED] border border-[#E7DED0] rounded-2xl p-6 sm:p-10">
+            <DonateFormWithOtherWays />
           </div>
+        </div>
+      </section>
+
+      {/* Testimonial (secondary, below the form) */}
+      <section className="bg-[#FEFCF7] py-20 border-t border-[#E8D9C0]">
+        <div className="max-w-2xl mx-auto px-6 text-center">
+          <span className="text-xs font-bold uppercase tracking-widest text-[#C17642]">From a recipient family</span>
+          <p className="font-playfair italic text-gray-700 text-xl leading-relaxed mt-4">
+            &ldquo;From the application process to having food delivered right to our door every week &mdash;
+            Tomchei Shabbos has taken away our greatest stress. There are no words to describe our gratitude.&rdquo;
+          </p>
         </div>
       </section>
 
