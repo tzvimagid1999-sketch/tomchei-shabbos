@@ -205,7 +205,7 @@ export default function RoshHashanah() {
   }
 
   return (
-    <main className="min-h-screen pb-16 bg-white">
+    <main className="min-h-screen pt-20 pb-16 bg-white">
       <div className="relative z-10">
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
