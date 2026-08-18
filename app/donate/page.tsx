@@ -28,13 +28,13 @@ interface USAePayCard {
 }
 
 const amounts = [
-  { value: 125,  monthlyValue: 613, label: "$125",   title: "A small family for a week" },
-  { value: 225,  monthlyValue: 500, label: "$225",   title: "A medium family for a week" },
-  { value: 350,  monthlyValue: 325, label: "$350",   title: "A large family for a week" },
-  { value: 600,  monthlyValue: 200, label: "$600",   title: "A small family for a month" },
-  { value: 900,  monthlyValue: 180, label: "$900",   title: "A medium family for a month" },
-  { value: 1350, monthlyValue: 72,  label: "$1,350", title: "A large family for a month" },
-  { value: 6000, monthlyValue: 36,  label: "$6,000", title: "A family for a year" },
+  { value: 125,  monthlyValue: 613, label: "$125",   title: "Small family for a week" },
+  { value: 225,  monthlyValue: 500, label: "$225",   title: "Medium family for a week" },
+  { value: 350,  monthlyValue: 325, label: "$350",   title: "Large family for a week" },
+  { value: 600,  monthlyValue: 200, label: "$600",   title: "Small family for a month" },
+  { value: 900,  monthlyValue: 180, label: "$900",   title: "Medium family for a month" },
+  { value: 1350, monthlyValue: 72,  label: "$1,350", title: "Large family for a month" },
+  { value: 6000, monthlyValue: 36,  label: "$6,000", title: "Family for a year" },
 ];
 
 const SPLIT_MONTH_OPTIONS = [3, 6, 12, 18, 24, 36];
