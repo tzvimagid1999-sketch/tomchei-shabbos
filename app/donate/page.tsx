@@ -248,7 +248,15 @@ export default function DonatePage() {
               const tierValue = frequency === "monthly" ? a.monthlyValue : a.value;
               const active = selected === tierValue && !custom;
               return (
-                <button key={a.value} onClick={() => { setSelected(tierValue); setCustom(""); }}
+                <button key={a.value}
+                  onClick={() => {
+                    setSelected(tierValue);
+                    setCustom("");
+                    // Wait a tick for the amount bar to render (it's conditional on donationAmount) before scrolling to it.
+                    requestAnimationFrame(() => {
+                      document.getElementById("donation-amount-bar")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                    });
+                  }}
                   className="group bg-white rounded-[20px] p-5 sm:p-8 text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-2 border-[#1AABAB]"
                   style={{ background: active ? "#F0FBFB" : "#FFFFFF" }}>
                   <p className="font-bold text-4xl sm:text-5xl text-[#1AABAB] mb-3 sm:mb-4">
@@ -308,7 +316,7 @@ export default function DonatePage() {
               )}
 
               {donationAmount > 0 && (
-                <div className="bg-gradient-to-br from-[#F0FBFB] to-white border-2 border-[#1AABAB] rounded-xl p-6 mb-2">
+                <div id="donation-amount-bar" className="bg-gradient-to-br from-[#F0FBFB] to-white border-2 border-[#1AABAB] rounded-xl p-6 mb-2 scroll-mt-24">
                   <p className="text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-2">Donation Amount</p>
                   <p className="font-bold text-5xl text-[#1AABAB]">${donationAmount}{isRecurringFreq ? "/mo" : ""}</p>
                 </div>
