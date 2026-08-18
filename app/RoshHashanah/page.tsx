@@ -210,11 +210,11 @@ export default function RoshHashanah() {
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
         {/* Hero */}
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-4">
+        <div className="w-full">
           <img
             src="/rosh-hashanah-campaign-hero.jpeg"
             alt="Rosh Hashanah Campaign"
-            className="w-full h-auto block rounded-xl"
+            className="w-full h-auto block"
           />
         </div>
 
