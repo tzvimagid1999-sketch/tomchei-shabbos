@@ -214,7 +214,7 @@ export default function RoshHashanah() {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: "url(/rosh-hashanah-apples-honey.png)",
+              backgroundImage: "url(/rosh-hashanah-campaign-hero.jpeg)",
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
