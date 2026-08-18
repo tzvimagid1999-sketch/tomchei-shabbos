@@ -210,31 +210,12 @@ export default function RoshHashanah() {
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
         {/* Hero */}
-        <div className="relative text-center pt-16 pb-8 sm:pt-20 sm:pb-10 px-4 sm:px-6 overflow-hidden">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: "url(/rosh-hashanah-campaign-hero.jpeg)",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+        <div className="w-full bg-black flex items-center justify-center">
+          <img
+            src="/rosh-hashanah-campaign-hero.jpeg"
+            alt="Rosh Hashanah Campaign"
+            className="max-w-full max-h-[80vh] w-auto h-auto mx-auto block"
           />
-          <div className="absolute inset-0" style={{ background: "rgba(15, 23, 42, 0.55)" }} />
-          <div className="relative max-w-3xl mx-auto">
-            <h1 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
-              A New Year. A Fresh Start. A Chance to Make a <span style={{ color: "#D4A017" }}>Difference.</span>
-            </h1>
-            <p className="mt-5 text-white/90 max-w-xl mx-auto" style={{ fontFamily: "var(--font-manrope)", fontSize: "16px", lineHeight: 1.6 }}>
-              Every family deserves to celebrate Rosh Hashanah with dignity. Your generosity provides food, hope, and joy to families who need it most.
-            </p>
-            <button onClick={() => document.getElementById('donate-section')?.scrollIntoView({ behavior: 'smooth' })}
-              className="mt-6 text-white px-8 sm:px-10 py-3 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto"
-              style={{ backgroundColor: "#D4A017" }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#B8860B")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#D4A017")}>
-              Donate Now →
-            </button>
-          </div>
         </div>
 
         <div className="h-8 sm:h-10" />
