@@ -210,7 +210,7 @@ export default function RoshHashanah() {
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
         {/* Hero */}
-        <div className="relative text-center pt-32 pb-20 sm:pt-40 sm:pb-28 px-4 sm:px-6 overflow-hidden">
+        <div className="relative text-center pt-24 pb-12 sm:pt-28 sm:pb-16 px-4 sm:px-6 overflow-hidden">
           <div
             className="absolute inset-0"
             style={{
@@ -237,7 +237,7 @@ export default function RoshHashanah() {
           </div>
         </div>
 
-        <div className="h-16 sm:h-20" />
+        <div className="h-8 sm:h-10" />
 
         {/* Thermometer */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
