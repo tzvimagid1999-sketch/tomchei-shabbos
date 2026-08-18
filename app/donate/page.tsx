@@ -238,7 +238,7 @@ export default function DonatePage() {
           <div className="absolute inset-0" style={{ background: "rgba(38, 29, 22, 0.6)" }} />
           <div className="relative max-w-3xl mx-auto">
             <h1 className="font-playfair text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight">
-              Your Gift Puts Food on a Family&apos;s <span style={{ color: "#F5A020" }}>Shabbos Table.</span>
+              Your Gift Puts Food on a Family&apos;s <span style={{ color: "#1AABAB" }}>Shabbos Table.</span>
             </h1>
             <p className="mt-8 text-white/90 max-w-xl mx-auto" style={{ fontFamily: "var(--font-manrope)", fontSize: "22px", lineHeight: 1.6 }}>
               Every dollar counts. Your generosity provides food, hope, and dignity to families who need it most, every week of the year.
