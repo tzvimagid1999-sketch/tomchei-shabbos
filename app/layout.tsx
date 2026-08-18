@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Lora, DM_Sans, Inter } from "next/font/google";
+import { Lora, DM_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -11,8 +11,6 @@ import PopupBanner from "./components/PopupBanner";
 // need to be touched across the site.
 const lora   = Lora({ subsets: ["latin"], variable: "--font-lora", style: ["normal", "italic"] });
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dmsans", weight: ["400", "500", "600", "700", "800"] });
-// Classic, trustworthy sans used specifically for the home page nav menu and hero CTA buttons.
-const inter  = Inter({ subsets: ["latin"], variable: "--font-inter", weight: ["500", "600", "700", "800"] });
 
 export const metadata: Metadata = {
   title: "Tomchei Shabbos Florida – Helping Every Family Celebrate Shabbos",
@@ -23,7 +21,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${lora.variable} ${dmSans.variable} ${inter.variable} font-sans`}>
+      <body className={`${lora.variable} ${dmSans.variable} font-sans`}>
         <Navbar />
         <PopupBanner />
         {children}

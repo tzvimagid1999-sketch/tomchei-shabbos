@@ -15,7 +15,6 @@ h1, h2, h3 { font-family: var(--font-lora), Georgia, serif; }
 .font-josefin,
 .font-figtree,
 .font-nunito   { font-family: var(--font-dmsans), Arial, sans-serif; }
-.font-inter    { font-family: var(--font-inter), Arial, sans-serif; }
 
 /* Subtle paper / linen texture overlay */
 .paper-texture {
