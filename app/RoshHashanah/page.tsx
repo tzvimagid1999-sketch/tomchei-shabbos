@@ -339,7 +339,7 @@ export default function RoshHashanah() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">Dedicate This Gift (Optional)</label>
+                <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">Dedicated To</label>
                 <div className="flex rounded-xl overflow-hidden border-2 border-[#E5E5E5] mb-3">
                   {([
                     { key: "", label: "None" },
