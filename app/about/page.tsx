@@ -1,14 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import TiltCard from "../components/TiltCard";
-const values = [
-  "Community-driven and volunteer-powered",
-  "100% of donations go directly to families",
-  "Weekly deliveries, every single Shabbos",
-  "Every family treated with dignity and respect",
-  "Serving all Jewish families in need",
-  "Confidential and caring support",
-];
 
 export default function AboutPage() {
   return (
@@ -132,25 +123,6 @@ export default function AboutPage() {
                 <span className="italic text-[#0F9FAE]"> Our neighbors. Our friends. Our community.</span>
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Values */}
-      <section className="bg-[#FDF9F7] pt-6 pb-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <span className="font-caveat text-[#C17642] text-3xl sm:text-4xl tracking-wide">Our Values</span>
-            <h2 className="font-playfair text-5xl sm:text-6xl font-semibold text-[#0F9FAE] mt-2 leading-[1.1]">
-              What We Stand For
-            </h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {values.map((v) => (
-              <TiltCard key={v}>
-                <span className="font-manrope text-[#495057] font-medium text-sm">{v}</span>
-              </TiltCard>
-            ))}
           </div>
         </div>
       </section>
