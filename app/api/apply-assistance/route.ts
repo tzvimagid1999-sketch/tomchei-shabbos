@@ -54,6 +54,26 @@ export async function POST(req: NextRequest) {
       html,
     });
 
+    // Confirm to the applicant that their application was received —
+    // best-effort, don't fail the whole submission if just this email fails.
+    try {
+      await sendMail({
+        to: data.email,
+        subject: "We received your application",
+        html: `
+          <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#2F3A44">
+            <h2 style="color:#1AABAB">Thank you, ${data.firstName}!</h2>
+            <p style="font-size:16px;line-height:1.7">
+              We've received your application for assistance from Tomchei Shabbos of Florida.
+              Our team will review it and reach out to you soon.
+            </p>
+            <p style="font-size:13px;color:#8B7355">With gratitude,<br/>Tomchei Shabbos of Florida</p>
+          </div>`,
+      });
+    } catch (confirmErr: unknown) {
+      console.error("Applicant confirmation email failed (non-fatal):", confirmErr instanceof Error ? confirmErr.message : confirmErr);
+    }
+
     // Also log the application to the Google Sheet — best-effort, never blocks
     // the email above or fails the submission if the sheet is unreachable.
     if (process.env.GOOGLE_SHEET_WEBHOOK_URL) {
