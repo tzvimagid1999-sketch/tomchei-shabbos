@@ -92,14 +92,6 @@ export default function AboutPage() {
               <div className="rounded-2xl overflow-hidden h-96 relative shadow-lg shrink-0">
                 <Image src="/photos/photo-10.jpg" alt="Tomchei Shabbos volunteers" fill className="object-cover" />
               </div>
-
-              <div className="lg:flex-1 lg:flex lg:items-end lg:mt-56">
-                <blockquote className="w-full rounded-2xl bg-[#F5EEE7] border border-[#E7DACD] px-10 py-10 text-center">
-                  <p className="font-playfair italic text-[#F5A020] leading-snug" style={{ fontSize: "34px" }}>
-                    Building a stronger community through acts of kindness.
-                  </p>
-                </blockquote>
-              </div>
             </div>
             <div>
               <span className="font-caveat text-[#C17642] text-3xl sm:text-4xl tracking-wide">Our Story</span>
