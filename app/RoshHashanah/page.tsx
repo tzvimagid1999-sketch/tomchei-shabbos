@@ -253,7 +253,7 @@ export default function RoshHashanah() {
             </div>
             <div className="relative w-full h-6 bg-[#F8F4EC] rounded-full overflow-hidden shadow-sm">
               <div className={`absolute top-0 left-0 h-full bg-gradient-to-r from-[#1AABAB] to-[#3DC4C4] rounded-full transition-all duration-500 ${loading ? "animate-pulse" : ""}`}
-                style={{ width: loading ? "8%" : `${progressPercent}%` }} />
+                style={{ width: loading ? "0%" : `${progressPercent}%` }} />
             </div>
           </div>
         </div>
