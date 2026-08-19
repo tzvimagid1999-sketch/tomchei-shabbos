@@ -242,13 +242,13 @@ export default function RoshHashanah() {
               </div>
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Raised</p>
-                <p className="font-bold text-2xl sm:text-3xl text-[#2D2D2D]">
-                  {loading ? "…" : totalDonated >= 1000 ? `$${(totalDonated / 1000).toFixed(0)}k` : `$${totalDonated.toLocaleString()}`}
+                <p className={`font-bold text-[#2D2D2D] ${loading ? "text-sm sm:text-base italic" : "text-2xl sm:text-3xl"}`}>
+                  {loading ? "Calculating…" : totalDonated >= 1000 ? `$${(totalDonated / 1000).toFixed(0)}k` : `$${totalDonated.toLocaleString()}`}
                 </p>
               </div>
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Progress</p>
-                <p className="font-bold text-2xl sm:text-3xl text-[#C8A75B]">{loading ? "…" : `${Math.round(progressPercent)}%`}</p>
+                <p className={`font-bold text-[#C8A75B] ${loading ? "text-sm sm:text-base italic" : "text-2xl sm:text-3xl"}`}>{loading ? "Calculating…" : `${Math.round(progressPercent)}%`}</p>
               </div>
             </div>
             <div className="relative w-full h-6 bg-[#F8F4EC] rounded-full overflow-hidden shadow-sm">
