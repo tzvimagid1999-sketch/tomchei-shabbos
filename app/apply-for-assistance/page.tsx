@@ -177,9 +177,9 @@ export default function ApplyForAssistancePage() {
             </div>
             {form.unit && (
               <div className="mb-3">
-                <label className={labelClass}>Building / Gate Access Instructions</label>
+                <label className={labelClass}>Building / Gate Access Instructions *</label>
                 <div className="relative">
-                  <input type={showAccessCode ? "text" : "password"} name="accessInstructions"
+                  <input type={showAccessCode ? "text" : "password"} name="accessInstructions" required
                     value={form.accessInstructions} onChange={handleChange}
                     placeholder="e.g. gate code, doorman, leave with front desk"
                     className={`${inputClass} pr-10`} />

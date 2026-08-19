@@ -13,6 +13,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });
       }
     }
+    if (data.unit && !String(data.accessInstructions || "").trim()) {
+      return NextResponse.json({ error: "Please provide building/gate access instructions." }, { status: 400 });
+    }
 
     if (!process.env.GMAIL_APP_PASSWORD) {
       return NextResponse.json({ error: "Applications are not configured yet. Please try again later." }, { status: 500 });
