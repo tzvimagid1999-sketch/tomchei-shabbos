@@ -28,18 +28,23 @@ export async function sendMonthlyConfirmation(opts: {
   amount: number;
   refnum?: string;
   cardLast4?: string;
+  honoreeType?: "honor" | "memory";
+  honoreeName?: string;
 }): Promise<void> {
   if (!process.env.GMAIL_APP_PASSWORD || !opts.email) return;
 
   const sig = signCustKey(opts.custkey);
   const cancelUrl = `${opts.origin}/manage-donation?c=${encodeURIComponent(opts.custkey)}&s=${sig}`;
   const fullName = opts.name || "Friend";
+  const dedication = opts.honoreeType && opts.honoreeName
+    ? ` (${opts.honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${opts.honoreeName})`
+    : "";
 
   const html = `
   <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#2F3A44">
     <p style="font-size:16px;line-height:1.7">
       Dear ${fullName},<br/><br/>
-      Thank you for your generous pledge of <strong>$${opts.amount}/month</strong> to Tomchei Shabbos of Florida.
+      Thank you for your generous pledge of <strong>$${opts.amount}/month</strong> to Tomchei Shabbos of Florida${dedication}.
       Your support means a great deal to us. Contributions like yours make it possible for Tomchei Shabbos of Florida
       to continue its mission. We are deeply grateful for your commitment.
     </p>
@@ -48,6 +53,7 @@ export async function sendMonthlyConfirmation(opts: {
       ${opts.cardLast4 ? `<p style="margin:0 0 6px"><strong>Card:</strong> xxxx xxxx xxxx ${opts.cardLast4}</p>` : ""}
       <p style="margin:0 0 6px"><strong>Amount:</strong> $${opts.amount}/month</p>
       <p style="margin:0 0 6px"><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+      ${dedication ? `<p style="margin:0 0 6px"><strong>Dedication:</strong> ${opts.honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${opts.honoreeName}</p>` : ""}
       <p style="margin:0"><strong>Tax ID:</strong> ${process.env.NONPROFIT_TAX_ID}</p>
     </div>
     <div style="background:#FAF3E8;border:1px solid #E8D9C0;border-radius:12px;padding:20px;margin:20px 0">

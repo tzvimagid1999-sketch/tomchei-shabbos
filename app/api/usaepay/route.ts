@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, firstName, lastName, email, street, city, state, zip, campaign } = await req.json();
+    const { amount, paymentKey, firstName, lastName, name, email, street, city, state, zip, campaign, honoreeType, honoreeName } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -27,6 +27,20 @@ export async function POST(req: NextRequest) {
     if (!paymentKey) {
       return NextResponse.json({ error: "Missing card details." }, { status: 400 });
     }
+
+    // The Donate page sends a single `name` field; the Rosh Hashanah page sends
+    // firstName/lastName separately — support both.
+    let resolvedFirst = firstName;
+    let resolvedLast = lastName;
+    if (!resolvedFirst && name) {
+      const parts = String(name).trim().split(/\s+/);
+      resolvedFirst = parts[0];
+      resolvedLast = parts.slice(1).join(" ") || parts[0];
+    }
+
+    const dedication = honoreeType && honoreeName
+      ? ` (${honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${honoreeName})`
+      : "";
 
     // Build the USAePay v2 auth hash: s2/<seed>/<sha256(sourceKey + seed + pin)>
     const seed = crypto.randomBytes(16).toString("hex");
@@ -47,12 +61,12 @@ export async function POST(req: NextRequest) {
         amount: numericAmount.toFixed(2),
         payment_key: paymentKey,
         email: email || undefined,
-        description: campaign === "rosh-hashanah"
+        description: (campaign === "rosh-hashanah"
           ? "Rosh Hashanah Campaign donation to Tomchei Shabbos of Florida"
-          : "Donation to Tomchei Shabbos of Florida",
+          : "Donation to Tomchei Shabbos of Florida") + dedication,
         billing_address: {
-          firstname: firstName || undefined,
-          lastname: lastName || undefined,
+          firstname: resolvedFirst || undefined,
+          lastname: resolvedLast || undefined,
           street: street || undefined,
           city: city || undefined,
           state: state || undefined,
@@ -71,7 +85,7 @@ export async function POST(req: NextRequest) {
           // Mask email for privacy
           const maskedEmail = email.replace(/(.{2})(.*)(@.*)/, "$1***$3");
 
-          const fullName = [firstName, lastName].filter(Boolean).join(" ") || "Friend";
+          const fullName = [resolvedFirst, resolvedLast].filter(Boolean).join(" ") || "Friend";
           await sendMail({
             to: email,
             subject: "Thank you for your generous donation!",
@@ -79,7 +93,7 @@ export async function POST(req: NextRequest) {
               <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#2F3A44">
                 <p style="font-size:16px;line-height:1.7">
                   Dear ${fullName},<br/><br/>
-                  Thank you for your generous donation of <strong>$${numericAmount.toFixed(2)}</strong> to Tomchei Shabbos of Florida.
+                  Thank you for your generous donation of <strong>$${numericAmount.toFixed(2)}</strong> to Tomchei Shabbos of Florida${dedication}.
                   Your support means a great deal to us. Contributions like yours make it possible for Tomchei Shabbos of Florida
                   to continue its mission. We are deeply grateful for your commitment.
                 </p>
@@ -88,6 +102,7 @@ export async function POST(req: NextRequest) {
                   <p style="margin:0 0 6px;font-size:14px"><strong>Amount:</strong> $${numericAmount.toFixed(2)}</p>
                   <p style="margin:0 0 6px;font-size:14px"><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
                   <p style="margin:0 0 6px;font-size:14px"><strong>Email:</strong> ${maskedEmail}</p>
+                  ${dedication ? `<p style="margin:0 0 6px;font-size:14px"><strong>Dedication:</strong> ${honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${honoreeName}</p>` : ""}
                   <p style="margin:0;font-size:14px"><strong>Tax ID:</strong> ${process.env.NONPROFIT_TAX_ID}</p>
                 </div>
                 <p style="font-size:16px;line-height:1.7">Warm regards,<br/>Tomchei Shabbos of Florida</p>

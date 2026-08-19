@@ -67,6 +67,7 @@ export default function RoshHashanah() {
   const [thankYou, setThankYou] = useState<{ name: string; amount: string; email: string; monthly?: boolean } | null>(null);
   const [checkoutFrequency, setCheckoutFrequency] = useState<"once" | "monthly">("once");
   const [splitMonths, setSplitMonths] = useState<number | null>(null); // null = ongoing until cancelled
+  const [honoreeType, setHonoreeType] = useState<"" | "honor" | "memory">("");
 
   const clientRef = useRef<any>(null);
   const cardRef = useRef<any>(null);
@@ -134,6 +135,7 @@ export default function RoshHashanah() {
     const city = (document.getElementById("city") as HTMLInputElement)?.value;
     const state = (document.getElementById("state") as HTMLInputElement)?.value;
     const zip = (document.getElementById("zip") as HTMLInputElement)?.value;
+    const honoreeName = (document.getElementById("honoreeName") as HTMLInputElement)?.value;
 
     if (!checkoutAmount || !firstName || !lastName || !email || !street || !city || !state || !zip) {
       alert("Please fill in all fields");
@@ -167,6 +169,7 @@ export default function RoshHashanah() {
           city,
           state,
           zip,
+          ...(honoreeType && honoreeName ? { honoreeType, honoreeName } : {}),
         }),
       });
 
@@ -182,6 +185,9 @@ export default function RoshHashanah() {
         (document.getElementById("city") as HTMLInputElement).value = "";
         (document.getElementById("state") as HTMLInputElement).value = "";
         (document.getElementById("zip") as HTMLInputElement).value = "";
+        const honoreeInput = document.getElementById("honoreeName") as HTMLInputElement | null;
+        if (honoreeInput) honoreeInput.value = "";
+        setHonoreeType("");
       } else {
         alert("Payment failed: " + (data.error || "Unknown error"));
       }
@@ -330,6 +336,28 @@ export default function RoshHashanah() {
                     onChange={(e) => setCheckoutAmount(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 text-lg border-2 border-[#E5E5E5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white" />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">Dedicate This Gift (Optional)</label>
+                <div className="flex rounded-xl overflow-hidden border-2 border-[#E5E5E5] mb-3">
+                  {([
+                    { key: "", label: "None" },
+                    { key: "honor", label: "In Honor Of" },
+                    { key: "memory", label: "In Memory Of" },
+                  ] as const).map((opt) => (
+                    <button type="button" key={opt.key} onClick={() => setHonoreeType(opt.key)}
+                      className={`flex-1 py-2.5 text-xs font-bold tracking-wide transition-all ${
+                        honoreeType === opt.key ? "bg-[#C8A75B] text-white" : "bg-white text-gray-500 hover:bg-gray-50"
+                      }`}>
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {honoreeType && (
+                  <input type="text" placeholder="Name" id="honoreeName"
+                    className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" />
+                )}
               </div>
 
               <div>

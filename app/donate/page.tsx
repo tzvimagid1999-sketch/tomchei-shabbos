@@ -97,6 +97,8 @@ export default function DonatePage() {
   const [splitMonths, setSplitMonths] = useState<number | null>(null); // null = ongoing until cancelled
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [honoreeType, setHonoreeType] = useState<"" | "honor" | "memory">("");
+  const [honoreeName, setHonoreeName] = useState("");
   const [street, setStreet] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -190,6 +192,7 @@ export default function DonatePage() {
           amount: donationAmount,
           paymentKey, name, email, street, city, state, zip,
           ...(frequency === "monthly" && splitMonths ? { numPayments: splitMonths } : {}),
+          ...(honoreeType && honoreeName ? { honoreeType, honoreeName } : {}),
         }),
       });
       const data = await res.json();
@@ -330,6 +333,28 @@ export default function DonatePage() {
                     onChange={(e) => { setCustom(e.target.value); setSelected(0); }}
                     className="w-full pl-10 pr-4 py-3 text-lg border-2 border-[#E5E5E5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1AABAB] focus:border-transparent bg-white" />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">Dedicate This Gift (Optional)</label>
+                <div className="flex rounded-xl overflow-hidden border-2 border-[#E5E5E5] mb-3">
+                  {([
+                    { key: "", label: "None" },
+                    { key: "honor", label: "In Honor Of" },
+                    { key: "memory", label: "In Memory Of" },
+                  ] as const).map((opt) => (
+                    <button type="button" key={opt.key} onClick={() => setHonoreeType(opt.key)}
+                      className={`flex-1 py-2.5 text-xs font-bold tracking-wide transition-all ${
+                        honoreeType === opt.key ? "bg-[#1AABAB] text-white" : "bg-white text-gray-500 hover:bg-gray-50"
+                      }`}>
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {honoreeType && (
+                  <input type="text" placeholder="Name" value={honoreeName} onChange={(e) => setHonoreeName(e.target.value)}
+                    className={inputClass} />
+                )}
               </div>
 
               <div>

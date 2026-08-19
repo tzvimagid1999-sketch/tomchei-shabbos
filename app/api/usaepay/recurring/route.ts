@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, name, email, street, city, state, zip, numPayments } = await req.json();
+    const { amount, paymentKey, name, email, street, city, state, zip, numPayments, honoreeType, honoreeName } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -35,6 +35,9 @@ export async function POST(req: NextRequest) {
     // charges payment #1 — the schedule only needs to cover the remaining ones.
     const totalPayments = numPayments ? Number(numPayments) : undefined;
     const remainingPayments = totalPayments && totalPayments > 1 ? totalPayments - 1 : undefined;
+    const dedication = honoreeType && honoreeName
+      ? ` (${honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${honoreeName})`
+      : "";
 
     const auth = () => {
       const seed = crypto.randomBytes(16).toString("hex");
@@ -94,9 +97,9 @@ export async function POST(req: NextRequest) {
         custkey: String(custkey),
         save_customer_paymethod: true,
         email: email || undefined,
-        description: totalPayments
+        description: (totalPayments
           ? `Pledge payment 1 of ${totalPayments} to Tomchei Shabbos of Florida`
-          : "Monthly donation to Tomchei Shabbos of Florida (first payment)",
+          : "Monthly donation to Tomchei Shabbos of Florida (first payment)") + dedication,
         billing_address: billing,
       }),
     });
@@ -166,6 +169,8 @@ export async function POST(req: NextRequest) {
         amount: numericAmount,
         refnum: (sale.refnum as string) || (sale.authcode as string) || undefined,
         cardLast4: cardNumber ? cardNumber.slice(-4) : undefined,
+        honoreeType: honoreeType || undefined,
+        honoreeName: honoreeName || undefined,
       });
     } catch (emailErr: unknown) {
       console.error("Confirmation email threw:", emailErr instanceof Error ? emailErr.message : emailErr);
