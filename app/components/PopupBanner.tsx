@@ -29,14 +29,14 @@ export default function PopupBanner() {
           {/* Clickable "Click To Give" hotspot, positioned over the button in the graphic */}
           <Link href="/RoshHashanah" onClick={close}
             aria-label="Click to give"
-            className="absolute rounded-[10px] cursor-pointer transition-all duration-150 hover:ring-2 hover:ring-inset hover:ring-[#0F6B6B] active:scale-[0.97]"
+            className="absolute rounded-none cursor-pointer transition-all duration-150 hover:ring-2 hover:ring-inset hover:ring-[#0F6B6B] active:scale-[0.97]"
             style={{ left: "69%", top: "79%", width: "27.5%", height: "11.5%" }} />
         </div>
 
         {/* Close button */}
         <button onClick={close}
-          className="absolute top-3 right-3 bg-black/40 hover:bg-black/60 text-white rounded-md p-1.5 transition">
-          <X className="w-5 h-5" />
+          className="absolute top-2 right-2 bg-black/40 hover:bg-black/60 text-white rounded-sm p-0.5 transition">
+          <X className="w-3 h-3" />
         </button>
       </div>
     </div>
