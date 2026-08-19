@@ -1,0 +1,33 @@
+Subject: URGENT: Recurring schedule "Next" date shows invalid date (11/30/-0001) - will it still charge?
+
+Hi Ben,
+
+Following up on my earlier question about the "00/00/0000" date issue — we now have
+a live, real example that makes this more concerning, and this one involves real
+donor money.
+
+We set up a recurring schedule (a $54 pledge split into 3 monthly payments of $18
+each). Here's what we see in the Recurring Billing tab for that customer:
+
+- Schedule Enabled: Yes
+- Schedule: Monthly
+- Start: 09/11/2026 (correct — this is what we set)
+- Next: 11/30/-0001 (clearly an invalid/uninitialized date)
+- Num Left: 2 (correct — the first of 3 payments was charged today directly,
+  this schedule covers the remaining 2)
+- Each Pmt Amt: $18.00 (correct)
+
+Everything else about the schedule looks right (amount, num left, start date,
+enabled status) — it's specifically the "Next" field showing this broken date.
+
+Can you confirm definitively: will this schedule still automatically charge $18
+on 10/11/2026 (one month after the start date) and again on 11/11/2026, despite
+the "Next" field showing an invalid date? Or does something need to be fixed on
+our end or yours for the "Next" date to populate correctly and for billing to
+actually fire?
+
+This is now affecting a real donor's real pledge, so we'd really appreciate a
+definitive answer before more of these come through.
+
+Thank you,
+Tzvi

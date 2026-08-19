@@ -1,0 +1,19 @@
+Subject: Re: Recurring schedule "Next" date shows invalid date
+
+Hi Ben,
+
+Yes — we always send a start_date when creating the billing schedule. For the
+example I flagged (the $54 pledge split into 3 monthly payments of $18), we
+sent start_date: 2026-09-11, which matches exactly what shows in the "Start"
+field on your dashboard (09/11/2026).
+
+So the date is being entered and accepted correctly on our end — it's only the
+"Next" field in your dashboard that's showing the invalid 11/30/-0001 value,
+even though Start, Enabled, and Num Left all display correctly.
+
+Given that, can you confirm whether billing will still fire correctly off the
+Start date (and then roll forward monthly from there), or does something on
+your side need to be fixed for billing to actually trigger?
+
+Thank you,
+Tzvi

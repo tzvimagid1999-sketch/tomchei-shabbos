@@ -1,0 +1,17 @@
+Subject: Re: Recurring schedule - date issue resolved, one question on payment count
+
+Hi Ben,
+
+Good news on the date issue — I pulled the raw schedule data directly from
+the USAePay REST API for that customer, and it shows a valid next_date of
+2026-09-12 (not the 11/30/-0001 shown on your dashboard). So that was just a
+display bug on the dashboard side, not a real problem with the schedule.
+
+One thing I do want to confirm: numleft on that schedule shows "1", but I
+expected "2". This is a $54 pledge split into 3 monthly payments of $18 — we
+charged payment 1 directly, so the schedule should have 2 payments left, not
+1. Can you help me understand why it's showing 1? I want to make sure this
+donor gets charged the correct number of times (2 more, not 1 more).
+
+Thank you,
+Tzvi
