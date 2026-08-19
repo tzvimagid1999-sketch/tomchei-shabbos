@@ -224,7 +224,7 @@ export default function RoshHashanah() {
 
         {/* Hero — same 300px size as the About Us, Volunteer, and Blog page heroes */}
         <section className="relative min-h-[300px] flex items-center justify-center text-center overflow-hidden">
-          <Image src="/rosh-hashanah-campaign-hero-padded.jpeg" alt="Rosh Hashanah Campaign"
+          <Image src="/rosh-hashanah-hero-v2.jpg" alt="Rosh Hashanah Campaign"
             fill className="object-cover object-center" priority sizes="100vw" />
         </section>
 
