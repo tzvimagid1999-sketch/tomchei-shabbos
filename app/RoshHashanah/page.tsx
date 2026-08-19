@@ -68,6 +68,7 @@ export default function RoshHashanah() {
   const [checkoutFrequency, setCheckoutFrequency] = useState<"once" | "monthly">("once");
   const [splitMonths, setSplitMonths] = useState<number | null>(null); // null = ongoing until cancelled
   const [honoreeType, setHonoreeType] = useState<"" | "honor" | "memory">("");
+  const [transitionStyle, setTransitionStyle] = useState<1 | 2 | 3>(1); // TEMP: review-only switcher
 
   const clientRef = useRef<any>(null);
   const cardRef = useRef<any>(null);
@@ -230,10 +231,34 @@ export default function RoshHashanah() {
             fill className="object-cover sm:object-contain object-center" priority sizes="100vw" />
         </section>
 
-        <div className="h-8 sm:h-10" />
+        {/* TEMP: review-only switcher, will be removed before real deploy */}
+        <div className="flex justify-center gap-2 py-3 bg-[#FFF8EE] border-y border-[#E8D9C0]">
+          {([1, 2, 3] as const).map((n) => (
+            <button key={n} onClick={() => setTransitionStyle(n)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold border-2 ${transitionStyle === n ? "bg-[#C8A75B] text-white border-[#C8A75B]" : "bg-white text-[#C8A75B] border-[#C8A75B]"}`}>
+              Option {n}
+            </button>
+          ))}
+        </div>
+
+        {transitionStyle === 1 && <div className="h-[70px]" style={{ backgroundColor: "#F8F4EC" }} />}
+        {transitionStyle === 2 && (
+          <div style={{ backgroundColor: "#F8F4EC" }}>
+            <svg viewBox="0 0 400 40" preserveAspectRatio="none" className="w-full h-10 block">
+              <path d="M0,0 C100,40 300,40 400,0 L400,0 L0,0 Z" fill="#F8F4EC"></path>
+            </svg>
+          </div>
+        )}
+        {transitionStyle === 3 && (
+          <div className="relative h-[70px]" style={{ backgroundColor: "#F8F4EC" }}>
+            <div className="absolute left-0 right-0 bottom-0 h-6" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.10))" }} />
+          </div>
+        )}
+
+        <div className={transitionStyle === 1 ? "h-0" : "h-8 sm:h-10"} />
 
         {/* Thermometer */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
+        <div className={`max-w-4xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20 relative z-10 ${transitionStyle === 1 ? "-mt-12" : ""}`}>
           <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8" style={{ background: 'rgba(255, 255, 255, 0.95)' }}>
             <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
               <div className="text-center">
