@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { sendMail, sendHonoreeNotification } from "../../lib/mailer";
+import { sendMail, sendHonoreeNotification, escapeHtml } from "../../lib/mailer";
 
 // Charges a donation through the USAePay gateway using a payment token
 // (payment_key) that was generated in the donor's browser by pay.js.
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     }
 
     const dedication = honoreeType && honoreeName
-      ? ` (${honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${honoreeName})`
+      ? ` (${honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${escapeHtml(honoreeName)})`
       : "";
 
     // Build the USAePay v2 auth hash: s2/<seed>/<sha256(sourceKey + seed + pin)>
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
             html: `
               <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#2F3A44">
                 <p style="font-size:16px;line-height:1.7">
-                  Dear ${fullName},<br/><br/>
+                  Dear ${escapeHtml(fullName)},<br/><br/>
                   This email serves as your official receipt for a tax-deductible contribution of
                   <strong>$${numericAmount.toFixed(2)}</strong> received on ${donationDate}${dedication}.
                   No goods or services were provided in exchange for this contribution.

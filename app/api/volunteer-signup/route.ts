@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendMail } from "../../lib/mailer";
+import { sendMail, escapeHtml } from "../../lib/mailer";
 
 // Routes each volunteer signup to the staff address for their selected
 // interest(s) — a signup can match more than one (e.g. Pack + Deliver).
@@ -37,11 +37,11 @@ export async function POST(req: NextRequest) {
     const emailFor = (interest: string) => `
       <div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto">
         <h2 style="color:#1AABAB">New Volunteer Signup</h2>
-        <p><strong>Interested in:</strong> ${interest}</p>
-        <p><strong>Name:</strong> ${firstName} ${lastName}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        ${message ? `<p><strong>Message:</strong> ${message}</p>` : ""}
+        <p><strong>Interested in:</strong> ${escapeHtml(interest)}</p>
+        <p><strong>Name:</strong> ${escapeHtml(firstName)} ${escapeHtml(lastName)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Phone:</strong> ${escapeHtml(phone)}</p>
+        ${message ? `<p><strong>Message:</strong> ${escapeHtml(message)}</p>` : ""}
       </div>`;
 
     // Send a separate email per matching interest, so e.g. Deliver never sees
@@ -65,9 +65,9 @@ export async function POST(req: NextRequest) {
         subject: "Thanks for signing up to volunteer! 💙",
         html: `
           <div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto">
-            <h2 style="color:#1AABAB">Thank you, ${firstName}!</h2>
+            <h2 style="color:#1AABAB">Thank you, ${escapeHtml(firstName)}!</h2>
             <p style="font-size:16px;line-height:1.6">
-              We've received your signup to help with <strong>${interestList.join(", ")}</strong>.
+              We've received your signup to help with <strong>${escapeHtml(interestList.join(", "))}</strong>.
               A member of our team will personally reach out soon to learn a bit more about you
               and find the right way for you to help.
             </p>

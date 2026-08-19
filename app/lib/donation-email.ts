@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { sendMail } from "./mailer";
+import { sendMail, escapeHtml } from "./mailer";
 
 // A one-click cancel link is safe to email because it carries an HMAC signature
 // of the customer key — it can't be forged without the server secret. We reuse
@@ -37,7 +37,7 @@ export async function sendMonthlyConfirmation(opts: {
   const cancelUrl = `${opts.origin}/manage-donation?c=${encodeURIComponent(opts.custkey)}&s=${sig}`;
   const fullName = opts.name || "Friend";
   const dedication = opts.honoreeType && opts.honoreeName
-    ? ` (${opts.honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${opts.honoreeName})`
+    ? ` (${opts.honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${escapeHtml(opts.honoreeName)})`
     : "";
 
   const donationDate = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
@@ -45,7 +45,7 @@ export async function sendMonthlyConfirmation(opts: {
   const html = `
   <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#2F3A44">
     <p style="font-size:16px;line-height:1.7">
-      Dear ${fullName},<br/><br/>
+      Dear ${escapeHtml(fullName)},<br/><br/>
       This email serves as your official receipt for a tax-deductible contribution of
       <strong>$${opts.amount}</strong> received on ${donationDate}${dedication}.
       No goods or services were provided in exchange for this contribution.

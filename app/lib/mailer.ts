@@ -1,5 +1,17 @@
 import nodemailer from "nodemailer";
 
+// Escapes user-supplied text before it's interpolated into an HTML email, so
+// someone typing "<script>" or "&" into a form field can't break the email's
+// layout or inject markup.
+export function escapeHtml(input: unknown): string {
+  return String(input ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // Sends email via Gmail/Google Workspace SMTP using an app password, instead
 // of a third-party email API. Free — uses the org's own Gmail account.
 let transporter: ReturnType<typeof nodemailer.createTransport> | null = null;
@@ -31,8 +43,8 @@ export async function sendHonoreeNotification(opts: {
       html: `
         <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#2F3A44">
           <p style="font-size:16px;line-height:1.7">
-            Dear ${opts.honoreeName},<br/><br/>
-            We wanted to let you know that ${opts.donorName} made a generous donation of
+            Dear ${escapeHtml(opts.honoreeName)},<br/><br/>
+            We wanted to let you know that ${escapeHtml(opts.donorName)} made a generous donation of
             <strong>$${opts.amount}</strong> to Tomchei Shabbos of Florida in your honor.
             Their gift will help families in our community celebrate Shabbos with dignity.
           </p>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendMail } from "../../lib/mailer";
+import { sendMail, escapeHtml } from "../../lib/mailer";
 
 // Sends assistance applications by email instead of storing them — this
 // nonprofit doesn't have a database, and staff already work out of email/Gmail.
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     }
 
     const row = (label: string, value: string) =>
-      value ? `<tr><td style="padding:6px 12px 6px 0;color:#888;font-size:13px;white-space:nowrap;vertical-align:top">${label}</td><td style="padding:6px 0;font-size:14px">${value}</td></tr>` : "";
+      value ? `<tr><td style="padding:6px 12px 6px 0;color:#888;font-size:13px;white-space:nowrap;vertical-align:top">${escapeHtml(label)}</td><td style="padding:6px 0;font-size:14px">${escapeHtml(value)}</td></tr>` : "";
 
     const html = `
       <div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto">
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
         subject: "We received your application",
         html: `
           <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#2F3A44">
-            <h2 style="color:#1AABAB">Thank you, ${data.firstName}!</h2>
+            <h2 style="color:#1AABAB">Thank you, ${escapeHtml(data.firstName)}!</h2>
             <p style="font-size:16px;line-height:1.7">
               We've received your application for assistance from Tomchei Shabbos of Florida.
               Our team will review it and reach out to you soon.
