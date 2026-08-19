@@ -35,7 +35,7 @@ export default function PopupBanner() {
 
         {/* Close button */}
         <button onClick={close}
-          className="absolute top-3 right-3 bg-black/40 hover:bg-black/60 text-white rounded-full p-1.5 transition">
+          className="absolute top-3 right-3 bg-black/40 hover:bg-black/60 text-white rounded-md p-1.5 transition">
           <X className="w-5 h-5" />
         </button>
       </div>
