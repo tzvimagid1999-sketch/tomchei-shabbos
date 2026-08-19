@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { sendMonthlyConfirmation } from "../../../lib/donation-email";
+import { sendHonoreeNotification } from "../../../lib/mailer";
 
 // Sets up a MONTHLY recurring donation. Per USAePay support, this is a 3-step
 // flow (NOT a single "create customer with embedded payment method" call):
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, name, email, street, city, state, zip, numPayments, honoreeType, honoreeName } = await req.json();
+    const { amount, paymentKey, name, email, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -174,6 +175,15 @@ export async function POST(req: NextRequest) {
       });
     } catch (emailErr: unknown) {
       console.error("Confirmation email threw:", emailErr instanceof Error ? emailErr.message : emailErr);
+    }
+
+    if (honoreeType === "honor" && honoreeEmail && honoreeName) {
+      await sendHonoreeNotification({
+        to: honoreeEmail,
+        honoreeName,
+        donorName: name || "A donor",
+        amount: numericAmount,
+      });
     }
 
     return NextResponse.json({ success: true, custnum: custkey, scheduleOk, debug: scheduleDebug });

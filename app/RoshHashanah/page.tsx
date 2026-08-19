@@ -136,6 +136,7 @@ export default function RoshHashanah() {
     const state = (document.getElementById("state") as HTMLInputElement)?.value;
     const zip = (document.getElementById("zip") as HTMLInputElement)?.value;
     const honoreeName = (document.getElementById("honoreeName") as HTMLInputElement)?.value;
+    const honoreeEmail = (document.getElementById("honoreeEmail") as HTMLInputElement)?.value;
 
     if (!checkoutAmount || !firstName || !lastName || !email || !street || !city || !state || !zip) {
       alert("Please fill in all fields");
@@ -170,6 +171,7 @@ export default function RoshHashanah() {
           state,
           zip,
           ...(honoreeType && honoreeName ? { honoreeType, honoreeName } : {}),
+          ...(honoreeType === "honor" && honoreeEmail ? { honoreeEmail } : {}),
         }),
       });
 
@@ -187,6 +189,8 @@ export default function RoshHashanah() {
         (document.getElementById("zip") as HTMLInputElement).value = "";
         const honoreeInput = document.getElementById("honoreeName") as HTMLInputElement | null;
         if (honoreeInput) honoreeInput.value = "";
+        const honoreeEmailInput = document.getElementById("honoreeEmail") as HTMLInputElement | null;
+        if (honoreeEmailInput) honoreeEmailInput.value = "";
         setHonoreeType("");
       } else {
         alert("Payment failed: " + (data.error || "Unknown error"));
@@ -356,6 +360,10 @@ export default function RoshHashanah() {
                 </div>
                 {honoreeType && (
                   <input type="text" placeholder="Name" id="honoreeName"
+                    className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D] mb-3" />
+                )}
+                {honoreeType === "honor" && (
+                  <input type="email" placeholder="Their email (optional — sends them a note letting them know)" id="honoreeEmail"
                     className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" />
                 )}
               </div>

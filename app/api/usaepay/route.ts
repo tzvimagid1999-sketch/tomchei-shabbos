@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { sendMail } from "../../lib/mailer";
+import { sendMail, sendHonoreeNotification } from "../../lib/mailer";
 
 // Charges a donation through the USAePay gateway using a payment token
 // (payment_key) that was generated in the donor's browser by pay.js.
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, firstName, lastName, name, email, street, city, state, zip, campaign, honoreeType, honoreeName } = await req.json();
+    const { amount, paymentKey, firstName, lastName, name, email, street, city, state, zip, campaign, honoreeType, honoreeName, honoreeEmail } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -122,6 +122,15 @@ export async function POST(req: NextRequest) {
           console.error("Failed to send confirmation email:", emailError);
           // Don't fail the payment if email fails
         }
+      }
+
+      if (honoreeType === "honor" && honoreeEmail && honoreeName) {
+        await sendHonoreeNotification({
+          to: honoreeEmail,
+          honoreeName,
+          donorName: [resolvedFirst, resolvedLast].filter(Boolean).join(" ") || "A donor",
+          amount: numericAmount,
+        });
       }
 
       return NextResponse.json({

@@ -99,6 +99,7 @@ export default function DonatePage() {
   const [email, setEmail] = useState("");
   const [honoreeType, setHonoreeType] = useState<"" | "honor" | "memory">("");
   const [honoreeName, setHonoreeName] = useState("");
+  const [honoreeEmail, setHonoreeEmail] = useState("");
   const [street, setStreet] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -193,6 +194,7 @@ export default function DonatePage() {
           paymentKey, name, email, street, city, state, zip,
           ...(frequency === "monthly" && splitMonths ? { numPayments: splitMonths } : {}),
           ...(honoreeType && honoreeName ? { honoreeType, honoreeName } : {}),
+          ...(honoreeType === "honor" && honoreeEmail ? { honoreeEmail } : {}),
         }),
       });
       const data = await res.json();
@@ -353,6 +355,11 @@ export default function DonatePage() {
                 </div>
                 {honoreeType && (
                   <input type="text" placeholder="Name" value={honoreeName} onChange={(e) => setHonoreeName(e.target.value)}
+                    className={`${inputClass} mb-3`} />
+                )}
+                {honoreeType === "honor" && (
+                  <input type="email" placeholder="Their email (optional — sends them a note letting them know)"
+                    value={honoreeEmail} onChange={(e) => setHonoreeEmail(e.target.value)}
                     className={inputClass} />
                 )}
               </div>

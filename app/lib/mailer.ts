@@ -16,6 +16,34 @@ function getTransporter() {
   return transporter;
 }
 
+// Best-effort notification to someone a donation was made in honor of.
+// Never blocks or fails the donation itself.
+export async function sendHonoreeNotification(opts: {
+  to: string;
+  honoreeName: string;
+  donorName: string;
+  amount: number;
+}): Promise<void> {
+  try {
+    await sendMail({
+      to: opts.to,
+      subject: `A gift was made in your honor!`,
+      html: `
+        <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#2F3A44">
+          <p style="font-size:16px;line-height:1.7">
+            Dear ${opts.honoreeName},<br/><br/>
+            We wanted to let you know that ${opts.donorName} made a generous donation of
+            <strong>$${opts.amount}</strong> to Tomchei Shabbos of Florida in your honor.
+            Their gift will help families in our community celebrate Shabbos with dignity.
+          </p>
+          <p style="font-size:16px;line-height:1.7">Warm regards,<br/>Tomchei Shabbos of Florida</p>
+        </div>`,
+    });
+  } catch (err) {
+    console.error("Honoree notification email failed (non-fatal):", err instanceof Error ? err.message : err);
+  }
+}
+
 export async function sendMail(opts: {
   to: string;
   subject: string;
