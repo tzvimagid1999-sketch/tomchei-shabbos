@@ -41,7 +41,7 @@ export default function AboutPage() {
                 Each week, our dedicated volunteers shop, pack, and deliver full Shabbos food packages
                 to families across Florida so that Kiddush can be made and Shabbos can be celebrated with joy.
               </p>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4">
                 {([
                   { value: "350+", label: "Families Served" },
                   { value: "52",   label: "Weeks / Year" },
@@ -49,7 +49,7 @@ export default function AboutPage() {
                 ] as { value: string; label: string }[]).map(({ value, label }) => (
                   <div
                     key={label}
-                    className="text-center p-5"
+                    className="text-center p-3 sm:p-5"
                     style={{
                       background: "#FFF8F4",
                       border: "1px solid #F3E7DE",
@@ -58,14 +58,14 @@ export default function AboutPage() {
                     }}
                   >
                     <div
-                      className="font-playfair text-[#F5A020]"
-                      style={{ fontSize: "54px", fontWeight: 700, lineHeight: 1.1 }}
+                      className="font-playfair text-[#F5A020] text-3xl sm:text-5xl"
+                      style={{ fontWeight: 700, lineHeight: 1.1 }}
                     >
                       {value}
                     </div>
                     <div
-                      className="text-gray-500 mt-1 uppercase"
-                      style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "0.04em" }}
+                      className="text-gray-500 mt-1 uppercase text-[11px] sm:text-[15px]"
+                      style={{ fontWeight: 500, letterSpacing: "0.04em" }}
                     >
                       {label}
                     </div>
