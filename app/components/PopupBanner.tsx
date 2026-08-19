@@ -30,7 +30,7 @@ export default function PopupBanner() {
           <Link href="/RoshHashanah" onClick={close}
             aria-label="Click to give"
             className="absolute rounded-none cursor-pointer transition-all duration-150 hover:ring-2 hover:ring-inset hover:ring-[#0F6B6B] active:scale-[0.97]"
-            style={{ left: "69.3%", top: "79.5%", width: "26.9%", height: "10.8%" }} />
+            style={{ left: "69.0%", top: "79.1%", width: "27.6%", height: "11.7%" }} />
         </div>
 
         {/* Close button */}
