@@ -230,8 +230,10 @@ export default function RoshHashanah() {
             fill className="object-cover sm:object-contain object-center" priority sizes="100vw" />
         </section>
 
-        {/* Thermometer — pulled up to overlap the bottom of the hero banner */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20 -mt-10 sm:-mt-12 relative z-10">
+        <div className="h-8 sm:h-10" />
+
+        {/* Thermometer */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
           <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8" style={{ background: 'rgba(255, 255, 255, 0.95)' }}>
             <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
               <div className="text-center">
