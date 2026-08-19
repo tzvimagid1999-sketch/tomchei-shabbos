@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+// Every response must be fresh — donors expect the progress bar to reflect
+// the latest total, not a cached snapshot from the browser or a CDN.
+function json(body: unknown, init?: ResponseInit) {
+  const res = NextResponse.json(body, init);
+  res.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  return res;
+}
+
 // Fetch total donations from USAePay for the campaign progress bar
 export async function GET(req: NextRequest) {
   const debug = req.nextUrl.searchParams.get("debug") === "1";
@@ -10,7 +21,7 @@ export async function GET(req: NextRequest) {
     const endpoint = process.env.USAEPAY_ENDPOINT || "https://usaepay.com/api/v2";
 
     if (!sourceKey || !pin) {
-      return NextResponse.json({ total: 0 });
+      return json({ total: 0 });
     }
 
     const seed = crypto.randomBytes(16).toString("hex");
@@ -21,14 +32,15 @@ export async function GET(req: NextRequest) {
     // Fetch all transactions for one-time + recurring donations
     const res = await fetch(`${endpoint}/transactions?limit=500&type=sale`, {
       headers: { Authorization: authHeader },
+      cache: "no-store",
     });
 
     if (!res.ok) {
       const rawText = await res.text();
       if (debug) {
-        return NextResponse.json({ total: 0, debug: { httpStatus: res.status, raw: rawText.slice(0, 1500) } });
+        return json({ total: 0, debug: { httpStatus: res.status, raw: rawText.slice(0, 1500) } });
       }
-      return NextResponse.json({ total: 0 });
+      return json({ total: 0 });
     }
 
     const data = await res.json();
@@ -54,7 +66,7 @@ export async function GET(req: NextRequest) {
       .reduce((sum, t) => sum + (parseFloat(String(t.amount)) || 0), 0);
 
     if (debug) {
-      return NextResponse.json({
+      return json({
         total: Math.round(total),
         debug: {
           transactionCount: transactions.length,
@@ -64,9 +76,9 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ total: Math.round(total) });
+    return json({ total: Math.round(total) });
   } catch (err) {
     console.error("Failed to fetch donation total:", err);
-    return NextResponse.json({ total: 0 });
+    return json({ total: 0 });
   }
 }

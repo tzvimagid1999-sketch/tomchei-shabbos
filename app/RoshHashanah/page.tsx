@@ -79,7 +79,7 @@ export default function RoshHashanah() {
   useEffect(() => {
     const fetchTotal = async () => {
       try {
-        const res = await fetch("/api/donation-total");
+        const res = await fetch("/api/donation-total", { cache: "no-store" });
         const data = await res.json();
         setTotalDonated(data.total || 0);
       } catch (err) {
