@@ -49,7 +49,7 @@ export default function Home() {
       {/* Tagline strip */}
       <div className="bg-[#1AABAB] py-5 text-center">
         <p className="font-playfair italic font-bold text-white text-2xl sm:text-3xl tracking-wide">
-          Making Shabbos possible for families throughout South Florida.
+          Making Shabbos possible for families throughout South Florida!
         </p>
       </div>
 
