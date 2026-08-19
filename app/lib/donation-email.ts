@@ -46,7 +46,7 @@ export async function sendMonthlyConfirmation(opts: {
   <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#2F3A44">
     <p style="font-size:16px;line-height:1.7">
       Dear ${escapeHtml(fullName)},<br/><br/>
-      This email serves as your official receipt for a tax-deductible contribution of
+      Thank you for your donation! This email serves as your official receipt for a tax-deductible contribution of
       <strong>$${opts.amount}</strong> received on ${donationDate}${dedication}.
       No goods or services were provided in exchange for this contribution.
     </p>
