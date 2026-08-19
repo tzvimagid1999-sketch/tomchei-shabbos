@@ -53,6 +53,20 @@ export async function POST(req: NextRequest) {
       html,
     });
 
+    // Also log the application to the Google Sheet — best-effort, never blocks
+    // the email above or fails the submission if the sheet is unreachable.
+    if (process.env.GOOGLE_SHEET_WEBHOOK_URL) {
+      try {
+        await fetch(`${process.env.GOOGLE_SHEET_WEBHOOK_URL}?secret=${process.env.GOOGLE_SHEET_SECRET}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      } catch (sheetErr: unknown) {
+        console.error("Failed to log application to Google Sheet (non-fatal):", sheetErr instanceof Error ? sheetErr.message : sheetErr);
+      }
+    }
+
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
     console.error("Application submission error:", err instanceof Error ? err.message : err);
