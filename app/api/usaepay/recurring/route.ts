@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, name, email, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail } = await req.json();
+    const { amount, paymentKey, name, email, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
     const dedication = honoreeType && honoreeName
       ? ` (${honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${honoreeName})`
       : "";
+    const campaignTag = campaign === "rosh-hashanah" ? "Rosh Hashanah Campaign " : "";
 
     const auth = () => {
       const seed = crypto.randomBytes(16).toString("hex");
@@ -98,7 +99,7 @@ export async function POST(req: NextRequest) {
         custkey: String(custkey),
         save_customer_paymethod: true,
         email: email || undefined,
-        description: (totalPayments
+        description: campaignTag + (totalPayments
           ? `Pledge payment 1 of ${totalPayments} to Tomchei Shabbos of Florida`
           : "Monthly donation to Tomchei Shabbos of Florida (first payment)") + dedication,
         billing_address: billing,
@@ -141,9 +142,9 @@ export async function POST(req: NextRequest) {
             start_date: nextBill,
             next_date: nextBill,
             enabled: true,
-            description: totalPayments
+            description: campaignTag + (totalPayments
               ? `Pledge (${totalPayments} monthly payments) to Tomchei Shabbos of Florida`
-              : "Monthly donation to Tomchei Shabbos of Florida",
+              : "Monthly donation to Tomchei Shabbos of Florida"),
             ...(remainingPayments ? { numleft: remainingPayments } : {}),
           }),
         });

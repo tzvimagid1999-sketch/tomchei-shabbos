@@ -163,7 +163,7 @@ export default function RoshHashanah() {
           amount: parseFloat(checkoutAmount),
           paymentKey,
           ...(isMonthly
-            ? { name: `${firstName} ${lastName}`, ...(splitMonths ? { numPayments: splitMonths } : {}) }
+            ? { name: `${firstName} ${lastName}`, campaign: "rosh-hashanah", ...(splitMonths ? { numPayments: splitMonths } : {}) }
             : { firstName, lastName, campaign: "rosh-hashanah" }),
           email,
           street,
