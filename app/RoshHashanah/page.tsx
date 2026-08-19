@@ -238,7 +238,7 @@ export default function RoshHashanah() {
             <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Goal</p>
-                <p className="font-bold text-2xl sm:text-3xl text-[#C8A75B]">$100k</p>
+                <p className={`font-bold text-[#C8A75B] ${loading ? "text-sm sm:text-base italic" : "text-2xl sm:text-3xl"}`}>{loading ? "Calculating…" : "$100k"}</p>
               </div>
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Raised</p>
@@ -252,7 +252,7 @@ export default function RoshHashanah() {
               </div>
             </div>
             <div className="relative w-full h-6 bg-[#F8F4EC] rounded-full overflow-hidden shadow-sm">
-              <div className={`absolute top-0 left-0 h-full bg-gradient-to-r from-[#C8A75B] to-[#D9B870] rounded-full transition-all duration-500 ${loading ? "animate-pulse" : ""}`}
+              <div className={`absolute top-0 left-0 h-full bg-gradient-to-r from-[#1AABAB] to-[#3DC4C4] rounded-full transition-all duration-500 ${loading ? "animate-pulse" : ""}`}
                 style={{ width: loading ? "8%" : `${progressPercent}%` }} />
             </div>
           </div>
