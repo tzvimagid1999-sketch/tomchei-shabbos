@@ -6,6 +6,8 @@ import { CheckCircle } from "lucide-react";
 import confetti from "canvas-confetti";
 import OtherWaysToGive from "../components/OtherWaysToGive";
 
+const SPLIT_MONTH_OPTIONS = [3, 6, 12, 18, 24, 36];
+
 function ThankYouScreen({ name, amount, email, monthly, onClose }: { name: string; amount: string; email: string; monthly?: boolean; onClose: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -64,6 +66,7 @@ export default function RoshHashanah() {
   const [scriptReady, setScriptReady] = useState(false);
   const [thankYou, setThankYou] = useState<{ name: string; amount: string; email: string; monthly?: boolean } | null>(null);
   const [checkoutFrequency, setCheckoutFrequency] = useState<"once" | "monthly">("once");
+  const [splitMonths, setSplitMonths] = useState<number | null>(null); // null = ongoing until cancelled
 
   const clientRef = useRef<any>(null);
   const cardRef = useRef<any>(null);
@@ -157,7 +160,7 @@ export default function RoshHashanah() {
           amount: parseFloat(checkoutAmount),
           paymentKey,
           ...(isMonthly
-            ? { name: `${firstName} ${lastName}` }
+            ? { name: `${firstName} ${lastName}`, ...(splitMonths ? { numPayments: splitMonths } : {}) }
             : { firstName, lastName, campaign: "rosh-hashanah" }),
           email,
           street,
@@ -293,9 +296,23 @@ export default function RoshHashanah() {
                 ))}
               </div>
               {checkoutFrequency === "monthly" && (
-                <p className="text-center text-xs text-[#C8A75B] font-semibold bg-[#C8A75B]/10 rounded-lg py-2 px-4">
-                  You&apos;ll be charged this amount every month. Cancel anytime at /manage-donation.
-                </p>
+                <>
+                  <p className="text-center text-xs text-[#C8A75B] font-semibold bg-[#C8A75B]/10 rounded-lg py-2 px-4">
+                    {splitMonths
+                      ? `You'll be charged this amount monthly for ${splitMonths} months, then it automatically stops.`
+                      : "You'll be charged this amount every month. Cancel anytime at /manage-donation."}
+                  </p>
+                  <div>
+                    <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">Split Over</label>
+                    <select value={splitMonths ?? ""} onChange={(e) => setSplitMonths(e.target.value ? Number(e.target.value) : null)}
+                      className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]">
+                      <option value="">Ongoing (until cancelled)</option>
+                      {SPLIT_MONTH_OPTIONS.map((m) => (
+                        <option key={m} value={m}>{m} months</option>
+                      ))}
+                    </select>
+                  </div>
+                </>
               )}
 
               {checkoutAmount && (
