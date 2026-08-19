@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Nunito, Playfair_Display, Caveat, Manrope, Josefin_Sans, Figtree } from "next/font/google";
+import { Nunito, Playfair_Display, Caveat, Manrope, Josefin_Sans, Figtree, Jost } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -11,6 +11,7 @@ const caveat   = Caveat({ subsets: ["latin"], variable: "--font-caveat",   weigh
 const manrope  = Manrope({ subsets: ["latin"], variable: "--font-manrope", weight: ["400", "500", "600", "700"] });
 const josefin  = Josefin_Sans({ subsets: ["latin"], variable: "--font-josefin", weight: ["400", "500", "600", "700"] });
 const figtree  = Figtree({ subsets: ["latin"], variable: "--font-figtree", weight: ["400", "500", "600", "700", "800"] });
+const jost     = Jost({ subsets: ["latin"], variable: "--font-jost", weight: ["400", "500", "600", "700", "800"] });
 
 export const metadata: Metadata = {
   title: "Tomchei Shabbos Florida – Helping Every Family Celebrate Shabbos",
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${nunito.variable} ${playfair.variable} ${caveat.variable} ${manrope.variable} ${josefin.variable} ${figtree.variable} font-sans`}>
+      <body className={`${nunito.variable} ${playfair.variable} ${caveat.variable} ${manrope.variable} ${josefin.variable} ${figtree.variable} ${jost.variable} font-sans`}>
         <Navbar />
         <PopupBanner />
         {children}

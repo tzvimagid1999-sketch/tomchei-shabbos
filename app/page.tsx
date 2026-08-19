@@ -22,13 +22,13 @@ export default function Home() {
 
         {/* Main content */}
         <div className="relative z-10 flex-1 flex flex-col justify-center px-8 sm:px-16 pb-8">
-          <p className="font-playfair text-white text-2xl sm:text-4xl font-light mb-1 drop-shadow-lg">
+          <p className="font-jost text-white text-2xl sm:text-4xl font-light mb-1 drop-shadow-lg">
             Making Shabbos Possible for Families in
           </p>
-          <h1 className="font-playfair font-black text-[#F5A020] text-5xl sm:text-7xl lg:text-8xl leading-tight mb-4 drop-shadow-lg">
+          <h1 className="font-jost font-black text-[#F5A020] text-5xl sm:text-7xl lg:text-8xl leading-tight mb-4 drop-shadow-lg">
             Florida
           </h1>
-          <p className="text-white text-xl sm:text-2xl font-bold tracking-wide drop-shadow-lg">
+          <p className="font-jost text-white text-xl sm:text-2xl font-bold tracking-wide drop-shadow-lg">
             Food. Dignity. Community.
           </p>
         </div>
