@@ -23,6 +23,12 @@ const methods = [
     bg: "#003087",
     letter: "P",
   },
+  {
+    name: "Jewish Communal Fund",
+    href: "https://jcfny.org/",
+    bg: "#6B4C9A",
+    letter: "J",
+  },
 ];
 
 export default function OtherWaysToGive() {
