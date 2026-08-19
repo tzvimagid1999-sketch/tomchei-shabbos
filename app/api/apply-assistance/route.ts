@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
           ${row("Spouse's Email", data.spouseEmail)}
           ${row("Phone", data.phone)}
           ${row("Address", `${data.street}${data.unit ? " " + data.unit : ""}, ${data.city}, ${data.state} ${data.zip}`)}
+          ${row("Building/Gate Access", data.accessInstructions || "")}
           ${row("Children at Home", data.numChildren)}
           ${row("Ages of Children", data.childrenAges)}
           ${row("Occupation", data.occupation)}

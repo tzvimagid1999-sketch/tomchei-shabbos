@@ -11,6 +11,7 @@ const initialForm = {
   spouseName: "",
   street: "",
   unit: "",
+  accessInstructions: "",
   city: "",
   state: "FL",
   zip: "",
@@ -173,6 +174,14 @@ export default function ApplyForAssistancePage() {
               <label className={labelClass}>Unit / Apartment Number</label>
               <input name="unit" value={form.unit} onChange={handleChange} className={inputClass} />
             </div>
+            {form.unit && (
+              <div className="mb-3">
+                <label className={labelClass}>Building / Gate Access Instructions</label>
+                <input name="accessInstructions" value={form.accessInstructions} onChange={handleChange}
+                  placeholder="e.g. gate code, doorman, leave with front desk"
+                  className={inputClass} />
+              </div>
+            )}
             <div className="grid grid-cols-3 gap-3">
               <div>
                 <label className={labelClass}>City *</label>
