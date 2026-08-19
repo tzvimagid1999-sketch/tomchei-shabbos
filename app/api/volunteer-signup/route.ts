@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
+import { sendMail } from "../../lib/mailer";
 
 // Routes each volunteer signup to the staff address for their selected
 // interest(s) — a signup can match more than one (e.g. Pack + Deliver).
@@ -26,8 +26,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Please select at least one way to help." }, { status: 400 });
     }
 
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
+    if (!process.env.GMAIL_APP_PASSWORD) {
       return NextResponse.json({ error: "Signups are not configured yet. Please try again later." }, { status: 500 });
     }
 
@@ -41,15 +40,11 @@ export async function POST(req: NextRequest) {
         ${message ? `<p><strong>Message:</strong> ${message}</p>` : ""}
       </div>`;
 
-    const from = process.env.RESEND_FROM || "Tomchei Shabbos <onboarding@resend.dev>";
-
     // Send a separate email per matching team, so e.g. Deliver never sees
     // Fundraise's address (and vice versa) in an all-recipients "To" field.
-    const resend = new Resend(apiKey);
     await Promise.all(
       recipients.map((to) =>
-        resend.emails.send({
-          from,
+        sendMail({
           to,
           replyTo: email,
           subject: `Volunteer Signup — ${firstName} ${lastName} (${interestList.join(", ")})`,
@@ -61,8 +56,7 @@ export async function POST(req: NextRequest) {
     // Confirm to the volunteer themselves that their signup went through —
     // best-effort, don't fail the whole signup if just this email fails.
     try {
-      await resend.emails.send({
-        from,
+      await sendMail({
         to: email,
         subject: "Thanks for signing up to volunteer! 💙",
         html: `

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
+import { sendMail } from "../../lib/mailer";
 
 // Sends assistance applications by email instead of storing them — this
 // nonprofit doesn't have a database, and staff already work out of email/Gmail.
@@ -14,8 +14,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
+    if (!process.env.GMAIL_APP_PASSWORD) {
       return NextResponse.json({ error: "Applications are not configured yet. Please try again later." }, { status: 500 });
     }
 
@@ -47,9 +46,7 @@ export async function POST(req: NextRequest) {
         </table>
       </div>`;
 
-    const resend = new Resend(apiKey);
-    await resend.emails.send({
-      from: process.env.RESEND_FROM || "Tomchei Shabbos <onboarding@resend.dev>",
+    await sendMail({
       to: "admin@tomcheishabbosflorida.org",
       replyTo: data.email,
       subject: `Assistance Application — ${data.firstName} ${data.lastName}`,

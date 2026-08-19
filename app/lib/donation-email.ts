@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { Resend } from "resend";
+import { sendMail } from "./mailer";
 
 // A one-click cancel link is safe to email because it carries an HMAC signature
 // of the customer key — it can't be forged without the server secret. We reuse
@@ -29,10 +29,8 @@ export async function sendMonthlyConfirmation(opts: {
   refnum?: string;
   cardLast4?: string;
 }): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey || !opts.email) return;
+  if (!process.env.GMAIL_APP_PASSWORD || !opts.email) return;
 
-  const from = process.env.RESEND_FROM || "Tomchei Shabbos <onboarding@resend.dev>";
   const sig = signCustKey(opts.custkey);
   const cancelUrl = `${opts.origin}/manage-donation?c=${encodeURIComponent(opts.custkey)}&s=${sig}`;
   const fullName = opts.name || "Friend";
@@ -73,9 +71,7 @@ export async function sendMonthlyConfirmation(opts: {
   </div>`;
 
   try {
-    const resend = new Resend(apiKey);
-    await resend.emails.send({
-      from,
+    await sendMail({
       to: opts.email,
       subject: "Thank you for your generous pledge!",
       html,

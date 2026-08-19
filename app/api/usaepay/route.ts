@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { Resend } from "resend";
+import { sendMail } from "../../lib/mailer";
 
 // Charges a donation through the USAePay gateway using a payment token
 // (payment_key) that was generated in the donor's browser by pay.js.
@@ -65,17 +65,14 @@ export async function POST(req: NextRequest) {
     const data = await res.json();
 
     if (data.result === "Approved" || data.result_code === "A") {
-      // Send confirmation email if Resend is configured
-      if (process.env.RESEND_API_KEY && email) {
+      // Send confirmation email if Gmail SMTP is configured
+      if (process.env.GMAIL_APP_PASSWORD && email) {
         try {
           // Mask email for privacy
           const maskedEmail = email.replace(/(.{2})(.*)(@.*)/, "$1***$3");
 
-          const resend = new Resend(process.env.RESEND_API_KEY);
-          const from = process.env.RESEND_FROM || "Tomchei Shabbos <onboarding@resend.dev>";
           const fullName = [firstName, lastName].filter(Boolean).join(" ") || "Friend";
-          await resend.emails.send({
-            from,
+          await sendMail({
             to: email,
             subject: "Thank you for your generous donation!",
             html: `
