@@ -21,7 +21,7 @@ export default function PopupBanner() {
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={close} />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-fade-in-up">
+      <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden animate-fade-in-up">
 
         <div className="relative aspect-[1200/660] w-full">
           <Image src="/rosh-hashanah-popup.jpeg" alt="Delivery Status: Pending — Awaiting Your Generosity" fill className="object-cover object-center" priority />
