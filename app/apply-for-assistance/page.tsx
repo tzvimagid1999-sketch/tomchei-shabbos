@@ -91,7 +91,7 @@ export default function ApplyForAssistancePage() {
   return (
     <main className="pt-20">
       {/* Hero */}
-      <section className="relative min-h-[280px] flex items-center justify-center text-center overflow-hidden">
+      <section className="relative min-h-[300px] flex items-center justify-center text-center overflow-hidden">
         <Image src="/apply-header.jpg" alt="" fill className="object-cover" priority sizes="100vw" />
         <div className="absolute inset-0 bg-[#1AABAB]/60" />
         <div className="relative z-10 max-w-4xl mx-auto px-6">
