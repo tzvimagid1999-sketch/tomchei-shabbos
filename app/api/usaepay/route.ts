@@ -82,39 +82,30 @@ export async function POST(req: NextRequest) {
       // Send confirmation email if Gmail SMTP is configured
       if (process.env.GMAIL_APP_PASSWORD && email) {
         try {
-          // Mask email for privacy
-          const maskedEmail = email.replace(/(.{2})(.*)(@.*)/, "$1***$3");
-
           const fullName = [resolvedFirst, resolvedLast].filter(Boolean).join(" ") || "Friend";
+          const donationDate = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
           await sendMail({
             to: email,
-            subject: "Thank you for your generous donation!",
+            subject: "Your donation receipt",
             html: `
               <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#2F3A44">
                 <p style="font-size:16px;line-height:1.7">
                   Dear ${fullName},<br/><br/>
-                  Thank you for your generous donation of <strong>$${numericAmount.toFixed(2)}</strong> to Tomchei Shabbos of Florida${dedication}.
-                  Your support means a great deal to us. Contributions like yours make it possible for Tomchei Shabbos of Florida
-                  to continue its mission. We are deeply grateful for your commitment.
+                  This email serves as your official receipt for a tax-deductible contribution of
+                  <strong>$${numericAmount.toFixed(2)}</strong> received on ${donationDate}${dedication}.
+                  No goods or services were provided in exchange for this contribution.
                 </p>
-                <div style="background:#FAF3E8;border:1px solid #E8D9C0;border-radius:12px;padding:20px;margin:20px 0">
-                  <p style="margin:0 0 6px;font-size:14px"><strong>Confirmation Number:</strong> ${data.refnum || data.authcode}</p>
-                  <p style="margin:0 0 6px;font-size:14px"><strong>Amount:</strong> $${numericAmount.toFixed(2)}</p>
-                  <p style="margin:0 0 6px;font-size:14px"><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
-                  <p style="margin:0 0 6px;font-size:14px"><strong>Email:</strong> ${maskedEmail}</p>
-                  ${dedication ? `<p style="margin:0 0 6px;font-size:14px"><strong>Dedication:</strong> ${honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${honoreeName}</p>` : ""}
-                  <p style="margin:0;font-size:14px"><strong>Tax ID:</strong> ${process.env.NONPROFIT_TAX_ID}</p>
-                </div>
-                <p style="font-size:16px;line-height:1.7">Warm regards,<br/>Tomchei Shabbos of Florida</p>
-                <div style="margin-top:20px;padding:15px;background-color:#fafafa;border-radius:5px;font-size:11px;color:#888;text-align:center">
-                  <p style="margin:0 0 8px">Tomchei Shabbos of Florida<br/>194 NE 186th Terrace, North Miami Beach, FL 33179</p>
-                  <p style="margin:0">
-                    Tomchei Shabbos of Florida is a tax-exempt organization under Section 501(c)(3) of the Internal Revenue Code.
-                    Tax ID # ${process.env.NONPROFIT_TAX_ID}. No goods or services were provided in exchange for this contribution.
-                    This receipt may serve as your official tax record. Please consult your tax advisor regarding the
-                    deductibility of your donation.
-                  </p>
-                </div>
+                <p style="font-size:16px;line-height:1.7">
+                  Tomchei Shabbos of Florida<br/>
+                  194 NE 186th Terrace<br/>
+                  North Miami Beach, FL 33179
+                </p>
+                <p style="font-size:13px;line-height:1.7;color:#8B7355">
+                  Tomchei Shabbos of Florida is a tax-exempt organization under Section 501(c)(3) of the Internal Revenue Code.
+                  Tax ID # ${process.env.NONPROFIT_TAX_ID}. No goods or services were provided in exchange for this contribution.
+                  This receipt may serve as your official tax record. Please consult your tax advisor regarding the
+                  deductibility of your donation.
+                </p>
               </div>
             `,
           });
