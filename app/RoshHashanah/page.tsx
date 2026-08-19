@@ -209,10 +209,10 @@ export default function RoshHashanah() {
       <div className="relative z-10">
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
-        {/* Hero — aspect ratio locked to the image's own dimensions (1600x583) so it
+        {/* Hero — aspect ratio locked to the padded image's dimensions (1600x727) so it
             always fills edge-to-edge with zero cropping, scaling naturally by device. */}
-        <section className="relative w-full overflow-hidden" style={{ aspectRatio: "1600 / 583" }}>
-          <Image src="/rosh-hashanah-campaign-hero.jpeg" alt="Rosh Hashanah Campaign"
+        <section className="relative w-full overflow-hidden" style={{ aspectRatio: "1600 / 727" }}>
+          <Image src="/rosh-hashanah-campaign-hero-padded.jpeg" alt="Rosh Hashanah Campaign"
             fill className="object-cover object-center" priority sizes="100vw" />
         </section>
 
