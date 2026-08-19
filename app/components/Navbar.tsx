@@ -20,10 +20,13 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-50 bg-white shadow-sm border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="grid grid-cols-[1fr_auto_1fr] md:flex md:justify-between items-center h-20">
 
-          {/* Logo */}
-          <Link href="/" className="block">
+          {/* Left spacer — keeps the logo visually centered on mobile, matching the hamburger's width */}
+          <div className="md:hidden" />
+
+          {/* Logo — centered on mobile, left-aligned on desktop */}
+          <Link href="/" className="block justify-self-center md:justify-self-auto">
             <Image src="/ts-logo.png.jpg" alt="Tomchei Shabbos Florida" width={240} height={75}
               className="object-contain" />
           </Link>
@@ -51,7 +54,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile toggle */}
-          <button className="md:hidden text-[#1AABAB] p-1" onClick={() => setOpen(!open)}>
+          <button className="md:hidden text-[#1AABAB] p-1 justify-self-end" onClick={() => setOpen(!open)}>
             {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
