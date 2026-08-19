@@ -6,9 +6,9 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#0a6e78]">
-      <div className="max-w-7xl mx-auto px-6 py-1.5 flex items-center justify-between gap-x-4 overflow-hidden">
-        <p className="text-white/50 text-[11px] whitespace-nowrap shrink-0">© {year} Tomchei Shabbos Florida</p>
-        <div className="flex gap-x-4 shrink-0">
+      <div className="max-w-7xl mx-auto px-6 py-3 sm:py-1.5 flex flex-col sm:flex-row items-center sm:justify-between gap-y-2 gap-x-4">
+        <p className="text-white/50 text-[11px] whitespace-nowrap shrink-0 order-2 sm:order-1">© {year} Tomchei Shabbos Florida</p>
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 order-1 sm:order-2">
           {[
             { href: "/",               label: "Home" },
             { href: "/about",          label: "About" },
@@ -22,7 +22,7 @@ export default function Footer() {
             </Link>
           ))}
         </div>
-        <p className="text-white/40 text-[11px] hidden sm:block shrink-0">501(c)(3) · Tax ID: 83-2155012</p>
+        <p className="text-white/40 text-[11px] hidden sm:block shrink-0 order-3">501(c)(3) · Tax ID: 83-2155012</p>
       </div>
     </footer>
   );
