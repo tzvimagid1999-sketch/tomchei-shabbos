@@ -72,7 +72,7 @@ export default function RoshHashanah() {
   const cardRef = useRef<any>(null);
   const publicKey = process.env.NEXT_PUBLIC_USAEPAY_PUBLIC_KEY;
 
-  const GOAL = 500000;
+  const GOAL = 100000;
   const progressPercent = Math.min((totalDonated / GOAL) * 100, 100);
 
   useEffect(() => {
@@ -226,7 +226,7 @@ export default function RoshHashanah() {
             <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Goal</p>
-                <p className="font-bold text-2xl sm:text-3xl text-[#C8A75B]">$500k</p>
+                <p className="font-bold text-2xl sm:text-3xl text-[#C8A75B]">$100k</p>
               </div>
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Raised</p>
