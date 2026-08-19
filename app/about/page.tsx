@@ -58,7 +58,7 @@ export default function AboutPage() {
                     }}
                   >
                     <div
-                      className="font-playfair text-[#F5A020] text-3xl sm:text-5xl"
+                      className="font-pt-serif text-[#F5A020] text-3xl sm:text-5xl"
                       style={{ fontWeight: 700, lineHeight: 1.1 }}
                     >
                       {value}
