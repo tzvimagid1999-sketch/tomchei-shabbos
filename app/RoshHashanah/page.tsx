@@ -45,7 +45,7 @@ function ThankYouScreen({ name, amount, email, monthly, onClose }: { name: strin
             : <>Your <strong>${amount}</strong> donation has been received.</>}
         </p>
         <p className="text-gray-500 text-sm mb-8">
-          You&apos;re helping a family celebrate Rosh Hashanah with dignity and joy.
+          You&apos;re helping a family celebrate Yom Tov with dignity and joy.
         </p>
         {email && <p className="text-gray-400 text-xs mb-8">A confirmation email has been sent to {email}</p>}
         <button onClick={onClose}
