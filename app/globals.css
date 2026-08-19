@@ -13,6 +13,7 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
 .font-josefin  { font-family: var(--font-josefin), sans-serif; }
 .font-figtree  { font-family: var(--font-figtree), sans-serif; }
 .font-jost     { font-family: var(--font-jost), sans-serif; }
+.font-pt-serif { font-family: var(--font-pt-serif), Georgia, serif; }
 
 /* Subtle paper / linen texture overlay */
 .paper-texture {

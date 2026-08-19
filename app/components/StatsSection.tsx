@@ -44,7 +44,7 @@ function Counter({ value, suffix, label, accent }: { value: number; suffix: stri
 
   return (
     <div ref={ref} className="text-center py-12 px-6 bg-[#FEFCF7]">
-      <div className={`font-playfair text-5xl sm:text-6xl font-bold mb-3 tabular-nums ${
+      <div className={`font-pt-serif text-5xl sm:text-6xl font-bold mb-3 tabular-nums ${
         accent ? "text-[#F5A020]" : "text-[#1AABAB]"
       }`}>
         {count.toLocaleString()}{suffix}
