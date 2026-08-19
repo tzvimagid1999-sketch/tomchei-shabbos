@@ -35,14 +35,15 @@ export async function sendMonthlyConfirmation(opts: {
   const from = process.env.RESEND_FROM || "Tomchei Shabbos <onboarding@resend.dev>";
   const sig = signCustKey(opts.custkey);
   const cancelUrl = `${opts.origin}/manage-donation?c=${encodeURIComponent(opts.custkey)}&s=${sig}`;
-  const first = (opts.name || "").split(/\s+/)[0] || "Friend";
+  const fullName = opts.name || "Friend";
 
   const html = `
   <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#2F3A44">
-    <h2 style="color:#0F9FAE;margin:0 0 8px">Thank you, ${first}!</h2>
-    <p style="font-size:16px;line-height:1.6">
-      Your <strong>$${opts.amount}/month</strong> donation to Tomchei Shabbos of Florida is set up.
-      Every month, you're helping a family celebrate Shabbos with dignity.
+    <p style="font-size:16px;line-height:1.7">
+      Dear ${fullName},<br/><br/>
+      Thank you for your generous pledge of <strong>$${opts.amount}/month</strong> to Tomchei Shabbos of Florida.
+      Your support means a great deal to us. Contributions like yours make it possible for Tomchei Shabbos of Florida
+      to continue its mission. We are deeply grateful for your commitment.
     </p>
     <div style="background:#f5f5f5;border-radius:8px;padding:16px 20px;margin:20px 0;font-size:14px">
       ${opts.refnum ? `<p style="margin:0 0 6px"><strong>Reference #:</strong> ${opts.refnum}</p>` : ""}
@@ -59,16 +60,16 @@ export async function sendMonthlyConfirmation(opts: {
         enter it with your email at ${opts.origin}/manage-donation anytime.
       </p>
     </div>
-    <div style="margin-top:20px;padding:15px;background-color:#fafafa;border-radius:5px;font-size:11px;color:#888">
-      <p style="margin:0 0 6px"><strong>Tax Deduction Information:</strong></p>
+    <p style="font-size:16px;line-height:1.7">Warm regards,<br/>Tomchei Shabbos of Florida</p>
+    <div style="margin-top:20px;padding:15px;background-color:#fafafa;border-radius:5px;font-size:11px;color:#888;text-align:center">
+      <p style="margin:0 0 8px">Tomchei Shabbos of Florida<br/>194 NE 186th Terrace, North Miami Beach, FL 33179</p>
       <p style="margin:0">
-        Tomchei Shabbos of Florida is a 501(c)(3) nonprofit organization (Tax ID: ${process.env.NONPROFIT_TAX_ID}).
-        Each monthly donation of $${opts.amount} is tax deductible to the extent allowed by law. No goods or
-        services were provided in exchange for this contribution. Please consult your tax advisor regarding the
-        deductibility of your contribution.
+        Tomchei Shabbos of Florida is a tax-exempt organization under Section 501(c)(3) of the Internal Revenue Code.
+        Tax ID # ${process.env.NONPROFIT_TAX_ID}. No goods or services were provided in exchange for this contribution.
+        This receipt may serve as your official tax record. Please consult your tax advisor regarding the
+        deductibility of your donation.
       </p>
     </div>
-    <p style="font-size:13px;color:#8B7355;margin-top:20px">With gratitude,<br/>Tomchei Shabbos of Florida</p>
   </div>`;
 
   try {
@@ -76,7 +77,7 @@ export async function sendMonthlyConfirmation(opts: {
     await resend.emails.send({
       from,
       to: opts.email,
-      subject: "Your monthly donation is set up 💙",
+      subject: "Thank you for your generous pledge!",
       html,
     });
   } catch (err) {
