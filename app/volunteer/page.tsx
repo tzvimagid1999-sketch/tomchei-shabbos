@@ -93,7 +93,7 @@ export default function VolunteerPage() {
           <div className="grid sm:grid-cols-3 gap-10 sm:gap-8">
             {highlights.map((h) => (
               <div key={h.title}>
-                <h3 className="font-playfair font-bold leading-tight" style={{ fontSize: "30px", color: h.accent ? "#1AABAB" : "#F5A020" }}>
+                <h3 className="font-playfair font-black leading-tight" style={{ fontSize: "48px", color: h.accent ? "#1AABAB" : "#F5A020" }}>
                   {h.title}
                 </h3>
                 <p className="text-[#8B7355] text-sm sm:text-base mt-3 leading-relaxed max-w-[260px] mx-auto">
