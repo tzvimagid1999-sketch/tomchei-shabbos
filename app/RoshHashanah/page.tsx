@@ -243,17 +243,17 @@ export default function RoshHashanah() {
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Raised</p>
                 <p className="font-bold text-2xl sm:text-3xl text-[#2D2D2D]">
-                  {totalDonated >= 1000 ? `$${(totalDonated / 1000).toFixed(0)}k` : `$${totalDonated.toLocaleString()}`}
+                  {loading ? "…" : totalDonated >= 1000 ? `$${(totalDonated / 1000).toFixed(0)}k` : `$${totalDonated.toLocaleString()}`}
                 </p>
               </div>
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Progress</p>
-                <p className="font-bold text-2xl sm:text-3xl text-[#C8A75B]">{Math.round(progressPercent)}%</p>
+                <p className="font-bold text-2xl sm:text-3xl text-[#C8A75B]">{loading ? "…" : `${Math.round(progressPercent)}%`}</p>
               </div>
             </div>
             <div className="relative w-full h-6 bg-[#F8F4EC] rounded-full overflow-hidden shadow-sm">
-              <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#C8A75B] to-[#D9B870] rounded-full transition-all duration-500"
-                style={{ width: `${progressPercent}%` }} />
+              <div className={`absolute top-0 left-0 h-full bg-gradient-to-r from-[#C8A75B] to-[#D9B870] rounded-full transition-all duration-500 ${loading ? "animate-pulse" : ""}`}
+                style={{ width: loading ? "8%" : `${progressPercent}%` }} />
             </div>
           </div>
         </div>
