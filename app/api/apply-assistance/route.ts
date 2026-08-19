@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
 
-    const required = ["email", "status", "firstName", "lastName", "spouseName", "street", "city", "zip", "phone", "spouseEmail", "numChildren", "childrenAges", "occupation", "spouseOccupation", "assistanceType", "rabbiName", "rabbiPhone", "rabbiCongregation", "otherOrgAssistance"];
+    const required = ["email", "status", "firstName", "lastName", "spouseName", "street", "city", "state", "zip", "phone", "spouseEmail", "numChildren", "childrenAges", "occupation", "spouseOccupation", "assistanceType", "rabbiName", "rabbiPhone", "rabbiCongregation", "otherOrgAssistance"];
     for (const field of required) {
       if (!String(data[field] || "").trim()) {
         return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
           ${row("Spouse's Name", data.spouseName)}
           ${row("Spouse's Email", data.spouseEmail)}
           ${row("Phone", data.phone)}
-          ${row("Address", `${data.street}${data.unit ? " " + data.unit : ""}, ${data.city}, FL ${data.zip}`)}
+          ${row("Address", `${data.street}${data.unit ? " " + data.unit : ""}, ${data.city}, ${data.state} ${data.zip}`)}
           ${row("Children at Home", data.numChildren)}
           ${row("Ages of Children", data.childrenAges)}
           ${row("Occupation", data.occupation)}

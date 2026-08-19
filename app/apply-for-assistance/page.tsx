@@ -12,6 +12,7 @@ const initialForm = {
   street: "",
   unit: "",
   city: "",
+  state: "FL",
   zip: "",
   phone: "",
   spouseEmail: "",
@@ -172,10 +173,16 @@ export default function ApplyForAssistancePage() {
               <label className={labelClass}>Unit / Apartment Number</label>
               <input name="unit" value={form.unit} onChange={handleChange} className={inputClass} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <div>
                 <label className={labelClass}>City *</label>
                 <input name="city" required value={form.city} onChange={handleChange} className={inputClass} />
+              </div>
+              <div>
+                <label className={labelClass}>State *</label>
+                <input name="state" required maxLength={2} value={form.state}
+                  onChange={(e) => setForm((f) => ({ ...f, state: e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 2) }))}
+                  className={inputClass} />
               </div>
               <div>
                 <label className={labelClass}>ZIP Code *</label>
