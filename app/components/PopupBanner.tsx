@@ -24,13 +24,13 @@ export default function PopupBanner() {
       <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden animate-fade-in-up">
 
         <div className="relative aspect-[1200/660] w-full">
-          <Image src="/rosh-hashanah-popup.jpeg" alt="Delivery Status: Pending — Awaiting Your Generosity" fill className="object-cover object-center" priority />
+          <Image src="/rosh-hashanah-popup-v2.jpg" alt="Delivery Status: Pending — Awaiting Your Generosity, Yom Tov Campaign" fill className="object-cover object-center" priority />
 
           {/* Clickable "Click To Give" hotspot, positioned over the button in the graphic */}
           <Link href="/RoshHashanah" onClick={close}
             aria-label="Click to give"
             className="absolute rounded-none cursor-pointer transition-all duration-150 hover:ring-2 hover:ring-inset hover:ring-[#0F6B6B] active:scale-[0.97]"
-            style={{ left: "69.0%", top: "79.1%", width: "27.6%", height: "11.7%" }} />
+            style={{ left: "70.75%", top: "76.36%", width: "25.42%", height: "10.91%" }} />
         </div>
 
         {/* Close button */}
