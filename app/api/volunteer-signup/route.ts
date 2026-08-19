@@ -21,8 +21,12 @@ export async function POST(req: NextRequest) {
       ? interests
       : String(interests || "").split(",").map((s) => s.trim()).filter(Boolean);
 
-    const recipients = [...new Set(interestList.map((i) => INTEREST_EMAILS[i]).filter(Boolean))];
-    if (recipients.length === 0) {
+    // Pair each selected interest with its own recipient, so each team's
+    // email only ever mentions its own interest — never the others.
+    const matches = interestList
+      .map((interest) => ({ interest, to: INTEREST_EMAILS[interest] }))
+      .filter((m) => m.to);
+    if (matches.length === 0) {
       return NextResponse.json({ error: "Please select at least one way to help." }, { status: 400 });
     }
 
@@ -30,25 +34,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Signups are not configured yet. Please try again later." }, { status: 500 });
     }
 
-    const html = `
+    const emailFor = (interest: string) => `
       <div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto">
         <h2 style="color:#1AABAB">New Volunteer Signup</h2>
-        <p><strong>Interested in:</strong> ${interestList.join(", ")}</p>
+        <p><strong>Interested in:</strong> ${interest}</p>
         <p><strong>Name:</strong> ${firstName} ${lastName}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Phone:</strong> ${phone}</p>
         ${message ? `<p><strong>Message:</strong> ${message}</p>` : ""}
       </div>`;
 
-    // Send a separate email per matching team, so e.g. Deliver never sees
-    // Fundraise's address (and vice versa) in an all-recipients "To" field.
+    // Send a separate email per matching interest, so e.g. Deliver never sees
+    // Fundraise mentioned (and vice versa), even if a volunteer picked both.
     await Promise.all(
-      recipients.map((to) =>
+      matches.map(({ interest, to }) =>
         sendMail({
           to,
           replyTo: email,
-          subject: `Volunteer Signup — ${firstName} ${lastName} (${interestList.join(", ")})`,
-          html,
+          subject: `Volunteer Signup — ${firstName} ${lastName} (${interest})`,
+          html: emailFor(interest),
         })
       )
     );
