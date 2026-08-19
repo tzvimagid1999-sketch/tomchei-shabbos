@@ -89,8 +89,8 @@ export default function VolunteerPage() {
 
       {/* Impact highlights */}
       <section className="bg-[#FAF3E8] paper-texture py-16">
-        <div className="max-w-5xl mx-auto px-6 text-center">
-          <div className="grid sm:grid-cols-3 gap-10 sm:gap-8">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <div className="grid sm:grid-cols-3 gap-10 sm:gap-16">
             {highlights.map((h) => (
               <div key={h.title}>
                 <h3 className="font-playfair font-black leading-tight" style={{ fontSize: "48px", color: h.accent ? "#1AABAB" : "#F5A020" }}>
