@@ -20,6 +20,18 @@ export default function Home() {
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-[#0D8585]/60 via-black/30 to-black/60" />
 
+        {/* Buttons — top-left */}
+        <div className="relative z-10 flex flex-wrap gap-4 px-8 sm:px-16 pt-8">
+          <Link href="/donate#payment"
+            className="bg-[#F5A020] text-white px-10 py-5 rounded-xl font-black text-sm sm:text-base uppercase tracking-widest hover:bg-[#D48810] transition-all duration-150 shadow-lg">
+            Make a Donation
+          </Link>
+          <Link href="/volunteer"
+            className="bg-white/20 backdrop-blur-sm border-2 border-white text-white px-10 py-5 rounded-xl font-black text-sm sm:text-base uppercase tracking-widest hover:bg-white/30 transition-all duration-150 shadow-lg">
+            Get Involved
+          </Link>
+        </div>
+
         {/* Main content */}
         <div className="relative z-10 flex-1 flex flex-col justify-center px-8 sm:px-16 pb-8">
           <p className="font-jost text-white text-2xl sm:text-4xl font-light mb-1 drop-shadow-lg">
@@ -31,18 +43,6 @@ export default function Home() {
           <p className="font-jost text-white text-xl sm:text-2xl font-bold tracking-wide drop-shadow-lg">
             Food. Dignity. Community.
           </p>
-        </div>
-
-        {/* Buttons */}
-        <div className="relative z-10 flex gap-4 px-8 sm:px-16 pb-14">
-          <Link href="/donate#payment"
-            className="bg-[#F5A020] text-white px-10 py-5 rounded-xl font-black text-sm sm:text-base uppercase tracking-widest hover:bg-[#D48810] transition-all duration-150 shadow-lg">
-            Make a Donation
-          </Link>
-          <Link href="/volunteer"
-            className="bg-white/20 backdrop-blur-sm border-2 border-white text-white px-10 py-5 rounded-xl font-black text-sm sm:text-base uppercase tracking-widest hover:bg-white/30 transition-all duration-150 shadow-lg">
-            Get Involved
-          </Link>
         </div>
       </section>
 
