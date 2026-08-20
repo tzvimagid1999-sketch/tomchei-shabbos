@@ -144,8 +144,15 @@ export default function DonatePage() {
     clientRef.current = client;
     const card = client.createPaymentCardEntry();
     card.generateHTML({
-      base: { fontSize: "15px", color: "#374151", fontFamily: "inherit" },
-      "::placeholder": { color: "#9ca3af" },
+      styles: `
+        .payjs-base { font-size: 15px; color: #374151; font-family: inherit; }
+        .payjs-base::placeholder { color: #9ca3af; }
+        .payjs-container { display: flex; flex-wrap: wrap; gap: 10px; }
+        .payjs-wrapper { margin-bottom: 0; }
+        .payjs-wrapper:nth-child(1) { flex: 2 1 140px; }
+        .payjs-wrapper:nth-child(2) { flex: 1 1 90px; }
+        .payjs-wrapper:nth-child(3) { flex: 1 1 70px; }
+      `,
     });
     card.addHTML("usaepay-card-container");
     card.addEventListener("error", (data) => {
