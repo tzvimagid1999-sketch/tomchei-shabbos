@@ -35,7 +35,7 @@ export default function BlogPage() {
       </section>
 
       {/* Article */}
-      <section className="bg-[#FDF9F7] py-20">
+      <section className="bg-[#1AABAB] py-20">
         <div className="max-w-3xl mx-auto px-6">
 
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
