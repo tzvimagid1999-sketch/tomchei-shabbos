@@ -228,6 +228,7 @@ export default function RoshHashanah() {
           <Image src="/rosh-hashanah-hero-v2.jpg" alt="Rosh Hashanah Campaign"
             fill className="object-contain sm:object-cover object-center" priority sizes="100vw" />
         </section>
+        <div className="h-1 w-full" style={{ backgroundColor: "#C8A75B" }} />
 
         <div className="h-8 sm:h-10" />
 
