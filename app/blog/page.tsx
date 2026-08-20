@@ -3,6 +3,12 @@ import Image from "next/image";
 import { Calendar, Clock, ArrowLeft } from "lucide-react";
 import { DONATE_HREF } from "../lib/site-config";
 
+export const metadata = {
+  title: "News & Stories | Tomchei Shabbos of Florida",
+  description:
+    "Stories and updates from Tomchei Shabbos of Florida — how our community comes together each week to help local families celebrate Shabbos.",
+};
+
 const post = {
   title: "Bringing Light to Every Home: The Mission of Tomchei Shabbos Florida",
   date: "June 3, 2026",

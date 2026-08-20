@@ -15,9 +15,20 @@ const jost     = Jost({ subsets: ["latin"], variable: "--font-jost", weight: ["4
 const ptSerif  = PT_Serif({ subsets: ["latin"], variable: "--font-pt-serif", weight: ["400", "700"] });
 
 export const metadata: Metadata = {
+  // metadataBase lets Google and social platforms resolve relative URLs.
+  metadataBase: new URL("https://tomcheishabbosflorida.org"),
   title: "Tomchei Shabbos Florida – Helping Every Family Celebrate Shabbos",
   description:
     "Tomchei Shabbos Florida provides food packages to families in need so everyone can have a beautiful Shabbos. Donate or volunteer today!",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Tomchei Shabbos Florida – Helping Every Family Celebrate Shabbos",
+    description:
+      "Tomchei Shabbos Florida provides food packages to families in need so everyone can have a beautiful Shabbos. Donate or volunteer today!",
+    url: "https://tomcheishabbosflorida.org",
+    siteName: "Tomchei Shabbos of Florida",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
