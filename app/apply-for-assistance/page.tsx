@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { CheckCircle, Eye, EyeOff } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 
 const initialForm = {
   email: "",
@@ -36,7 +36,6 @@ export default function ApplyForAssistancePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [showAccessCode, setShowAccessCode] = useState(false);
 
   const inputClass =
     "w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#1AABAB] transition font-medium text-gray-700 bg-white";
@@ -178,17 +177,10 @@ export default function ApplyForAssistancePage() {
             {form.unit && (
               <div className="mb-3">
                 <label className={labelClass}>Building / Gate Access Instructions *</label>
-                <div className="relative">
-                  <input type={showAccessCode ? "text" : "password"} name="accessInstructions" required
-                    value={form.accessInstructions} onChange={handleChange}
-                    placeholder="e.g. gate code, doorman, leave with front desk"
-                    className={`${inputClass} pr-10`} />
-                  <button type="button" onClick={() => setShowAccessCode((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    aria-label={showAccessCode ? "Hide access code" : "Show access code"}>
-                    {showAccessCode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
+                <input type="text" name="accessInstructions" required
+                  value={form.accessInstructions} onChange={handleChange}
+                  placeholder="e.g. gate code, doorman, leave with front desk"
+                  className={inputClass} />
               </div>
             )}
             <div className="grid grid-cols-3 gap-3">
