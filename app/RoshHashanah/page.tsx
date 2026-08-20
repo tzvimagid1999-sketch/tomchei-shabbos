@@ -250,7 +250,7 @@ export default function RoshHashanah() {
                 <p className={`font-bold text-[#C8A75B] ${loading ? "text-sm sm:text-base italic" : "text-2xl sm:text-3xl"}`}>{loading ? "Calculating…" : `${Math.round(progressPercent)}%`}</p>
               </div>
             </div>
-            <div className="relative w-full h-6 bg-[#F8F4EC] rounded-full overflow-hidden" style={{ boxShadow: "0 0 0 1px rgba(0,0,0,0.06), inset 0 2px 4px rgba(0,0,0,0.08)" }}>
+            <div className="relative w-full h-6 bg-[#F8F4EC] rounded-full overflow-hidden" style={{ boxShadow: "0 0 10px 3px rgba(0,0,0,0.18)" }}>
               <div className={`absolute top-0 left-0 h-full bg-gradient-to-r from-[#1AABAB] to-[#3DC4C4] rounded-full transition-all duration-500 ${loading ? "animate-pulse" : ""}`}
                 style={{ width: loading ? "0%" : `${progressPercent}%` }} />
             </div>
