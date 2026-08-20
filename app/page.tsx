@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import StatsSection from "./components/StatsSection";
 import FadeInOnScroll from "./components/FadeInOnScroll";
-import ContactForm from "./components/ContactForm";
 
 export default function Home() {
   return (
@@ -116,15 +115,6 @@ export default function Home() {
           &ldquo;Our Neighbors. Our Friends. Our Community.&rdquo;
         </p>
       </div>
-
-      {/* Contact Us */}
-      <section className="bg-[#FAF3E8] paper-texture py-20">
-        <div className="max-w-md mx-auto px-6">
-          <h2 className="font-playfair text-4xl font-bold text-gray-900 mb-2 text-center">Contact Us</h2>
-          <p className="text-[#8B7355] text-center mb-10">Have a question? Send us a message and we&apos;ll get back to you.</p>
-          <ContactForm />
-        </div>
-      </section>
 
       {/* CTA banner */}
       <section className="relative bg-[#1AABAB] py-10 overflow-hidden">

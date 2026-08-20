@@ -1,0 +1,13 @@
+Subject: Turn off automatic customer receipt emails
+
+Hi Ben,
+
+Can you turn off the automatic customer receipt email on our account? Our
+website now sends its own receipt, so donors are getting two emails for
+the same donation.
+
+If this is something I can turn off myself in the dashboard, can you point
+me to where that setting is?
+
+Thank you,
+Tzvi
