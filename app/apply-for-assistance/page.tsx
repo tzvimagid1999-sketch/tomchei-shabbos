@@ -177,21 +177,10 @@ export default function ApplyForAssistancePage() {
             {form.unit && (
               <div className="mb-3">
                 <label className={labelClass}>Building / Gate Access Instructions *</label>
-                <div className="relative">
-                  {/* Real input captures typing normally but is invisible (color: transparent) so
-                      native cursor/selection/copy-paste behavior all still work correctly. */}
-                  <input type="text" name="accessInstructions" required
-                    value={form.accessInstructions} onChange={handleChange}
-                    placeholder="e.g. gate code, doorman, leave with front desk"
-                    className={inputClass}
-                    style={{ color: form.accessInstructions ? "transparent" : undefined, caretColor: "#374151" }} />
-                  {/* Masked overlay — shows real asterisks in place of the typed text */}
-                  {form.accessInstructions && (
-                    <div className="absolute inset-0 flex items-center px-4 pointer-events-none font-medium text-gray-700 text-sm tracking-widest overflow-hidden">
-                      {"*".repeat(form.accessInstructions.length)}
-                    </div>
-                  )}
-                </div>
+                <input type="text" name="accessInstructions" required
+                  value={form.accessInstructions} onChange={handleChange}
+                  placeholder="e.g. gate code, doorman, leave with front desk"
+                  className={inputClass} />
               </div>
             )}
             <div className="grid grid-cols-3 gap-3">
