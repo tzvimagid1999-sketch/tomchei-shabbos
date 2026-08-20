@@ -1,6 +1,7 @@
 ﻿import Link from "next/link";
 import Image from "next/image";
 import { Calendar, Clock, ArrowLeft } from "lucide-react";
+import { DONATE_HREF } from "../lib/site-config";
 
 const post = {
   title: "Bringing Light to Every Home: The Mission of Tomchei Shabbos Florida",
@@ -67,7 +68,7 @@ export default function BlogPage() {
 
               {/* Divider */}
               <div className="border-t border-gray-100 pt-8 mt-8 flex flex-col sm:flex-row gap-4">
-                <Link href="/donate#payment"
+                <Link href={DONATE_HREF}
                   className="bg-[#F5A020] text-white px-8 py-3 font-bold text-sm hover:bg-[#D48810] transition text-center">
                   Donate Now
                 </Link>

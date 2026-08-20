@@ -380,13 +380,15 @@ export default function DonatePage() {
                 <div className="mb-4">
                   <input type="email" required placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_0.7fr_1fr] gap-3">
-                  <input type="text" required placeholder="Address" value={street} onChange={(e) => setStreet(e.target.value)} className={inputClass} />
-                  <input type="text" required placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} className={inputClass} />
+                {/* min-w-0 on each field: grid items default to min-width:auto, so inputs
+                    refuse to shrink below their intrinsic size and overflow the card. */}
+                <div className="grid grid-cols-2 sm:grid-cols-[2fr_1fr_0.7fr_1fr] gap-3">
+                  <input type="text" required placeholder="Address" value={street} onChange={(e) => setStreet(e.target.value)} className={`${inputClass} min-w-0 col-span-2 sm:col-span-1`} />
+                  <input type="text" required placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} className={`${inputClass} min-w-0 col-span-2 sm:col-span-1`} />
                   <input type="text" required placeholder="State" maxLength={2} value={state}
-                    onChange={(e) => setState(e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 2))} className={inputClass} />
+                    onChange={(e) => setState(e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 2))} className={`${inputClass} min-w-0`} />
                   <input type="text" required inputMode="numeric" placeholder="Zip" maxLength={5} value={zip}
-                    onChange={(e) => setZip(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))} className={inputClass} />
+                    onChange={(e) => setZip(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))} className={`${inputClass} min-w-0`} />
                 </div>
               </div>
 

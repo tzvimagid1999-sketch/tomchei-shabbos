@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { DONATE_HREF } from "../lib/site-config";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -12,7 +13,7 @@ export default function Footer() {
           {[
             { href: "/",               label: "Home" },
             { href: "/about",          label: "About" },
-            { href: "/donate#payment", label: "Donate" },
+            { href: DONATE_HREF,       label: "Donate" },
             { href: "/volunteer",      label: "Volunteer" },
             { href: "/blog",           label: "Blog" },
             { href: "/manage-donation", label: "Cancel Monthly" },

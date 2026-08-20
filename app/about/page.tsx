@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { DONATE_HREF } from "../lib/site-config";
 
 export default function AboutPage() {
   return (
@@ -156,7 +157,7 @@ export default function AboutPage() {
         <div className="relative z-10 max-w-xl mx-auto px-6">
           <h2 className="font-playfair text-5xl sm:text-6xl font-bold text-white mb-4 leading-[1.1]">Join Our Mission</h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/donate#payment"
+            <Link href={DONATE_HREF}
               className="bg-[#F5A020] text-white px-8 py-4 rounded-lg font-semibold text-base hover:bg-[#D48810] transition">
               Donate Now
             </Link>

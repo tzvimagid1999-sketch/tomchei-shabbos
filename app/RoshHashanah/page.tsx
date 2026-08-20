@@ -390,11 +390,13 @@ export default function RoshHashanah() {
                 <div className="mb-4">
                   <input type="email" placeholder="Email Address" className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="email" required />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_0.7fr_1fr] gap-3">
-                  <input type="text" placeholder="Address" className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="street" />
-                  <input type="text" placeholder="City" className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="city" />
-                  <input type="text" placeholder="State" maxLength={2} className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="state" />
-                  <input type="text" placeholder="Zip" maxLength={5} className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="zip" />
+                {/* min-w-0 on each field: grid items default to min-width:auto, so inputs
+                    refuse to shrink below their intrinsic size and overflow the card. */}
+                <div className="grid grid-cols-2 sm:grid-cols-[2fr_1fr_0.7fr_1fr] gap-3">
+                  <input type="text" placeholder="Address" className="min-w-0 col-span-2 sm:col-span-1 border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="street" />
+                  <input type="text" placeholder="City" className="min-w-0 col-span-2 sm:col-span-1 border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="city" />
+                  <input type="text" placeholder="State" maxLength={2} className="min-w-0 border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="state" />
+                  <input type="text" placeholder="Zip" maxLength={5} className="min-w-0 border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="zip" />
                 </div>
               </div>
 

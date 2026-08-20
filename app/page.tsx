@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import StatsSection from "./components/StatsSection";
 import FadeInOnScroll from "./components/FadeInOnScroll";
+import { DONATE_HREF } from "./lib/site-config";
 
 export default function Home() {
   return (
@@ -35,7 +36,7 @@ export default function Home() {
 
         {/* Buttons — bottom-right; smaller and side-by-side on mobile, original size on sm+ */}
         <div className="relative z-10 flex justify-end gap-2 sm:gap-4 px-8 sm:px-16 pb-14">
-          <Link href="/donate#payment"
+          <Link href={DONATE_HREF}
             className="bg-[#F5A020] text-white px-4 py-2 sm:px-10 sm:py-5 rounded-lg sm:rounded-xl font-black text-[11px] sm:text-base uppercase tracking-widest hover:bg-[#D48810] transition-all duration-150 shadow-lg whitespace-nowrap">
             Make a Donation
           </Link>
@@ -61,7 +62,7 @@ export default function Home() {
         <p className="font-playfair italic text-3xl sm:text-4xl text-[#7A5C3A] max-w-3xl mx-auto leading-relaxed">
           &ldquo;Your donation provides a family&apos;s Shabbos this week.&rdquo;
         </p>
-        <Link href="/donate#payment"
+        <Link href={DONATE_HREF}
           className="inline-block mt-8 bg-[#F5A020] text-white px-10 py-4 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-[#D48810] transition">
           Donate Now
         </Link>
@@ -124,7 +125,7 @@ export default function Home() {
             Join our family of supporters helping Florida families celebrate Shabbos with dignity and joy.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/donate#payment"
+            <Link href={DONATE_HREF}
               className="bg-[#F5A020] text-white px-10 py-4 rounded-lg font-bold text-base tracking-wide hover:bg-[#D48810] transition-all duration-150">
               Donate Now
             </Link>

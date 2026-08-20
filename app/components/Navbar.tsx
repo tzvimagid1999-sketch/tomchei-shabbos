@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { DONATE_HREF } from "../lib/site-config";
 
 const links = [
   { href: "/",          label: "Home" },
@@ -47,7 +48,7 @@ export default function Navbar() {
               className="ml-2 px-4 py-2 rounded-lg text-sm font-semibold text-[#0F9FAE] hover:bg-orange-100 transition-all flex items-center gap-1.5">
               🍎 Rosh Hashanah Campaign
             </Link>
-            <Link href="/donate#payment"
+            <Link href={DONATE_HREF}
               className="ml-2 bg-[#F5A020] text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-[#D48810] transition-all tracking-wide active:translate-y-[2px]">
               Donate Now
             </Link>
@@ -76,7 +77,7 @@ export default function Navbar() {
             onClick={() => setOpen(false)}>
             🍎 Rosh Hashanah Campaign
           </Link>
-          <Link href="/donate#payment"
+          <Link href={DONATE_HREF}
             className="block bg-[#F5A020] text-white text-center px-4 py-2.5 rounded-lg font-bold text-sm mt-2 tracking-wide"
             onClick={() => setOpen(false)}>
             Donate Now

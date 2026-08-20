@@ -1,0 +1,14 @@
+Subject: Setting up Apple Pay on our account
+
+Hi Ben,
+
+We'd like to add Apple Pay to our donation pages. I saw that it requires an
+Apple Developer account ($99/year) plus generating and uploading certificates
+in the Apple Pay section of the merchant console.
+
+Before I go through that whole process, is there anything you can help with
+or simplify on your end? Some processors help merchants through this setup,
+so I wanted to check before committing to it myself.
+
+Thank you,
+Tzvi
