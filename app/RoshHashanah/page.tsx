@@ -233,7 +233,8 @@ export default function RoshHashanah() {
 
         {/* Thermometer */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
-          <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8" style={{ background: 'rgba(255, 255, 255, 0.95)' }}>
+          <div className="bg-white rounded-2xl p-6 sm:p-8 transition-transform duration-300 hover:-translate-y-1"
+            style={{ background: 'rgba(255, 255, 255, 0.95)', boxShadow: "0 0 16px 4px rgba(0,0,0,0.15)" }}>
             <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Goal</p>
