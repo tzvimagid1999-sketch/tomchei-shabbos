@@ -35,12 +35,8 @@ export default function BlogPage() {
       </section>
 
       {/* Article */}
-      <section className="relative py-20 overflow-hidden" style={{ background: "linear-gradient(135deg, #1AABAB 0%, #0D8585 55%, #F5A020 130%)" }}>
-        <div className="absolute inset-0 opacity-[0.08]" style={{
-          backgroundImage: "radial-gradient(circle, #ffffff 2px, transparent 2px)",
-          backgroundSize: "28px 28px",
-        }} />
-        <div className="relative z-10 max-w-3xl mx-auto px-6">
+      <section className="bg-[#FDF9F7] py-20">
+        <div className="max-w-3xl mx-auto px-6">
 
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
