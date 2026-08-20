@@ -122,9 +122,10 @@ export default function RoshHashanah() {
         .payjs-base::placeholder { color: #9ca3af; }
         .payjs-container { display: flex; flex-wrap: wrap; gap: 10px; }
         .payjs-wrapper { margin-bottom: 0; }
-        .payjs-wrapper:nth-child(1) { flex: 2 1 140px; }
+        .payjs-wrapper:nth-child(1) { flex: 1 1 100%; }
         .payjs-wrapper:nth-child(2) { flex: 1 1 90px; }
-        .payjs-wrapper:nth-child(3) { flex: 1 1 70px; }
+        .payjs-wrapper:nth-child(3) { flex: 1 1 90px; }
+        .payjs-wrapper:nth-child(4) { flex: 1 1 70px; }
       `,
     });
     card.addHTML("card-field");
@@ -378,24 +379,26 @@ export default function RoshHashanah() {
                 )}
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">Card Number</label>
-                <div id="card-field" className="border-2 border-[#E5E5E5] rounded-lg p-4 bg-white focus-within:ring-2 focus-within:ring-[#C8A75B]"></div>
-              </div>
-
               <div className="pt-4">
                 <h3 className="text-sm font-semibold text-[#2D2D2D] mb-4 uppercase tracking-wider">Billing Information</h3>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <input type="text" placeholder="First Name" className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="firstName" />
                   <input type="text" placeholder="Last Name" className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="lastName" />
                 </div>
-                <input type="email" placeholder="Email Address" className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D] mb-4" id="email" required />
-                <input type="text" placeholder="Street Address" className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D] mb-4" id="street" />
-                <div className="grid grid-cols-2 gap-4">
+                <div className="mb-4">
+                  <input type="email" placeholder="Email Address" className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="email" required />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_0.7fr_1fr] gap-3">
+                  <input type="text" placeholder="Address" className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="street" />
                   <input type="text" placeholder="City" className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="city" />
                   <input type="text" placeholder="State" maxLength={2} className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="state" />
+                  <input type="text" placeholder="Zip" maxLength={5} className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="zip" />
                 </div>
-                <input type="text" placeholder="ZIP Code" maxLength={5} className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D] mt-4" id="zip" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">Card Details</label>
+                <div id="card-field" className="border-2 border-[#E5E5E5] rounded-lg p-4 bg-white focus-within:ring-2 focus-within:ring-[#C8A75B]"></div>
               </div>
 
               <button onClick={handleCheckoutPayment} disabled={checkoutLoading} className="w-full bg-[#C8A75B] hover:bg-[#B8975B] text-white py-4 rounded-lg font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 mt-8">

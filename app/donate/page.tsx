@@ -149,9 +149,10 @@ export default function DonatePage() {
         .payjs-base::placeholder { color: #9ca3af; }
         .payjs-container { display: flex; flex-wrap: wrap; gap: 10px; }
         .payjs-wrapper { margin-bottom: 0; }
-        .payjs-wrapper:nth-child(1) { flex: 2 1 140px; }
+        .payjs-wrapper:nth-child(1) { flex: 1 1 100%; }
         .payjs-wrapper:nth-child(2) { flex: 1 1 90px; }
-        .payjs-wrapper:nth-child(3) { flex: 1 1 70px; }
+        .payjs-wrapper:nth-child(3) { flex: 1 1 90px; }
+        .payjs-wrapper:nth-child(4) { flex: 1 1 70px; }
       `,
     });
     card.addHTML("usaepay-card-container");
@@ -371,28 +372,30 @@ export default function DonatePage() {
                 )}
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">Card Number</label>
-                <div className="border-2 border-[#E5E5E5] rounded-lg p-4 bg-white focus-within:ring-2 focus-within:ring-[#1AABAB] min-h-[52px]">
-                  <div id="usaepay-card-container" />
-                  {!scriptReady && <p className="text-gray-400 text-sm">Loading secure card field…</p>}
-                </div>
-              </div>
-
               <div className="pt-4">
                 <h3 className="text-sm font-semibold text-[#2D2D2D] mb-4 uppercase tracking-wider">Billing Information</h3>
                 <div className="mb-4">
                   <input type="text" required placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
                 </div>
-                <input type="email" required placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} className={`${inputClass} mb-4`} />
-                <input type="text" required placeholder="Street Address" value={street} onChange={(e) => setStreet(e.target.value)} className={`${inputClass} mb-4`} />
-                <div className="grid grid-cols-2 gap-4">
+                <div className="mb-4">
+                  <input type="email" required placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_0.7fr_1fr] gap-3">
+                  <input type="text" required placeholder="Address" value={street} onChange={(e) => setStreet(e.target.value)} className={inputClass} />
                   <input type="text" required placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} className={inputClass} />
                   <input type="text" required placeholder="State" maxLength={2} value={state}
                     onChange={(e) => setState(e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 2))} className={inputClass} />
+                  <input type="text" required inputMode="numeric" placeholder="Zip" maxLength={5} value={zip}
+                    onChange={(e) => setZip(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))} className={inputClass} />
                 </div>
-                <input type="text" required inputMode="numeric" placeholder="ZIP Code" maxLength={5} value={zip}
-                  onChange={(e) => setZip(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))} className={`${inputClass} mt-4`} />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">Card Details</label>
+                <div className="border-2 border-[#E5E5E5] rounded-lg p-4 bg-white focus-within:ring-2 focus-within:ring-[#1AABAB] min-h-[52px]">
+                  <div id="usaepay-card-container" />
+                  {!scriptReady && <p className="text-gray-400 text-sm">Loading secure card field…</p>}
+                </div>
               </div>
 
               {error && <p className="text-red-500 text-sm">{error}</p>}
