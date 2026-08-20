@@ -222,10 +222,11 @@ export default function RoshHashanah() {
       <div className="relative z-10">
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
-        {/* Hero — same 300px size as the About Us, Volunteer, Blog, and Apply pages, on all screens */}
-        <section className="relative min-h-[300px] flex items-center justify-center text-center overflow-hidden">
+        {/* Hero — on mobile, a moderate fixed height with the full banner visible (no crop).
+            On sm+ screens, same 300px crop-to-fill box as the other pages, unchanged. */}
+        <section className="relative min-h-[140px] sm:min-h-[300px] flex items-center justify-center text-center overflow-hidden" style={{ backgroundColor: "#F8F4EC" }}>
           <Image src="/rosh-hashanah-hero-v2.jpg" alt="Rosh Hashanah Campaign"
-            fill className="object-cover object-center" priority sizes="100vw" />
+            fill className="object-contain sm:object-cover object-center" priority sizes="100vw" />
         </section>
 
         <div className="h-8 sm:h-10" />
