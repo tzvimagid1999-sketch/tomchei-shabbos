@@ -84,6 +84,12 @@ export default function RoshHashanah() {
       : Math.floor(totalDonated / STRETCH_STEP) * STRETCH_STEP + STRETCH_STEP;
   const baseGoalReached = totalDonated >= BASE_GOAL;
   const goalLabel = `$${Math.round(goal / 1000)}k`;
+  // Show the exact amount raised ($1,001) rather than rounding to $1k. Longer
+  // numbers get a smaller size so "$150,000" still fits the 3-column layout on
+  // a narrow phone.
+  const raisedLabel = `$${Math.round(totalDonated).toLocaleString()}`;
+  const raisedSizeClass =
+    raisedLabel.length > 7 ? "text-lg sm:text-2xl" : "text-2xl sm:text-3xl";
   const progressPercent = Math.min((totalDonated / goal) * 100, 100);
 
   useEffect(() => {
@@ -265,8 +271,8 @@ export default function RoshHashanah() {
               </div>
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Raised</p>
-                <p className={`font-bold text-[#2D2D2D] ${loading ? "text-sm sm:text-base italic" : "text-2xl sm:text-3xl"}`}>
-                  {loading ? "Calculating…" : totalDonated >= 1000 ? `$${(totalDonated / 1000).toFixed(0)}k` : `$${totalDonated.toLocaleString()}`}
+                <p className={`font-bold text-[#2D2D2D] tabular-nums ${loading ? "text-sm sm:text-base italic" : raisedSizeClass}`}>
+                  {loading ? "Calculating…" : raisedLabel}
                 </p>
               </div>
               <div className="text-center">
