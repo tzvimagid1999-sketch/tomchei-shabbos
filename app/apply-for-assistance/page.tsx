@@ -148,9 +148,7 @@ export default function ApplyForAssistancePage() {
 
           {/* Spouse info */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">
-              Spouse&apos;s Information <span className="normal-case font-normal text-gray-400">(if applicable)</span>
-            </h3>
+            <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Spouse&apos;s Information</h3>
             <div className="mb-3">
               <label className={labelClass}>Spouse&apos;s Name</label>
               <input name="spouseName" value={form.spouseName} onChange={handleChange} className={inputClass} />
