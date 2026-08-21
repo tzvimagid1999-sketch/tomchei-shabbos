@@ -73,8 +73,18 @@ export default function RoshHashanah() {
   const cardRef = useRef<any>(null);
   const publicKey = process.env.NEXT_PUBLIC_USAEPAY_PUBLIC_KEY;
 
-  const GOAL = 100000;
-  const progressPercent = Math.min((totalDonated / GOAL) * 100, 100);
+  // Stretch goals: the campaign starts at $100k. The moment that's reached the
+  // target climbs to $125k, then $150k, and so on in $25k steps. The next tier
+  // is deliberately NOT revealed until the current one is actually hit.
+  const BASE_GOAL = 100000;
+  const STRETCH_STEP = 25000;
+  const goal =
+    totalDonated < BASE_GOAL
+      ? BASE_GOAL
+      : Math.floor(totalDonated / STRETCH_STEP) * STRETCH_STEP + STRETCH_STEP;
+  const baseGoalReached = totalDonated >= BASE_GOAL;
+  const goalLabel = `$${Math.round(goal / 1000)}k`;
+  const progressPercent = Math.min((totalDonated / goal) * 100, 100);
 
   useEffect(() => {
     const fetchTotal = async () => {
@@ -249,7 +259,7 @@ export default function RoshHashanah() {
             <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Goal</p>
-                <p className={`font-bold text-[#C8A75B] ${loading ? "text-sm sm:text-base italic" : "text-2xl sm:text-3xl"}`}>{loading ? "Calculating…" : "$100k"}</p>
+                <p className={`font-bold text-[#C8A75B] ${loading ? "text-sm sm:text-base italic" : "text-2xl sm:text-3xl"}`}>{loading ? "Calculating…" : goalLabel}</p>
               </div>
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Raised</p>
@@ -262,6 +272,13 @@ export default function RoshHashanah() {
                 <p className={`font-bold text-[#C8A75B] ${loading ? "text-sm sm:text-base italic" : "text-2xl sm:text-3xl"}`}>{loading ? "Calculating…" : `${Math.round(progressPercent)}%`}</p>
               </div>
             </div>
+            {/* Only revealed once the previous goal is actually met — before that
+                the campaign shows a single target with no hint of a stretch goal. */}
+            {!loading && baseGoalReached && (
+              <p className="text-center text-xs sm:text-sm font-bold text-[#1AABAB] mb-3">
+                🎉 We passed ${Math.round((goal - STRETCH_STEP) / 1000)}k! New goal: {goalLabel}
+              </p>
+            )}
             <div className="relative w-full h-6 bg-[#F8F4EC] rounded-full overflow-hidden" style={{ boxShadow: "0 0 10px 3px rgba(0,0,0,0.18)" }}>
               <div className={`absolute top-0 left-0 h-full bg-gradient-to-r from-[#1AABAB] to-[#3DC4C4] rounded-full transition-all duration-500 ${loading ? "animate-pulse" : ""}`}
                 style={{ width: loading ? "0%" : `${progressPercent}%` }} />
