@@ -7,7 +7,9 @@ export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
 
-    const required = ["email", "status", "firstName", "lastName", "spouseName", "street", "city", "state", "zip", "phone", "spouseEmail", "numChildren", "childrenAges", "occupation", "spouseOccupation", "assistanceType", "rabbiName", "rabbiPhone", "rabbiCongregation", "otherOrgAssistance"];
+    // Spouse fields are intentionally optional — single, divorced, and widowed
+    // applicants were otherwise forced to type "N/A" to get past validation.
+    const required = ["email", "status", "firstName", "lastName", "street", "city", "state", "zip", "phone", "numChildren", "childrenAges", "occupation", "assistanceType", "rabbiName", "rabbiPhone", "rabbiCongregation", "otherOrgAssistance"];
     for (const field of required) {
       if (!String(data[field] || "").trim()) {
         return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });

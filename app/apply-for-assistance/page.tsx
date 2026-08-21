@@ -148,18 +148,20 @@ export default function ApplyForAssistancePage() {
 
           {/* Spouse info */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Spouse&apos;s Information</h3>
+            <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">
+              Spouse&apos;s Information <span className="normal-case font-normal text-gray-400">(if applicable)</span>
+            </h3>
             <div className="mb-3">
-              <label className={labelClass}>Spouse&apos;s Name *</label>
-              <input name="spouseName" required value={form.spouseName} onChange={handleChange} className={inputClass} />
+              <label className={labelClass}>Spouse&apos;s Name</label>
+              <input name="spouseName" value={form.spouseName} onChange={handleChange} className={inputClass} />
             </div>
             <div className="mb-3">
-              <label className={labelClass}>Spouse&apos;s Email *</label>
-              <input type="email" name="spouseEmail" required value={form.spouseEmail} onChange={handleChange} className={inputClass} />
+              <label className={labelClass}>Spouse&apos;s Email</label>
+              <input type="email" name="spouseEmail" value={form.spouseEmail} onChange={handleChange} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Spouse&apos;s Occupation *</label>
-              <input name="spouseOccupation" required value={form.spouseOccupation} onChange={handleChange} className={inputClass} />
+              <label className={labelClass}>Spouse&apos;s Occupation</label>
+              <input name="spouseOccupation" value={form.spouseOccupation} onChange={handleChange} className={inputClass} />
             </div>
           </div>
 
