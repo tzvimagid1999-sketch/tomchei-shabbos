@@ -1,3 +1,9 @@
+"use client";
+import { useState } from "react";
+import { Check, Copy } from "lucide-react";
+
+const ZELLE_EMAIL = "tomcheishabbosfl@gmail.com";
+
 const methods = [
   {
     name: "The Donors Fund",
@@ -31,6 +37,41 @@ const methods = [
   },
 ];
 
+// Zelle has no payment URL — donors send from their own bank app to an address.
+// So this row shows the address and copies it, rather than linking out.
+function ZelleRow() {
+  const [copied, setCopied] = useState(false);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(ZELLE_EMAIL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard can be blocked (older browsers, insecure context). The address
+      // is visible on screen either way, so the donor can still select it.
+      setCopied(false);
+    }
+  };
+
+  return (
+    <button type="button" onClick={copy}
+      className="w-full flex items-center gap-4 bg-white border-2 border-gray-100 rounded-xl px-4 py-3 hover:border-[#1AABAB] hover:shadow-md transition-all text-left">
+      <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg shrink-0"
+        style={{ backgroundColor: "#6D1ED4" }}>
+        Z
+      </div>
+      <div className="min-w-0 flex-1">
+        <span className="font-semibold text-gray-700 block">Donate with Zelle</span>
+        <span className="text-xs text-gray-500 break-all">{ZELLE_EMAIL}</span>
+      </div>
+      <span className="shrink-0 flex items-center gap-1 text-xs font-semibold text-[#1AABAB]">
+        {copied ? <><Check className="w-4 h-4" /> Copied</> : <><Copy className="w-4 h-4" /> Copy</>}
+      </span>
+    </button>
+  );
+}
+
 export default function OtherWaysToGive() {
   return (
     <div className="max-w-md mx-auto">
@@ -46,6 +87,7 @@ export default function OtherWaysToGive() {
             <span className="font-semibold text-gray-700">Donate with {m.name}</span>
           </a>
         ))}
+        <ZelleRow />
       </div>
     </div>
   );
