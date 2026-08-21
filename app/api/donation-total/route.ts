@@ -12,6 +12,45 @@ function json(body: unknown, init?: ResponseInit) {
   return res;
 }
 
+// Donations made outside the website's card form (Venmo, PayPal, Cash App,
+// The Donors Fund, JCF) never touch USAePay, so staff log them in a Google
+// Sheet and we add that running total here.
+//
+// Best-effort by design: if the sheet is slow, unreachable, or misconfigured,
+// we return 0 for it rather than letting the whole progress bar fail. The
+// result is cached briefly so a page full of visitors polling every 10s
+// doesn't hammer Apps Script.
+async function fetchOtherDonationsTotal(): Promise<{ total: number; error?: string }> {
+  const url = process.env.OTHER_DONATIONS_URL;
+  const secret = process.env.OTHER_DONATIONS_SECRET;
+  if (!url) return { total: 0 };
+
+  try {
+    const res = await fetch(`${url}?secret=${encodeURIComponent(secret || "")}`, {
+      redirect: "follow",
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return { total: 0, error: `HTTP ${res.status}` };
+
+    const text = await res.text();
+    let parsed: { total?: unknown; error?: unknown };
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      // Apps Script returns an HTML error page when misconfigured.
+      return { total: 0, error: `non-JSON response: ${text.slice(0, 120)}` };
+    }
+    if (parsed.error) return { total: 0, error: String(parsed.error) };
+
+    const value = parseFloat(String(parsed.total));
+    return Number.isFinite(value) && value >= 0
+      ? { total: value }
+      : { total: 0, error: `bad total: ${String(parsed.total)}` };
+  } catch (err) {
+    return { total: 0, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
 // Fetch total donations from USAePay for the campaign progress bar
 export async function GET(req: NextRequest) {
   const debug = req.nextUrl.searchParams.get("debug") === "1";
@@ -65,10 +104,17 @@ export async function GET(req: NextRequest) {
       })
       .reduce((sum, t) => sum + (parseFloat(String(t.amount)) || 0), 0);
 
+    const other = await fetchOtherDonationsTotal();
+    const combined = total + other.total;
+
     if (debug) {
       return json({
-        total: Math.round(total),
+        total: Math.round(combined),
         debug: {
+          cardTotal: Math.round(total),
+          otherPlatformsTotal: Math.round(other.total),
+          otherPlatformsError: other.error ?? null,
+          otherPlatformsConfigured: Boolean(process.env.OTHER_DONATIONS_URL),
           transactionCount: transactions.length,
           sample: transactions.slice(0, 10),
           rawKeys: Object.keys(data),
@@ -76,7 +122,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    return json({ total: Math.round(total) });
+    return json({ total: Math.round(combined) });
   } catch (err) {
     console.error("Failed to fetch donation total:", err);
     return json({ total: 0 });

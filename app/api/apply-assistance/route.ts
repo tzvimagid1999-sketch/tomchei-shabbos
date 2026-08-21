@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       </div>`;
 
     await sendMail({
-      to: "admin@tomcheishabbosflorida.org",
+      to: "chanies@tomcheishabbosflorida.org",
       replyTo: data.email,
       subject: `Assistance Application — ${data.firstName} ${data.lastName}`,
       html,
