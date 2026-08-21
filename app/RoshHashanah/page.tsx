@@ -258,7 +258,9 @@ export default function RoshHashanah() {
             style={{ background: 'rgba(255, 255, 255, 0.95)', boxShadow: "0 0 16px 4px rgba(0,0,0,0.15)" }}>
             <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
               <div className="text-center">
-                <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Goal</p>
+                <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">
+                  {!loading && baseGoalReached ? "Bonus Goal" : "Goal"}
+                </p>
                 <p className={`font-bold text-[#C8A75B] ${loading ? "text-sm sm:text-base italic" : "text-2xl sm:text-3xl"}`}>{loading ? "Calculating…" : goalLabel}</p>
               </div>
               <div className="text-center">
@@ -276,7 +278,7 @@ export default function RoshHashanah() {
                 the campaign shows a single target with no hint of a stretch goal. */}
             {!loading && baseGoalReached && (
               <p className="text-center text-xs sm:text-sm font-bold text-[#1AABAB] mb-3">
-                🎉 We passed ${Math.round((goal - STRETCH_STEP) / 1000)}k! New goal: {goalLabel}
+                🎉 We passed ${Math.round((goal - STRETCH_STEP) / 1000)}k! Bonus Goal: {goalLabel}
               </p>
             )}
             <div className="relative w-full h-6 bg-[#F8F4EC] rounded-full overflow-hidden" style={{ boxShadow: "0 0 10px 3px rgba(0,0,0,0.18)" }}>
