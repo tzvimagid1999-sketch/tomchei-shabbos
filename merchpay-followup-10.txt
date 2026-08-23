@@ -1,0 +1,38 @@
+Subject: Site lost connection to USAePay today - was our account rate-limited?
+
+Hi Ben,
+
+Earlier today our website completely lost its connection to USAePay for roughly
+an hour. Live donations were failing during that window. Every request timed
+out before it could connect:
+
+  ConnectTimeoutError: Connect Timeout Error
+  (attempted address: usaepay.com:443, timeout: 10000ms)
+
+USAePay was reachable normally from other networks at the same time, so it
+looked specific to our hosting provider's IP addresses rather than an outage
+on your end.
+
+Here's what I think caused it. Our donation page shows a fundraising progress
+bar, and it was requesting the transactions endpoint (limit=500) every 10
+seconds for each visitor with the page open. During the campaign that added up
+to a lot of requests. We've since reduced it by about 95% - the total is now
+cached and fetched at most once per minute regardless of how many people are
+on the page. Connectivity came back on its own after that.
+
+Three questions:
+
+1. Can you check whether our account or our host's IPs were rate-limited or
+   blocked today, automatically or manually?
+
+2. What request rate does USAePay consider acceptable for the transactions
+   endpoint? I want to be sure our current setup stays well within it.
+
+3. If we get blocked again mid-campaign, what's the fastest way to get it
+   lifted, and who should I contact?
+
+This is our live donation site during an active campaign, so I want to make
+sure it doesn't happen again.
+
+Thank you,
+Tzvi
