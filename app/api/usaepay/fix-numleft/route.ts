@@ -24,26 +24,36 @@ export async function GET(req: NextRequest) {
   // Scan mode: find every enabled schedule stuck at numleft=0, and optionally
   // repair them all to the indefinite count.
   if (scan) {
-    const custRes = await fetch(`${endpoint}/customers?limit=200`, { headers: { Authorization: auth() } });
-    const custList = await custRes.json();
-    const customers = (custList?.data || []) as Array<{
-      custkey?: string; key?: string; email?: string;
-      billing_schedules?: Array<{ key: string; numleft?: string; enabled?: string; description?: string }>;
+    // The customer LIST endpoint doesn't embed billing_schedules, so identify
+    // recurring signups from their transactions and check only those customers.
+    // Far fewer upstream calls than walking all 93 customers.
+    const txRes = await fetch(`${endpoint}/transactions?limit=500&type=sale`, {
+      headers: { Authorization: auth() },
+    });
+    const txData = await txRes.json();
+    const txs = (txData?.transactions || txData?.data || []) as Array<{
+      custkey?: string; description?: string; customer_email?: string; created?: string;
     }>;
 
+    const candidates = new Map<string, { email?: string; created?: string }>();
+    for (const t of txs) {
+      if (!t.custkey) continue;
+      if (!/monthly donation|pledge/i.test(t.description || "")) continue;
+      if (!candidates.has(t.custkey)) candidates.set(t.custkey, { email: t.customer_email, created: t.created });
+    }
+
     const broken: Array<Record<string, unknown>> = [];
-    let schedulesSeen = 0;
-    const numleftValues: Record<string, number> = {};
-    for (const c of customers) {
-      const ck = c.custkey || c.key;
-      if (!ck) continue;
-      for (const s of c.billing_schedules || []) {
-        schedulesSeen++;
-        const nl = String(s.numleft);
-        numleftValues[nl] = (numleftValues[nl] || 0) + 1;
-      }
-      for (const s of c.billing_schedules || []) {
-        if (s.enabled === "1" && String(s.numleft) === "0") {
+    const healthy: Array<Record<string, unknown>> = [];
+    for (const [ck, meta] of candidates) {
+      const sRes = await fetch(`${endpoint}/customers/${encodeURIComponent(ck)}/billing_schedules`, {
+        headers: { Authorization: auth() },
+      });
+      if (!sRes.ok) continue;
+      const sData = await sRes.json();
+      for (const s of (sData?.data || []) as Array<{ key: string; numleft?: string; enabled?: string; description?: string; next_date?: string }>) {
+        if (s.enabled !== "1") continue;
+        const row = { custkey: ck, email: meta.email, scheduleKey: s.key, numleft: s.numleft, next_date: s.next_date, description: s.description };
+        if (String(s.numleft) === "0") {
           let repaired: string | undefined;
           if (apply) {
             await fetch(`${endpoint}/customers/${encodeURIComponent(ck)}/billing_schedules/${encodeURIComponent(s.key)}`, {
@@ -55,20 +65,21 @@ export async function GET(req: NextRequest) {
               headers: { Authorization: auth() },
             });
             const after = await v.json();
-            repaired = ((after?.data || []) as Array<{ key: string; numleft?: string }>)
-              .find((x) => x.key === s.key)?.numleft;
+            repaired = ((after?.data || []) as Array<{ key: string; numleft?: string }>).find((x) => x.key === s.key)?.numleft;
           }
-          broken.push({ custkey: ck, email: c.email, scheduleKey: s.key, description: s.description, numleftAfter: repaired });
+          broken.push({ ...row, numleftAfter: repaired });
+        } else {
+          healthy.push(row);
         }
       }
     }
     return NextResponse.json({
-      customersChecked: customers.length,
-      schedulesSeen,
-      numleftBreakdown: numleftValues,
+      recurringCustomersChecked: candidates.size,
       brokenCount: broken.length,
+      healthyCount: healthy.length,
       applied: apply,
       broken,
+      healthy,
     });
   }
 
