@@ -13,13 +13,52 @@ export async function GET(req: NextRequest) {
 
   const custkey = req.nextUrl.searchParams.get("custkey");
   const apply = req.nextUrl.searchParams.get("apply") === "1";
-  if (!custkey) return NextResponse.json({ error: "Missing custkey" }, { status: 400 });
+  const scan = req.nextUrl.searchParams.get("scan") === "1";
 
   const auth = () => {
     const seed = crypto.randomBytes(16).toString("hex");
     const hash = crypto.createHash("sha256").update(sourceKey + seed + pin).digest("hex");
     return "Basic " + Buffer.from(`${sourceKey}:s2/${seed}/${hash}`).toString("base64");
   };
+
+  // Scan mode: find every enabled schedule stuck at numleft=0, and optionally
+  // repair them all to the indefinite count.
+  if (scan) {
+    const custRes = await fetch(`${endpoint}/customers?limit=200`, { headers: { Authorization: auth() } });
+    const custList = await custRes.json();
+    const customers = (custList?.data || []) as Array<{
+      custkey?: string; key?: string; email?: string;
+      billing_schedules?: Array<{ key: string; numleft?: string; enabled?: string; description?: string }>;
+    }>;
+
+    const broken: Array<Record<string, unknown>> = [];
+    for (const c of customers) {
+      const ck = c.custkey || c.key;
+      if (!ck) continue;
+      for (const s of c.billing_schedules || []) {
+        if (s.enabled === "1" && String(s.numleft) === "0") {
+          let repaired: string | undefined;
+          if (apply) {
+            await fetch(`${endpoint}/customers/${encodeURIComponent(ck)}/billing_schedules/${encodeURIComponent(s.key)}`, {
+              method: "PUT",
+              headers: { Authorization: auth(), "Content-Type": "application/json" },
+              body: JSON.stringify({ numleft: 9999 }),
+            });
+            const v = await fetch(`${endpoint}/customers/${encodeURIComponent(ck)}/billing_schedules`, {
+              headers: { Authorization: auth() },
+            });
+            const after = await v.json();
+            repaired = ((after?.data || []) as Array<{ key: string; numleft?: string }>)
+              .find((x) => x.key === s.key)?.numleft;
+          }
+          broken.push({ custkey: ck, email: c.email, scheduleKey: s.key, description: s.description, numleftAfter: repaired });
+        }
+      }
+    }
+    return NextResponse.json({ customersChecked: customers.length, brokenCount: broken.length, applied: apply, broken });
+  }
+
+  if (!custkey) return NextResponse.json({ error: "Missing custkey" }, { status: 400 });
 
   const listRes = await fetch(`${endpoint}/customers/${encodeURIComponent(custkey)}/billing_schedules`, {
     headers: { Authorization: auth() },

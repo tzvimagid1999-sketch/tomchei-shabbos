@@ -36,6 +36,14 @@ export async function POST(req: NextRequest) {
     // charges payment #1 — the schedule only needs to cover the remaining ones.
     const totalPayments = numPayments ? Number(numPayments) : undefined;
     const remainingPayments = totalPayments && totalPayments > 1 ? totalPayments - 1 : undefined;
+
+    // "Ongoing (until cancelled)" must still send an explicit numleft. Omitting
+    // it makes USAePay store 0 — zero payments remaining — so the schedule looks
+    // enabled but never charges again. Their docs say "*" means bill forever,
+    // but the REST API silently ignores it, so we use a count that outlives any
+    // donor (9999 months ≈ 833 years). Cancelling still works normally.
+    const INDEFINITE_PAYMENTS = 9999;
+    const scheduleNumLeft = remainingPayments ?? INDEFINITE_PAYMENTS;
     const dedication = honoreeType && honoreeName
       ? ` (${honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${honoreeName})`
       : "";
@@ -145,7 +153,7 @@ export async function POST(req: NextRequest) {
             description: campaignTag + (totalPayments
               ? `Pledge (${totalPayments} monthly payments) to Tomchei Shabbos of Florida`
               : "Monthly donation to Tomchei Shabbos of Florida"),
-            ...(remainingPayments ? { numleft: remainingPayments } : {}),
+            numleft: scheduleNumLeft,
           }),
         });
         const schedRaw = await schedRes.text();
