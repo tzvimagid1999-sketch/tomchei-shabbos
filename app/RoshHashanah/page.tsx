@@ -105,7 +105,9 @@ export default function RoshHashanah() {
     };
 
     fetchTotal();
-    const interval = setInterval(fetchTotal, 10000);
+    // 60s, not 10s: the server caches the upstream total for a minute anyway,
+    // and the old rate multiplied by every open tab is what overwhelmed USAePay.
+    const interval = setInterval(fetchTotal, 60000);
     return () => clearInterval(interval);
   }, []);
 

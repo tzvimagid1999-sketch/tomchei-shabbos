@@ -25,6 +25,13 @@ function json(body: unknown, init?: ResponseInit) {
 let otherCache: { value: number; at: number } | null = null;
 const OTHER_CACHE_MS = 60_000;
 
+// The campaign page polls this endpoint every 10s per visitor. Without a cache
+// that meant every visitor pulling 500 transactions from USAePay six times a
+// minute, which is almost certainly what got our IPs connection-throttled.
+// One upstream call per minute is plenty for a progress bar.
+let cardCache: { value: number; at: number } | null = null;
+const CARD_CACHE_MS = 60_000;
+
 async function fetchOtherDonationsTotal(): Promise<{ total: number; error?: string }> {
   const url = process.env.OTHER_DONATIONS_URL;
   const secret = process.env.OTHER_DONATIONS_SECRET;
@@ -74,6 +81,13 @@ export async function GET(req: NextRequest) {
       return json({ total: 0 });
     }
 
+    // Serve the cached card total when it's fresh, so visitor polling never
+    // reaches USAePay directly.
+    if (!debug && cardCache && Date.now() - cardCache.at < CARD_CACHE_MS) {
+      const cachedOther = await fetchOtherDonationsTotal();
+      return json({ total: Math.round(cardCache.value + cachedOther.total) });
+    }
+
     const seed = crypto.randomBytes(16).toString("hex");
     const hash = crypto.createHash("sha256").update(sourceKey + seed + pin).digest("hex");
     const authHeader =
@@ -114,6 +128,8 @@ export async function GET(req: NextRequest) {
         return approved && !reversed && tagged;
       })
       .reduce((sum, t) => sum + (parseFloat(String(t.amount)) || 0), 0);
+
+    cardCache = { value: total, at: Date.now() };
 
     const other = await fetchOtherDonationsTotal();
     const combined = total + other.total;
