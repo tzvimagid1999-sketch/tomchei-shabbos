@@ -32,9 +32,16 @@ export async function GET(req: NextRequest) {
     }>;
 
     const broken: Array<Record<string, unknown>> = [];
+    let schedulesSeen = 0;
+    const numleftValues: Record<string, number> = {};
     for (const c of customers) {
       const ck = c.custkey || c.key;
       if (!ck) continue;
+      for (const s of c.billing_schedules || []) {
+        schedulesSeen++;
+        const nl = String(s.numleft);
+        numleftValues[nl] = (numleftValues[nl] || 0) + 1;
+      }
       for (const s of c.billing_schedules || []) {
         if (s.enabled === "1" && String(s.numleft) === "0") {
           let repaired: string | undefined;
@@ -55,7 +62,14 @@ export async function GET(req: NextRequest) {
         }
       }
     }
-    return NextResponse.json({ customersChecked: customers.length, brokenCount: broken.length, applied: apply, broken });
+    return NextResponse.json({
+      customersChecked: customers.length,
+      schedulesSeen,
+      numleftBreakdown: numleftValues,
+      brokenCount: broken.length,
+      applied: apply,
+      broken,
+    });
   }
 
   if (!custkey) return NextResponse.json({ error: "Missing custkey" }, { status: 400 });
