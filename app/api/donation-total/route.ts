@@ -17,18 +17,27 @@ function json(body: unknown, init?: ResponseInit) {
 // Sheet and we add that running total here.
 //
 // Best-effort by design: if the sheet is slow, unreachable, or misconfigured,
-// we return 0 for it rather than letting the whole progress bar fail. The
-// result is cached briefly so a page full of visitors polling every 10s
-// doesn't hammer Apps Script.
+// we return 0 for it rather than letting the whole progress bar fail.
+//
+// Cached in memory rather than via fetch's `next.revalidate`, because this
+// route is force-dynamic (revalidate = 0) and Next rejects a longer per-fetch
+// revalidate inside such a route — which took the whole endpoint down.
+let otherCache: { value: number; at: number } | null = null;
+const OTHER_CACHE_MS = 60_000;
+
 async function fetchOtherDonationsTotal(): Promise<{ total: number; error?: string }> {
   const url = process.env.OTHER_DONATIONS_URL;
   const secret = process.env.OTHER_DONATIONS_SECRET;
   if (!url) return { total: 0 };
 
+  if (otherCache && Date.now() - otherCache.at < OTHER_CACHE_MS) {
+    return { total: otherCache.value };
+  }
+
   try {
     const res = await fetch(`${url}?secret=${encodeURIComponent(secret || "")}`, {
       redirect: "follow",
-      next: { revalidate: 60 },
+      cache: "no-store",
     });
     if (!res.ok) return { total: 0, error: `HTTP ${res.status}` };
 
@@ -43,9 +52,11 @@ async function fetchOtherDonationsTotal(): Promise<{ total: number; error?: stri
     if (parsed.error) return { total: 0, error: String(parsed.error) };
 
     const value = parseFloat(String(parsed.total));
-    return Number.isFinite(value) && value >= 0
-      ? { total: value }
-      : { total: 0, error: `bad total: ${String(parsed.total)}` };
+    if (!Number.isFinite(value) || value < 0) {
+      return { total: 0, error: `bad total: ${String(parsed.total)}` };
+    }
+    otherCache = { value, at: Date.now() };
+    return { total: value };
   } catch (err) {
     return { total: 0, error: err instanceof Error ? err.message : String(err) };
   }
@@ -124,7 +135,11 @@ export async function GET(req: NextRequest) {
 
     return json({ total: Math.round(combined) });
   } catch (err) {
-    console.error("Failed to fetch donation total:", err);
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("Failed to fetch donation total:", message);
+    // Surface the reason when debugging — a bare { total: 0 } made a hard
+    // failure look identical to a campaign that simply hadn't raised anything.
+    if (debug) return json({ total: 0, debug: { fatalError: message } });
     return json({ total: 0 });
   }
 }
