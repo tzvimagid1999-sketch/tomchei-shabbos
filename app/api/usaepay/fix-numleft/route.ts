@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
     {
       method: "PUT",
       headers: { Authorization: auth(), "Content-Type": "application/json" },
-      body: JSON.stringify({ numleft: "*" }),
+      body: JSON.stringify({ numleft: req.nextUrl.searchParams.get("value") ?? "*" }),
     }
   );
   const putRaw = await putRes.text();
