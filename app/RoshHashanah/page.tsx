@@ -5,6 +5,7 @@ import Image from "next/image";
 import { CheckCircle } from "lucide-react";
 import confetti from "canvas-confetti";
 import OtherWaysToGive from "../components/OtherWaysToGive";
+import { SHOW_PROGRESS_BAR } from "../lib/site-config";
 
 const SPLIT_MONTH_OPTIONS = [3, 6, 12, 18, 24, 36];
 
@@ -93,6 +94,12 @@ export default function RoshHashanah() {
   const progressPercent = Math.min((totalDonated / goal) * 100, 100);
 
   useEffect(() => {
+    // Bar disabled: make no calls to USAePay at all while connectivity is blocked.
+    if (!SHOW_PROGRESS_BAR) {
+      setLoading(false);
+      return;
+    }
+
     const fetchTotal = async () => {
       try {
         const res = await fetch("/api/donation-total", { cache: "no-store" });
@@ -261,6 +268,7 @@ export default function RoshHashanah() {
         <div className="h-8 sm:h-10" />
 
         {/* Thermometer */}
+        {SHOW_PROGRESS_BAR && (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
           <div className="bg-white rounded-2xl p-6 sm:p-8 transition-transform duration-300 hover:-translate-y-1"
             style={{ background: 'rgba(255, 255, 255, 0.95)', boxShadow: "0 0 16px 4px rgba(0,0,0,0.15)" }}>
@@ -295,6 +303,7 @@ export default function RoshHashanah() {
             </div>
           </div>
         </div>
+        )}
 
         {/* Donation Cards */}
         <div id="donate-section" className="max-w-6xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
