@@ -135,7 +135,12 @@ export async function GET(req: NextRequest) {
 
     return json({ total: Math.round(combined) });
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    // Node wraps network failures as a bare "fetch failed" — the actual reason
+    // (DNS, TLS, refused, timeout) is only on the nested `cause`.
+    const cause = (err as { cause?: unknown })?.cause;
+    const message =
+      (err instanceof Error ? err.message : String(err)) +
+      (cause ? ` | cause: ${cause instanceof Error ? `${cause.name}: ${cause.message}` : String(cause)}` : "");
     console.error("Failed to fetch donation total:", message);
     // Surface the reason when debugging — a bare { total: 0 } made a hard
     // failure look identical to a campaign that simply hadn't raised anything.
