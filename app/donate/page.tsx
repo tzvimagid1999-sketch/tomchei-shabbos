@@ -97,6 +97,7 @@ export default function DonatePage() {
   const [splitMonths, setSplitMonths] = useState<number | null>(null); // null = ongoing until cancelled
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [honoreeType, setHonoreeType] = useState<"" | "honor" | "memory">("");
   const [honoreeName, setHonoreeName] = useState("");
   const [honoreeEmail, setHonoreeEmail] = useState("");
@@ -199,7 +200,7 @@ export default function DonatePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           amount: donationAmount,
-          paymentKey, name, email, street, city, state, zip,
+          paymentKey, name, email, phone, street, city, state, zip,
           ...(frequency === "monthly" && splitMonths ? { numPayments: splitMonths } : {}),
           ...(honoreeType && honoreeName ? { honoreeType, honoreeName } : {}),
           ...(honoreeType === "honor" && honoreeEmail ? { honoreeEmail } : {}),
@@ -377,8 +378,9 @@ export default function DonatePage() {
                 <div className="mb-4">
                   <input type="text" required placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
                 </div>
-                <div className="mb-4">
-                  <input type="email" required placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  <input type="email" required placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} className={`${inputClass} min-w-0`} />
+                  <input type="tel" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} className={`${inputClass} min-w-0`} />
                 </div>
                 {/* min-w-0 on each field: grid items default to min-width:auto, so inputs
                     refuse to shrink below their intrinsic size and overflow the card. */}

@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, name, email, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign } = await req.json();
+    const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -66,6 +66,7 @@ export async function POST(req: NextRequest) {
       city: city || undefined,
       state: state || undefined,
       postalcode: zip || undefined,
+      phone: phone || undefined,
       country: "US",
     };
 

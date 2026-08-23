@@ -164,6 +164,7 @@ export default function RoshHashanah() {
     const firstName = (document.getElementById("firstName") as HTMLInputElement)?.value;
     const lastName = (document.getElementById("lastName") as HTMLInputElement)?.value;
     const email = (document.getElementById("email") as HTMLInputElement)?.value;
+    const phone = (document.getElementById("phone") as HTMLInputElement)?.value;
     const street = (document.getElementById("street") as HTMLInputElement)?.value;
     const city = (document.getElementById("city") as HTMLInputElement)?.value;
     const state = (document.getElementById("state") as HTMLInputElement)?.value;
@@ -199,6 +200,7 @@ export default function RoshHashanah() {
             ? { name: `${firstName} ${lastName}`, campaign: "rosh-hashanah", ...(splitMonths ? { numPayments: splitMonths } : {}) }
             : { firstName, lastName, campaign: "rosh-hashanah" }),
           email,
+          phone,
           street,
           city,
           state,
@@ -216,6 +218,8 @@ export default function RoshHashanah() {
         (document.getElementById("firstName") as HTMLInputElement).value = "";
         (document.getElementById("lastName") as HTMLInputElement).value = "";
         (document.getElementById("email") as HTMLInputElement).value = "";
+        const phoneInput = document.getElementById("phone") as HTMLInputElement | null;
+        if (phoneInput) phoneInput.value = "";
         (document.getElementById("street") as HTMLInputElement).value = "";
         (document.getElementById("city") as HTMLInputElement).value = "";
         (document.getElementById("state") as HTMLInputElement).value = "";
@@ -423,8 +427,9 @@ export default function RoshHashanah() {
                   <input type="text" placeholder="First Name" className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="firstName" />
                   <input type="text" placeholder="Last Name" className="border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="lastName" />
                 </div>
-                <div className="mb-4">
-                  <input type="email" placeholder="Email Address" className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="email" required />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  <input type="email" placeholder="Email Address" className="min-w-0 border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="email" required />
+                  <input type="tel" placeholder="Phone Number" className="min-w-0 border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#C8A75B] focus:border-transparent bg-white text-[#2D2D2D]" id="phone" />
                 </div>
                 {/* min-w-0 on each field: grid items default to min-width:auto, so inputs
                     refuse to shrink below their intrinsic size and overflow the card. */}
