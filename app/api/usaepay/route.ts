@@ -61,6 +61,10 @@ export async function POST(req: NextRequest) {
         amount: numericAmount.toFixed(2),
         payment_key: paymentKey,
         email: email || undefined,
+        // Populates the "Customer" column in MerchPay's Sales by Date report.
+        // That report shows Time / Invoice / Customer and has no Description
+        // column, so this is the only field that surfaces the donor's name there.
+        customerid: [resolvedFirst, resolvedLast].filter(Boolean).join(" ") || undefined,
         // Donor name leads the description so it shows in MerchPay's Sales by
         // Date report, which lists Description but not the billing name — and
         // so the name survives if that column truncates.

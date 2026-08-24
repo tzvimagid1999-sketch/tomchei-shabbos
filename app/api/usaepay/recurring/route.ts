@@ -108,6 +108,9 @@ export async function POST(req: NextRequest) {
         custkey: String(custkey),
         save_customer_paymethod: true,
         email: email || undefined,
+        // Shows the donor's name in the "Customer" column of MerchPay's
+        // Sales by Date report, which has no Description column.
+        customerid: `${firstName} ${lastName}`.trim() || undefined,
         // Donor name leads the description so it appears in MerchPay's Sales by
         // Date report, which shows Description but not the billing name.
         description: `${firstName} ${lastName} - ` + campaignTag + (totalPayments
