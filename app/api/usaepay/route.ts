@@ -50,6 +50,51 @@ export async function POST(req: NextRequest) {
     const authHeader =
       "Basic " + Buffer.from(`${sourceKey}:${apiHash}`).toString("base64");
 
+    const donorName = [resolvedFirst, resolvedLast].filter(Boolean).join(" ");
+    const billing = {
+      firstname: resolvedFirst || undefined,
+      lastname: resolvedLast || undefined,
+      street: street || undefined,
+      city: city || undefined,
+      state: state || undefined,
+      postalcode: zip || undefined,
+      phone: phone || undefined,
+      country: "US",
+    };
+
+    // MerchPay's Sales by Date report reads the Customer column from a linked
+    // customer record — not from any field on the transaction itself. One-time
+    // donations had no such record, which is why they showed blank while the
+    // manually-created recurring donors showed names.
+    //
+    // Deliberately fail-open: if this call errors or times out we charge the
+    // card anyway without a custkey. A reporting nicety must never cost a
+    // donation.
+    let oneTimeCustKey: string | undefined;
+    try {
+      const custRes = await fetch(`${endpoint}/customers`, {
+        method: "POST",
+        headers: { Authorization: authHeader, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstname: resolvedFirst || "Donor",
+          lastname: resolvedLast || "",
+          company: donorName || undefined,
+          email: email || undefined,
+          billing_address: billing,
+          // No schedule attached — this record exists purely so the donation
+          // has a named customer to display in reports.
+          enabled: false,
+        }),
+      });
+      if (custRes.ok) {
+        const cust = await custRes.json();
+        const key = cust?.key ?? cust?.custkey;
+        if (key) oneTimeCustKey = String(key);
+      }
+    } catch (custErr) {
+      console.error("Customer record creation failed (non-fatal):", custErr instanceof Error ? custErr.message : custErr);
+    }
+
     const res = await fetch(`${endpoint}/transactions`, {
       method: "POST",
       headers: {
@@ -61,30 +106,20 @@ export async function POST(req: NextRequest) {
         amount: numericAmount.toFixed(2),
         payment_key: paymentKey,
         email: email || undefined,
-        // Populates the "Customer" column in MerchPay's Sales by Date report.
-        // That report shows Time / Invoice / Customer and has no Description
-        // column, so this is the only field that surfaces the donor's name there.
-        customerid: [resolvedFirst, resolvedLast].filter(Boolean).join(" ") || undefined,
-        // Donor name leads the description so it shows in MerchPay's Sales by
-        // Date report, which lists Description but not the billing name — and
-        // so the name survives if that column truncates.
+        // Links this charge to the customer record created above, which is what
+        // the Sales by Date report's Customer column actually reads.
+        ...(oneTimeCustKey ? { custkey: oneTimeCustKey } : {}),
+        customerid: donorName || undefined,
+        // Name also leads the description, so it shows in exports and detail
+        // views regardless of which report is used.
         description:
-          [resolvedFirst, resolvedLast].filter(Boolean).join(" ") +
+          donorName +
           " - " +
           (campaign === "rosh-hashanah"
             ? "Rosh Hashanah Campaign donation to Tomchei Shabbos of Florida"
             : "Donation to Tomchei Shabbos of Florida") +
           dedication,
-        billing_address: {
-          firstname: resolvedFirst || undefined,
-          lastname: resolvedLast || undefined,
-          street: street || undefined,
-          city: city || undefined,
-          state: state || undefined,
-          postalcode: zip || undefined,
-          phone: phone || undefined,
-          country: "US",
-        },
+        billing_address: billing,
       }),
     });
 
