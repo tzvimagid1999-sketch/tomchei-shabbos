@@ -108,7 +108,9 @@ export async function POST(req: NextRequest) {
         custkey: String(custkey),
         save_customer_paymethod: true,
         email: email || undefined,
-        description: campaignTag + (totalPayments
+        // Donor name leads the description so it appears in MerchPay's Sales by
+        // Date report, which shows Description but not the billing name.
+        description: `${firstName} ${lastName} - ` + campaignTag + (totalPayments
           ? `Pledge payment 1 of ${totalPayments} to Tomchei Shabbos of Florida`
           : "Monthly donation to Tomchei Shabbos of Florida (first payment)") + dedication,
         billing_address: billing,
@@ -151,7 +153,9 @@ export async function POST(req: NextRequest) {
             start_date: nextBill,
             next_date: nextBill,
             enabled: true,
-            description: campaignTag + (totalPayments
+            // Name leads here too, so every future auto-charge from this
+            // schedule carries the donor's name into the reports as well.
+            description: `${firstName} ${lastName} - ` + campaignTag + (totalPayments
               ? `Pledge (${totalPayments} monthly payments) to Tomchei Shabbos of Florida`
               : "Monthly donation to Tomchei Shabbos of Florida"),
             numleft: scheduleNumLeft,

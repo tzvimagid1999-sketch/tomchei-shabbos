@@ -61,9 +61,16 @@ export async function POST(req: NextRequest) {
         amount: numericAmount.toFixed(2),
         payment_key: paymentKey,
         email: email || undefined,
-        description: (campaign === "rosh-hashanah"
-          ? "Rosh Hashanah Campaign donation to Tomchei Shabbos of Florida"
-          : "Donation to Tomchei Shabbos of Florida") + dedication,
+        // Donor name leads the description so it shows in MerchPay's Sales by
+        // Date report, which lists Description but not the billing name — and
+        // so the name survives if that column truncates.
+        description:
+          [resolvedFirst, resolvedLast].filter(Boolean).join(" ") +
+          " - " +
+          (campaign === "rosh-hashanah"
+            ? "Rosh Hashanah Campaign donation to Tomchei Shabbos of Florida"
+            : "Donation to Tomchei Shabbos of Florida") +
+          dedication,
         billing_address: {
           firstname: resolvedFirst || undefined,
           lastname: resolvedLast || undefined,
