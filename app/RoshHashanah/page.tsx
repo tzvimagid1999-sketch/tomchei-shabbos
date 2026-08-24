@@ -259,13 +259,18 @@ export default function RoshHashanah() {
       <div className="relative z-10">
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
-        {/* Hero — the container's aspect ratio matches the banner's own (1920x300), so the
-            image fills it edge-to-edge with no cropping and no letterbox bars at any width.
-            A fixed height can't work here: at 300px tall this 6.4:1 banner would need a
-            ~1940px-wide screen to avoid cropping. */}
-        <section className="relative w-full aspect-[1920/300] overflow-hidden" style={{ backgroundColor: "#F8F4EC" }}>
-          <Image src="/rosh-hashanah-hero-v2.jpg" alt="Rosh Hashanah Campaign"
-            fill className="object-cover object-center" priority sizes="100vw" />
+        {/* Hero — two banners, swapped at the sm breakpoint (640px), because one
+            image can't serve both shapes: the wide 1920x300 desktop banner renders
+            as a thin sliver on a phone. The container's aspect ratio switches to
+            match whichever image is showing, so neither one crops or letterboxes.
+            <picture> rather than next/image so the browser downloads only the one
+            it needs instead of both. */}
+        <section className="relative w-full aspect-[800/600] sm:aspect-[1920/300] overflow-hidden" style={{ backgroundColor: "#F8F4EC" }}>
+          <picture>
+            <source media="(min-width: 640px)" srcSet="/rosh-hashanah-hero-v2.jpg" />
+            <img src="/rosh-hashanah-hero-mobile.jpg" alt="Rosh Hashanah Campaign"
+              className="absolute inset-0 w-full h-full object-cover object-center" />
+          </picture>
         </section>
         <div className="h-1 w-full" style={{ backgroundColor: "#C8A75B" }} />
 
