@@ -268,15 +268,16 @@ export default function RoshHashanah() {
         {/* Fixed 300px at every width, matching the hero on every other page.
             Sizing the phone version by aspect ratio instead made it grow with
             screen width (~322px on a large phone), so it read as taller than the
-            rest of the site. Mobile serves the 800x600 banner cropped to fill;
-            desktop serves the 1920x300 one contained, since it's only that tall
-            on a ~1920px screen — the container is painted the banner's own edge
-            color (#FCF7F3) so the leftover bands are invisible. */}
+            rest of the site. Both banners are contained rather than cropped —
+            cropping the 800x600 one to fill shaved ~11px off the top on wider
+            phones, clipping "Tomchei". Both have the same cream edges, so the
+            container is painted that color (#FCF7F3) and the leftover bands are
+            invisible. */}
         <section className="relative w-full h-[300px] overflow-hidden" style={{ backgroundColor: "#FCF7F3" }}>
           <picture>
             <source media="(min-width: 640px)" srcSet="/rosh-hashanah-hero-v2.jpg" />
             <img src="/rosh-hashanah-hero-mobile.jpg" alt="Rosh Hashanah Campaign"
-              className="absolute inset-0 w-full h-full object-cover sm:object-contain object-center" />
+              className="absolute inset-0 w-full h-full object-contain object-center" />
           </picture>
         </section>
         <div className="h-1 w-full" style={{ backgroundColor: "#C8A75B" }} />
