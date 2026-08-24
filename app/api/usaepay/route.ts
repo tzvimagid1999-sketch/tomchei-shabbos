@@ -105,10 +105,6 @@ export async function POST(req: NextRequest) {
         command: "cc:sale",
         amount: numericAmount.toFixed(2),
         payment_key: paymentKey,
-        // MerchPay's Sales by Date "Customer" column reads the cardholder name,
-        // which pay.js never captures (its form is only number/expiry/CVV). We
-        // supply it alongside the token so the donor's name reaches that report.
-        ...(donorName ? { creditcard: { cardholder: donorName } } : {}),
         email: email || undefined,
         // Links this charge to the customer record created above, which is what
         // the Sales by Date report's Customer column actually reads.
