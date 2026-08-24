@@ -265,12 +265,14 @@ export default function RoshHashanah() {
             match whichever image is showing, so neither one crops or letterboxes.
             <picture> rather than next/image so the browser downloads only the one
             it needs instead of both. */}
-        {/* Mobile uses the 800x600 banner edge-to-edge. Desktop matches the fixed
-            300px hero height every other page uses; the 1920x300 banner is only
-            that tall on a ~1920px screen, so it's contained rather than cropped
-            and the container is painted the banner's own edge color (#FCF7F3) so
-            the leftover bands are invisible. */}
-        <section className="relative w-full aspect-[800/600] sm:aspect-auto sm:h-[300px] overflow-hidden" style={{ backgroundColor: "#FCF7F3" }}>
+        {/* Fixed 300px at every width, matching the hero on every other page.
+            Sizing the phone version by aspect ratio instead made it grow with
+            screen width (~322px on a large phone), so it read as taller than the
+            rest of the site. Mobile serves the 800x600 banner cropped to fill;
+            desktop serves the 1920x300 one contained, since it's only that tall
+            on a ~1920px screen — the container is painted the banner's own edge
+            color (#FCF7F3) so the leftover bands are invisible. */}
+        <section className="relative w-full h-[300px] overflow-hidden" style={{ backgroundColor: "#FCF7F3" }}>
           <picture>
             <source media="(min-width: 640px)" srcSet="/rosh-hashanah-hero-v2.jpg" />
             <img src="/rosh-hashanah-hero-mobile.jpg" alt="Rosh Hashanah Campaign"
