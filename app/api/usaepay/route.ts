@@ -62,39 +62,17 @@ export async function POST(req: NextRequest) {
       country: "US",
     };
 
-    // MerchPay's Sales by Date report reads the Customer column from a linked
-    // customer record — not from any field on the transaction itself. One-time
-    // donations had no such record, which is why they showed blank while the
-    // manually-created recurring donors showed names.
+    // One-time donations deliberately do NOT create or link a customer record.
     //
-    // Deliberately fail-open: if this call errors or times out we charge the
-    // card anyway without a custkey. A reporting nicety must never cost a
-    // donation.
-    let oneTimeCustKey: string | undefined;
-    try {
-      const custRes = await fetch(`${endpoint}/customers`, {
-        method: "POST",
-        headers: { Authorization: authHeader, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstname: resolvedFirst || "Donor",
-          lastname: resolvedLast || "",
-          company: donorName || undefined,
-          email: email || undefined,
-          billing_address: billing,
-          // No schedule attached — this record exists purely so the donation
-          // has a named customer to display in reports.
-          enabled: false,
-        }),
-      });
-      if (custRes.ok) {
-        const cust = await custRes.json();
-        const key = cust?.key ?? cust?.custkey;
-        if (key) oneTimeCustKey = String(key);
-      }
-    } catch (custErr) {
-      console.error("Customer record creation failed (non-fatal):", custErr instanceof Error ? custErr.message : custErr);
-    }
-
+    // Per USAePay support (Ben, 2026-08-24): when a sale carries a custkey, the
+    // Sales by Date report's Customer column renders the linked customer profile
+    // and IGNORES the cardholder field entirely. The profiles we were creating
+    // came back with only `company` populated — first/last were empty — so that
+    // column showed nothing.
+    //
+    // Dropping custkey lets `cardholder` populate the column instead, and stops
+    // this route from creating a customer profile for every single donation.
+    // Less donor data stored, and one less call in the charge path.
     const res = await fetch(`${endpoint}/transactions`, {
       method: "POST",
       headers: {
@@ -105,10 +83,11 @@ export async function POST(req: NextRequest) {
         command: "cc:sale",
         amount: numericAmount.toFixed(2),
         payment_key: paymentKey,
+        // Populates the Customer column on the Sales by Date report. pay.js
+        // never captures a cardholder name (its form is only number/expiry/CVV),
+        // so we supply it here. Only honoured because no custkey is sent.
+        ...(donorName ? { creditcard: { cardholder: donorName } } : {}),
         email: email || undefined,
-        // Links this charge to the customer record created above, which is what
-        // the Sales by Date report's Customer column actually reads.
-        ...(oneTimeCustKey ? { custkey: oneTimeCustKey } : {}),
         customerid: donorName || undefined,
         // Name also leads the description, so it shows in exports and detail
         // views regardless of which report is used.
