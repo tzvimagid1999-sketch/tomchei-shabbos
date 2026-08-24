@@ -1,0 +1,47 @@
+Subject: Which field populates the Customer column on the Sales by Date report?
+
+Hi Ben,
+
+I'm trying to get the donor's name to appear in the Customer column of the
+Sales by Date report, and I've run out of fields to guess at. Hoping you can
+just tell me which one that column actually reads.
+
+The situation: donations come in through our website via the API. The card is
+tokenized in the browser with pay.js, so the transaction is submitted with a
+payment_key rather than raw card data. Those transactions show up fine and
+settle correctly - but the Customer column is blank for every one of them.
+
+Recurring donors that were set up manually in the portal DO show names in that
+same column, so the report clearly can display them. It's specifically the
+API-submitted one-time donations that come through empty.
+
+Here's what I've already tried sending on the cc:sale, none of which put a name
+in that column:
+
+  1. description       - set to "Firstname Lastname - Donation to ..."
+  2. customerid        - set to "Firstname Lastname"
+  3. custkey           - I create a Customer record first, then link the sale
+                         to it with custkey
+  4. creditcard.cardholder - sent alongside the payment_key
+
+On that last one, the Cardholder field in the transaction detail displayed as
+"211231284" - a number rather than the name I sent - which makes me think
+cardholder is being derived from the token and my value is being ignored.
+
+So, three questions:
+
+  1. Which field does the Customer column on Sales by Date read from?
+
+  2. Is that field settable on an API cc:sale at all, or does it only populate
+     from a customer record created a particular way?
+
+  3. When a transaction uses payment_key from pay.js, are any of the name
+     fields overridden by what's on the token? That would explain why nothing
+     I send is sticking.
+
+We're mid-campaign and currently can't tell who donated from that report, which
+makes reconciling and thanking donors difficult. Any pointer on the right field
+would help a lot.
+
+Thank you,
+Tzvi

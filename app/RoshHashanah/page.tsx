@@ -77,7 +77,7 @@ export default function RoshHashanah() {
   // Stretch goals: the campaign starts at $100k. The moment that's reached the
   // target climbs to $125k, then $150k, and so on in $25k steps. The next tier
   // is deliberately NOT revealed until the current one is actually hit.
-  const BASE_GOAL = 100000;
+  const BASE_GOAL = 250000;
   const STRETCH_STEP = 25000;
   const goal =
     totalDonated < BASE_GOAL
