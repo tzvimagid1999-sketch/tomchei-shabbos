@@ -114,18 +114,39 @@ export async function GET(req: NextRequest) {
       amount?: string | number;
       trantype?: string;
       description?: string;
+      source_name?: string;
+      created?: string;
     }>;
 
     // Only count donations explicitly tagged as Rosh Hashanah Campaign — otherwise
     // this sums the merchant account's entire donation history (mail, phone, the
-    // general donate page, etc.), not just this specific campaign.
+    // general donate page, etc.), not just this specific campaign. That history is
+    // large: recurring, the old payment page and DonorSuite together hold well over
+    // $150k of non-campaign money on this same account.
+    //
+    // The telemarketer is the exception. ADM submits campaign donations by phone
+    // and cannot add our description tag, so they're matched by source instead —
+    // but only from CAMPAIGN_START onward, since ADM also raises money for us
+    // outside this campaign.
+    //
+    // NB: USAePay stores the label with a trailing space ("ADM Telemarketing "),
+    // so this must compare trimmed. An exact match silently counts nothing.
+    const ADM_SOURCE = "adm telemarketing";
+    const CAMPAIGN_START = "2026-07-24"; // first day of Rosh Hashanah campaign donations
+
     const total = transactions
       .filter((t) => {
         const approved = t.result_code === "A" || t.result === "Approved";
         const trantype = (t.trantype || "").toLowerCase();
         const reversed = trantype.includes("void") || trantype.includes("refund");
+        if (!approved || reversed) return false;
+
         const tagged = (t.description || "").toLowerCase().includes("rosh hashanah campaign");
-        return approved && !reversed && tagged;
+        if (tagged) return true;
+
+        const source = (t.source_name || "").trim().toLowerCase();
+        const when = String(t.created || "").slice(0, 10);
+        return source === ADM_SOURCE && when >= CAMPAIGN_START;
       })
       .reduce((sum, t) => sum + (parseFloat(String(t.amount)) || 0), 0);
 
