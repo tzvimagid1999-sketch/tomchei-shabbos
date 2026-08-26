@@ -466,6 +466,13 @@ export default function RoshHashanah() {
                     ? `Give $${checkoutAmount || "0"}/Month`
                     : "Complete Donation"}
               </button>
+
+              {/* Campaign mode redirects /donate here, so this page is the only
+                  checkout donors see — it needs the same reassurance line the
+                  donate page carries. */}
+              <p className="text-center text-xs text-gray-400 mt-4">
+                Secure checkout &middot; Donation is tax-deductible &middot; 501(c)(3) Tax ID: 83-2155012
+              </p>
             </div>
 
             <div className="mt-8">

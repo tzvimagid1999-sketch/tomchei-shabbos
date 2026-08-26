@@ -23,7 +23,9 @@ export default function Footer() {
             </Link>
           ))}
         </div>
-        <p className="text-white/40 text-[11px] hidden sm:block shrink-0 order-3">501(c)(3) · Tax ID: 83-2155012</p>
+        {/* Shown at every width — donors need the Tax ID for their records, and
+            most of them are on a phone. Previously hidden below the sm breakpoint. */}
+        <p className="text-white/40 text-[11px] shrink-0 order-3">501(c)(3) · Tax ID: 83-2155012</p>
       </div>
     </footer>
   );
