@@ -19,7 +19,7 @@ const MAILING = {
 export const metadata = {
   title: "Contact Us | Tomchei Shabbos of Florida",
   description:
-    "Get in touch with Tomchei Shabbos of Florida, or find our mailing address for donations sent by check, including IRA qualified charitable distributions.",
+    "Get in touch with Tomchei Shabbos of Florida, or find our mailing address for donations sent by check.",
 };
 
 export default function ContactPage() {
@@ -83,25 +83,6 @@ export default function ContactPage() {
               </address>
             </div>
 
-          </div>
-
-          {/* IRA / QCD note. Donors over the RMD age must take a distribution
-              each year and can send it straight to a charity tax-free, but
-              their custodian will only mail a paper check — so they need this
-              address and our Tax ID before they can give at all. */}
-          <div className="mt-6 rounded-2xl bg-[#F8F4EC] p-7">
-            <h2 className="font-playfair text-2xl font-bold text-[#2D2D2D] mb-2">
-              Giving from an IRA
-            </h2>
-            <p className="text-gray-700 text-[15px] leading-relaxed">
-              If you&rsquo;re making a qualified charitable distribution from your IRA, your fund
-              administrator can mail the check to the address above. Please have them include your
-              name so we know who to thank and where to send your receipt.
-            </p>
-            <p className="text-gray-700 text-[15px] leading-relaxed mt-3">
-              Tomchei Shabbos of Florida is a tax-exempt organization under Section 501(c)(3) of the
-              Internal Revenue Code. <strong className="text-[#2D2D2D]">Tax ID: 83-2155012</strong>.
-            </p>
           </div>
 
           <div className="mt-14 text-center">
