@@ -17,7 +17,10 @@ export default function Footer() {
             { href: "/volunteer",      label: "Volunteer" },
             { href: "/blog",           label: "Blog" },
             { href: "/contact",        label: "Contact" },
-            { href: "/manage-donation", label: "Cancel Monthly" },
+            // "Cancel Monthly" removed from the footer — monthly donors get a
+            // direct link to /manage-donation in their confirmation email, so
+            // the page stays reachable without advertising cancellation to
+            // every visitor. The route itself is untouched.
           ].map((l) => (
             <Link key={l.href} href={l.href} className="text-white/50 text-[11px] hover:text-white transition-colors">
               {l.label}
