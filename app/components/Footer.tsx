@@ -16,6 +16,7 @@ export default function Footer() {
             { href: DONATE_HREF,       label: "Donate" },
             { href: "/volunteer",      label: "Volunteer" },
             { href: "/blog",           label: "Blog" },
+            { href: "/contact",        label: "Contact" },
             { href: "/manage-donation", label: "Cancel Monthly" },
           ].map((l) => (
             <Link key={l.href} href={l.href} className="text-white/50 text-[11px] hover:text-white transition-colors">
