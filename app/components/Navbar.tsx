@@ -12,6 +12,7 @@ const links = [
   { href: "/volunteer", label: "Volunteer" },
   { href: "/blog",      label: "Blog" },
   { href: "/apply-for-assistance", label: "Apply for Assistance" },
+  { href: "/contact",   label: "Contact" },
 ];
 
 export default function Navbar() {
