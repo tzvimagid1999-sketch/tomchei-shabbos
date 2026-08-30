@@ -68,10 +68,6 @@ export default function ContactPage() {
                   {MAILING.street}<br />
                   {MAILING.cityStateZip}
                 </address>
-                <p className="text-[15px] text-gray-500 mt-3 leading-relaxed">
-                  Make checks payable to{" "}
-                  <span className="font-semibold text-[#2D2D2D]">{MAILING.payableTo}</span>.
-                </p>
               </div>
             </div>
 
