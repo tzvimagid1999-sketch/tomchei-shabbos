@@ -48,3 +48,27 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
   to   { transform: translateX(-50%); }
 }
 .animate-marquee { animation: marquee 40s linear infinite; }
+
+
+/* Merchant funding campaign page only — scoped to .mf so nothing here can
+   affect the rest of the site. */
+.mf .mf-display { font-family: var(--font-lora), Georgia, serif; letter-spacing: normal; line-height: 1.12; }
+.mf .mf-hebrew  { font-family: var(--font-hebrew-src), Georgia, serif; }
+
+/* Content is visible by default; the hidden state is only armed once JS has
+   confirmed it can reveal it again, so a failed observer cannot leave the
+   donation form invisible. */
+.mf .mf-reveal.mf-armed { opacity: 0; transform: translateY(18px); transition: opacity .6s ease-out, transform .6s ease-out; }
+.mf .mf-reveal.mf-armed.mf-shown { opacity: 1; transform: none; }
+.mf .mf-lift { transition: transform .18s ease-out; }
+.mf .mf-lift:hover { transform: translateY(-4px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .mf .mf-reveal { opacity: 1; transform: none; transition: none; }
+  .mf .mf-lift:hover { transform: none; }
+}
+
+/* Each name fades in as the wall cycles; keyed on index so React remounts it. */
+.mf .mf-donor { display: inline-block; animation: mf-donor-in .5s ease-out; }
+@keyframes mf-donor-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .mf .mf-donor { animation: none; } }

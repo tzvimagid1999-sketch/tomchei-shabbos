@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { sendMonthlyConfirmation } from "../../../lib/donation-email";
 import { sendHonoreeNotification } from "../../../lib/mailer";
+import { wallTag } from "../../../lib/donor-wall";
 
 // Sets up a MONTHLY recurring donation. Per USAePay support, this is a 3-step
 // flow (NOT a single "create customer with embedded payment method" call):
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign } = await req.json();
+    const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign, subCampaign, company, displayName } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -47,7 +48,10 @@ export async function POST(req: NextRequest) {
     const dedication = honoreeType && honoreeName
       ? ` (${honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${honoreeName})`
       : "";
-    const campaignTag = campaign === "rosh-hashanah" ? "Rosh Hashanah Campaign " : "";
+    // subCampaign tags the donation for a campaign page's own total; the Rosh
+    // Hashanah wording the main bar counts is unchanged.
+    const subTag = subCampaign ? `[${subCampaign}] ` : "";
+    const campaignTag = subTag + wallTag(displayName) + (campaign === "rosh-hashanah" ? "Rosh Hashanah Campaign " : "");
 
     const auth = () => {
       const seed = crypto.randomBytes(16).toString("hex");
@@ -67,6 +71,7 @@ export async function POST(req: NextRequest) {
       state: state || undefined,
       postalcode: zip || undefined,
       phone: phone || undefined,
+      company: company || undefined,
       country: "US",
     };
 
@@ -77,7 +82,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         firstname: firstName,
         lastname: lastName,
-        company: name || `${firstName} ${lastName}`,
+        company: company || name || `${firstName} ${lastName}`,
         email: email || undefined,
         billing_address: billing,
       }),

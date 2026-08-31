@@ -3,13 +3,19 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { X } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function PopupBanner() {
   const [visible, setVisible] = useState(false);
+  // The merchant funding campaign is its own standalone landing page; a
+  // site-wide interstitial over its donation form would only get in the way.
+  const suppressed = usePathname().startsWith("/merchant-funding");
 
   useEffect(() => {
-    setTimeout(() => setVisible(true), 3000);
-  }, []);
+    if (suppressed) return;
+    const id = setTimeout(() => setVisible(true), 3000);
+    return () => clearTimeout(id);
+  }, [suppressed]);
 
   const close = () => setVisible(false);
 
