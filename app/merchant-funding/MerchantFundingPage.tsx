@@ -44,6 +44,7 @@ export default function MerchantFundingPage() {
   const [raised, setRaised] = useState<number | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
   const [amount, setAmount] = useState("");
+  const [honoreeType, setHonoreeType] = useState<"" | "honor" | "memory">("");
   const [monthly, setMonthly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -155,6 +156,8 @@ export default function MerchantFundingPage() {
     const city = val("city");
     const state = val("state");
     const zip = val("zip");
+    const honoreeName = val("honoreeName");
+    const honoreeEmail = val("honoreeEmail");
 
     if (!chosenAmount || Number(chosenAmount) < 1) return setError("Enter an amount to give.");
     if (!firstName || !lastName || !email || !street || !city || !state || !zip)
@@ -179,6 +182,10 @@ export default function MerchantFundingPage() {
           campaign: "rosh-hashanah",
           subCampaign: SUB_CAMPAIGN,
           ...(monthly ? { name: `${firstName} ${lastName}` } : { firstName, lastName }),
+          // Both routes put the dedication in the USAePay description and the
+          // receipt; an "in honor of" email address also sends the honouree a note.
+          ...(honoreeType && honoreeName ? { honoreeType, honoreeName } : {}),
+          ...(honoreeType === "honor" && honoreeEmail ? { honoreeEmail } : {}),
           email, phone, street, city, state, zip,
         }),
       });
@@ -304,6 +311,33 @@ export default function MerchantFundingPage() {
               onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))}
               className="mf-display h-16 w-full bg-transparent px-3 text-[1.6rem] tabular-nums focus:outline-none" />
           </div>
+
+          <Legend>Dedicated to</Legend>
+          <div className="flex overflow-hidden rounded-[100px]" style={{ border: "1px solid rgba(45,45,45,0.2)" }}>
+            {([
+              { key: "", label: "None" },
+              { key: "honor", label: "In Honor Of" },
+              { key: "memory", label: "In Memory Of" },
+            ] as const).map((opt) => {
+              const on = honoreeType === opt.key;
+              return (
+                <button key={opt.key || "none"} type="button" onClick={() => setHonoreeType(opt.key)} aria-pressed={on}
+                  className="flex-1 py-3.5 text-[15px] font-bold"
+                  style={{ backgroundColor: on ? "#C8A75B" : "transparent", color: on ? "#FFFFFF" : "#2D2D2D" }}>
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+          {honoreeType && (
+            <div className="mt-4">
+              <Field id="honoreeName" label={honoreeType === "memory" ? "Name of the person being remembered" : "Name of the person being honored"} />
+              {honoreeType === "honor" && (
+                <Field id="honoreeEmail" label="Their email" type="email" optional
+                  hint="We will send them a note letting them know." />
+              )}
+            </div>
+          )}
 
           <Legend>Your details</Legend>
           <div className="grid gap-x-4 sm:grid-cols-2">
