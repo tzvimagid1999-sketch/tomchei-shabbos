@@ -3,6 +3,9 @@
 //
 // General enquiries inbox. Shown on the contact page and used as the delivery
 // address for the contact form.
+//
+// info@ is being created today. Until it exists the form will report success
+// while the mail bounces, which the organisation has accepted knowingly.
 export const CONTACT_EMAIL = "info@tomcheishabbosflorida.org";
 
 export const MAILING = {
