@@ -16,6 +16,8 @@ import Script from "next/script";
 const SUB_CAMPAIGN = "team:merchant-funding";
 const GOAL = 50000;
 
+type Donor = { name: string; amount: number };
+
 const money = (n: number) => `$${Math.round(n).toLocaleString()}`;
 
 // Counts up once the figure scrolls into view; skipped under reduced motion.
@@ -47,7 +49,7 @@ export default function MerchantFundingPage() {
   const [honoreeType, setHonoreeType] = useState<"" | "honor" | "memory">("");
   // Opt-in, and it stays opt-in: unticked means the gift is never attributed.
   const [showName, setShowName] = useState(true);
-  const [donors, setDonors] = useState<string[]>([]);
+  const [donors, setDonors] = useState<Donor[]>([]);
   const [donorIdx, setDonorIdx] = useState(0);
   const [monthly, setMonthly] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -292,7 +294,10 @@ export default function MerchantFundingPage() {
             <p className="text-[15px] leading-[1.4]">
               <span style={{ opacity: 0.6 }}>Thank you </span>
               <strong key={donorIdx} className="mf-donor" style={{ color: "#8B6F3A" }}>
-                {donors[donorIdx % donors.length]}
+                {donors[donorIdx % donors.length].name}
+                {donors[donorIdx % donors.length].amount > 0 && (
+                  <> · {money(donors[donorIdx % donors.length].amount)}</>
+                )}
               </strong>
               {donors.length > 1 && (
                 <span style={{ opacity: 0.6 }}> · and {donors.length - 1} other{donors.length - 1 === 1 ? "" : "s"}</span>
@@ -403,7 +408,7 @@ export default function MerchantFundingPage() {
             <span className="text-[15px] leading-[1.45]">
               Show my name on this page
               <span className="mt-1 block text-[13px]" style={{ opacity: 0.6 }}>
-                Your name joins the supporters listed above. Amounts are never shown.
+                Your name and the amount you give join the supporters listed above.
                 Leave this unticked to give anonymously.
               </span>
             </span>

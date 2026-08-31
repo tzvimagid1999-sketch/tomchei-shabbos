@@ -11,11 +11,14 @@ export const dynamic = "force-dynamic";
 // Everyone else is invisible to this endpoint — there is no way for it to
 // surface a donor who did not opt in.
 //
-// Amounts are deliberately NOT returned. The page shows who gave, not how much.
+// Amounts are shown alongside the name, at the organisation's request. Both are
+// covered by the same opt-in: no tag, no name and no figure.
 const TAG = "[team:merchant-funding]";
 const MAX = 30;
 
-let cache: { value: string[]; at: number } | null = null;
+type Donor = { name: string; amount: number };
+
+let cache: { value: Donor[]; at: number } | null = null;
 const CACHE_MS = 60_000;
 
 const json = (body: unknown) =>
@@ -43,9 +46,10 @@ export async function GET() {
       result_code?: string;
       trantype?: string;
       description?: string;
+      amount?: string | number;
     }>;
 
-    const donors: string[] = [];
+    const donors: Donor[] = [];
     const seen = new Set<string>();
     // USAePay returns oldest-first, so walk backwards for newest-first.
     for (let i = txns.length - 1; i >= 0 && donors.length < MAX; i--) {
@@ -61,7 +65,7 @@ export async function GET() {
       const key = name.toLowerCase();
       if (seen.has(key)) continue;
       seen.add(key);
-      donors.push(name);
+      donors.push({ name, amount: Math.round(parseFloat(String(t.amount)) || 0) });
     }
 
     cache = { value: donors, at: Date.now() };
