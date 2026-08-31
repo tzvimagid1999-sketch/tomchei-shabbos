@@ -45,6 +45,10 @@ export default function MerchantFundingPage() {
   const [loadFailed, setLoadFailed] = useState(false);
   const [amount, setAmount] = useState("");
   const [honoreeType, setHonoreeType] = useState<"" | "honor" | "memory">("");
+  // Opt-in, and it stays opt-in: unticked means the gift is never attributed.
+  const [showName, setShowName] = useState(true);
+  const [donors, setDonors] = useState<string[]>([]);
+  const [donorIdx, setDonorIdx] = useState(0);
   const [monthly, setMonthly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -58,6 +62,15 @@ export default function MerchantFundingPage() {
 
   // Polls once a minute — no faster. Polling harder than this once got the
   // site's IP throttled by USAePay and took live donations down for an hour.
+  const refreshDonors = useCallback(
+    () =>
+      fetch("/api/merchant-funding-donors")
+        .then((r) => r.json())
+        .then((d) => Array.isArray(d?.donors) && setDonors(d.donors))
+        .catch(() => {}),
+    []
+  );
+
   const refresh = useCallback(
     () =>
       fetch("/api/merchant-funding-total")
@@ -74,9 +87,19 @@ export default function MerchantFundingPage() {
 
   useEffect(() => {
     refresh();
-    const id = setInterval(refresh, 60_000);
+    refreshDonors();
+    const id = setInterval(() => { refresh(); refreshDonors(); }, 60_000);
     return () => clearInterval(id);
-  }, [refresh]);
+  }, [refresh, refreshDonors]);
+
+  // Cycle through the names one at a time. Paused under reduced motion, where
+  // the full list is rendered instead.
+  useEffect(() => {
+    if (donors.length < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = setInterval(() => setDonorIdx((i) => (i + 1) % donors.length), 3200);
+    return () => clearInterval(id);
+  }, [donors.length]);
 
   // Always open at the top. Browsers restore the previous scroll position on a
   // revisit, which on a phone dropped returning visitors straight into the
@@ -158,6 +181,10 @@ export default function MerchantFundingPage() {
     const zip = val("zip");
     const honoreeName = val("honoreeName");
     const honoreeEmail = val("honoreeEmail");
+    const company = val("company");
+    // Businesses are the audience here, so a company name is what goes on the
+    // wall when there is one. Sent only if the donor ticked the box.
+    const displayName = showName ? company || `${firstName} ${lastName}`.trim() : "";
 
     if (!chosenAmount || Number(chosenAmount) < 1) return setError("Enter an amount to give.");
     if (!firstName || !lastName || !email || !street || !city || !state || !zip)
@@ -187,6 +214,8 @@ export default function MerchantFundingPage() {
           ...(honoreeType && honoreeName ? { honoreeType, honoreeName } : {}),
           ...(honoreeType === "honor" && honoreeEmail ? { honoreeEmail } : {}),
           email, phone, street, city, state, zip,
+          ...(company ? { company } : {}),
+          ...(displayName ? { displayName } : {}),
         }),
       });
       const data = await res.json();
@@ -254,6 +283,24 @@ export default function MerchantFundingPage() {
       </section>
 
       <section ref={statsRef} className="px-5 sm:px-8">
+        {/* Donor wall. Only names whose owners ticked the box reach this far —
+            the API cannot return anyone else. */}
+        {donors.length > 0 && (
+          <div className="mb-4 flex items-center justify-center gap-3 rounded-[100px] px-6 py-3.5 text-center"
+            style={{ backgroundColor: "#FFFFFF", border: "2px solid #C8A75B" }}>
+            <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: "#1AABAB" }} />
+            <p className="text-[15px] leading-[1.4]">
+              <span style={{ opacity: 0.6 }}>Thank you </span>
+              <strong key={donorIdx} className="mf-donor" style={{ color: "#8B6F3A" }}>
+                {donors[donorIdx % donors.length]}
+              </strong>
+              {donors.length > 1 && (
+                <span style={{ opacity: 0.6 }}> · and {donors.length - 1} other{donors.length - 1 === 1 ? "" : "s"}</span>
+              )}
+            </p>
+          </div>
+        )}
+
         <div className="mf-reveal grid gap-4 sm:grid-cols-3">
           {[
             ["Goal", money(GOAL)],
@@ -344,8 +391,23 @@ export default function MerchantFundingPage() {
             <Field id="firstName" label="First name" />
             <Field id="lastName" label="Last name" />
           </div>
+          <Field id="company" label="Company name" optional
+            hint="If given, this is the name shown on the page instead of yours." />
           <Field id="email" label="Email" type="email" hint="Where your receipt is sent." />
           <Field id="phone" label="Phone" type="tel" optional />
+
+          <label className="mt-2 flex cursor-pointer items-start gap-3 rounded-[16px] px-5 py-4"
+            style={{ border: "1px solid rgba(45,45,45,0.12)" }}>
+            <input type="checkbox" checked={showName} onChange={(e) => setShowName(e.target.checked)}
+              className="mt-0.5 h-5 w-5 shrink-0" style={{ accentColor: "#C8A75B" }} />
+            <span className="text-[15px] leading-[1.45]">
+              Show my name on this page
+              <span className="mt-1 block text-[13px]" style={{ opacity: 0.6 }}>
+                Your name joins the supporters listed above. Amounts are never shown.
+                Leave this unticked to give anonymously.
+              </span>
+            </span>
+          </label>
 
           <Legend>Billing address</Legend>
           <Field id="street" label="Street address" />

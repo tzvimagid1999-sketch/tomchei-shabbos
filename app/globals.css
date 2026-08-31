@@ -67,3 +67,8 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
   .mf .mf-reveal { opacity: 1; transform: none; transition: none; }
   .mf .mf-lift:hover { transform: none; }
 }
+
+/* Each name fades in as the wall cycles; keyed on index so React remounts it. */
+.mf .mf-donor { display: inline-block; animation: mf-donor-in .5s ease-out; }
+@keyframes mf-donor-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .mf .mf-donor { animation: none; } }

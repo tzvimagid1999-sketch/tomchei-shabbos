@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { sendMail, sendHonoreeNotification, escapeHtml } from "../../lib/mailer";
+import { wallTag } from "../../lib/donor-wall";
 
 // Charges a donation through the USAePay gateway using a payment token
 // (payment_key) that was generated in the donor's browser by pay.js.
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, firstName, lastName, name, email, phone, street, city, state, zip, campaign, subCampaign, honoreeType, honoreeName, honoreeEmail } = await req.json();
+    const { amount, paymentKey, firstName, lastName, name, email, phone, street, city, state, zip, campaign, subCampaign, company, displayName, honoreeType, honoreeName, honoreeEmail } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -59,6 +60,7 @@ export async function POST(req: NextRequest) {
       state: state || undefined,
       postalcode: zip || undefined,
       phone: phone || undefined,
+      company: company || undefined,
       country: "US",
     };
 
@@ -98,6 +100,8 @@ export async function POST(req: NextRequest) {
           donorName +
           " - " +
           (subCampaign ? `[${subCampaign}] ` : "") +
+          // Present only when the donor asked to be named publicly.
+          wallTag(displayName) +
           (campaign === "rosh-hashanah"
             ? "Rosh Hashanah Campaign donation to Tomchei Shabbos of Florida"
             : "Donation to Tomchei Shabbos of Florida") +
