@@ -270,7 +270,7 @@ export default function MerchantFundingPage() {
   };
 
   return (
-    <div className="mf" style={{ backgroundColor: "#F8F4EC", color: "#2D2D2D", fontFamily: "var(--font-dm), ui-sans-serif, system-ui, sans-serif", fontWeight: 500 }}>
+    <div className="mf" style={{ backgroundColor: "#FBF8F3", color: "#2D2D2D", fontFamily: "var(--font-dm), ui-sans-serif, system-ui, sans-serif", fontWeight: 500 }}>
       <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
       <header className="flex w-full items-center justify-between gap-5 px-5 py-5 sm:px-8">
@@ -300,27 +300,27 @@ export default function MerchantFundingPage() {
             logo and typography, so it gets no scrim and no overlaid text — the
             apples-and-honey photo it replaced needed both.
 
-            Two crops of the same design, each shown at its own ratio so nothing
-            is cut off. The 1600x583 banner is unreadable at phone widths, where
-            it would be about 137px tall, so the 800x600 version the Rosh
-            Hashanah page uses takes over below lg. */}
-        <div className="relative -mx-5 aspect-[4/3] w-auto overflow-hidden sm:-mx-8 lg:hidden">
+            This is the 4:3 crop of the design, not the 1600x583 banner. Beside
+            the headline the wide crop was only 252px tall; the same column fits
+            this one at 519px, and it is the crop drawn to be read in a squarer
+            shape.
+
+            The artwork carries its own near-white ground, sampled at #FBF8F3,
+            which read as a pale rectangle against the page's old #F8F4EC cream.
+            The page now uses that same #FBF8F3, so the two are the same colour
+            and the edge disappears. Blending was the wrong tool here: multiply
+            only resolves to the backdrop for pure white, and this ground is not
+            pure white, so it came out darker than the page instead. */}
+        <div
+          className="relative -mx-5 aspect-[4/3] w-auto overflow-hidden sm:-mx-8 lg:mx-0 lg:w-full"
+          style={{ backgroundColor: "#FBF8F3" }}
+        >
           <Image
             src="/rosh-hashanah-hero-mobile.jpg"
             alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
             fill
             priority
-            sizes="100vw"
-            className="object-contain object-center"
-          />
-        </div>
-        <div className="relative hidden aspect-[1600/583] w-full overflow-hidden rounded-[24px] lg:block">
-          <Image
-            src="/rosh-hashanah-campaign-hero.jpeg"
-            alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
-            fill
-            priority
-            sizes="60vw"
+            sizes="(min-width: 1024px) 60vw, 100vw"
             className="object-contain object-center"
           />
         </div>

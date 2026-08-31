@@ -29,7 +29,7 @@ export default async function ThankYouPage({
     <div
       className="mf flex min-h-screen flex-col"
       style={{
-        backgroundColor: "#F8F4EC",
+        backgroundColor: "#FBF8F3",
         color: "#2D2D2D",
         fontFamily: "var(--font-dm), ui-sans-serif, system-ui, sans-serif",
         fontWeight: 500,
