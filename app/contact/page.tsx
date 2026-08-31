@@ -109,9 +109,6 @@ export default function ContactPage() {
             ))}
           </div>
 
-          <p className="text-center text-sm text-gray-500 mt-12">
-            Tomchei Shabbos of Florida is a 501(c)(3) tax-exempt organization &middot; Tax ID: 83-2155012
-          </p>
         </div>
       </section>
     </main>

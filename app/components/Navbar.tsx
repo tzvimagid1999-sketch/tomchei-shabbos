@@ -21,7 +21,9 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-white shadow-sm border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Full width rather than a centred max-w container, so the logo sits
+          flush left and Donate flush right instead of both being inset. */}
+      <div className="w-full px-3 sm:px-4">
         <div className="grid grid-cols-[1fr_auto_1fr] md:flex md:justify-between items-center h-20">
 
           {/* Left spacer — keeps the logo visually centered on mobile, matching the hamburger's width */}
