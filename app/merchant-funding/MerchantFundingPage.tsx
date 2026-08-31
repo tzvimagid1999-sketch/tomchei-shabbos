@@ -343,7 +343,6 @@ export default function MerchantFundingPage() {
       <section id="give" className="scroll-mt-6 px-5 pb-20 pt-14 sm:px-8 sm:pt-20">
         <div className="mf-reveal mx-auto max-w-[720px] rounded-[32px] px-6 py-10 sm:px-12 sm:py-12" style={{ backgroundColor: "#FFFFFF" }}>
           <h2 className="mf-display text-center text-[clamp(1.9rem,4vw,2.8rem)]">Help provide Shabbos for a family</h2>
-          <p className="mt-3 text-center text-[14px]" style={{ opacity: 0.65 }}>Secure payment · All information is encrypted</p>
 
           <div className="mt-9 flex gap-3">
             {[
