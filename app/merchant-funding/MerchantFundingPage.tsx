@@ -448,6 +448,7 @@ export default function MerchantFundingPage() {
           <address className="mt-3 text-[15px] not-italic" style={{ opacity: 0.75 }}>
             194 NE 186th Terrace<br />North Miami Beach, FL 33179
           </address>
+          <p className="mt-3 text-[15px]" style={{ opacity: 0.75 }}>Tax ID 83-2155012</p>
         </div>
       </footer>
     </div>
