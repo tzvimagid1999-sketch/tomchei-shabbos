@@ -443,17 +443,11 @@ export default function MerchantFundingPage() {
       </section>
 
       <footer className="px-5 py-14 sm:px-8" style={{ backgroundColor: "#0a6e78", color: "#FFFFFF" }}>
-        <div className="grid gap-8 sm:grid-cols-2">
-          <div>
-            <p className="mf-display text-[1.6rem]">Tomchei Shabbos of Florida</p>
-            <address className="mt-3 text-[15px] not-italic" style={{ opacity: 0.75 }}>
-              194 NE 186th Terrace<br />North Miami Beach, FL 33179
-            </address>
-          </div>
-          <div className="text-[15px] sm:text-right" style={{ opacity: 0.75 }}>
-            <p>501(c)(3) tax-exempt organization · Tax ID 83-2155012</p>
-            <p className="mt-2">Donations are tax-deductible to the extent allowed by law.</p>
-          </div>
+        <div>
+          <p className="mf-display text-[1.6rem]">Tomchei Shabbos of Florida</p>
+          <address className="mt-3 text-[15px] not-italic" style={{ opacity: 0.75 }}>
+            194 NE 186th Terrace<br />North Miami Beach, FL 33179
+          </address>
         </div>
       </footer>
     </div>
