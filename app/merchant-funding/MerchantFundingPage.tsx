@@ -403,7 +403,7 @@ export default function MerchantFundingPage() {
             <Field id="lastName" label="Last name" />
           </div>
           <Field id="company" label="Company name" optional
-            hint="If given, this is the name shown on the page instead of yours." />
+            hint="If given, this name will be displayed." />
           <Field id="email" label="Email" type="email" hint="Where your receipt is sent." />
           <Field id="phone" label="Phone" type="tel" optional />
 
