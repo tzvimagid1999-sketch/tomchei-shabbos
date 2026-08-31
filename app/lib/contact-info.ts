@@ -3,7 +3,7 @@
 //
 // General enquiries inbox. Shown on the contact page and used as the delivery
 // address for the contact form.
-export const CONTACT_EMAIL = "admin@tomcheishabbosflorida.org";
+export const CONTACT_EMAIL = "info@tomcheishabbosflorida.org";
 
 export const MAILING = {
   payableTo: "Tomchei Shabbos of Florida",
