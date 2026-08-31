@@ -68,7 +68,24 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
   .mf .mf-lift:hover { transform: none; }
 }
 
-/* Each name fades in as the wall cycles; keyed on index so React remounts it. */
-.mf .mf-donor { display: inline-block; animation: mf-donor-in .5s ease-out; }
-@keyframes mf-donor-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .mf .mf-donor { animation: none; } }
+
+
+/* Donor wall marquee. The track holds two identical copies of the list and
+   scrolls exactly one copy's width, so the loop is seamless. Duration is set
+   per-render from the donor count, keeping speed constant as names are added. */
+.mf .mf-marquee { position: relative; }
+.mf .mf-marquee-track { display: flex; width: max-content; animation: mf-marquee-scroll linear infinite; }
+.mf .mf-marquee-group { display: flex; }
+.mf .mf-marquee-item { display: inline-flex; align-items: center; gap: .6rem; padding: 0 1.6rem; white-space: nowrap; }
+.mf .mf-marquee-dot { width: .5rem; height: .5rem; border-radius: 9999px; flex: none; }
+@keyframes mf-marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Let people stop it to read a name. */
+.mf .mf-marquee:hover .mf-marquee-track,
+.mf .mf-marquee:focus-within .mf-marquee-track { animation-play-state: paused; }
+
+/* No motion: no scroll. The list stays readable by dragging instead. */
+@media (prefers-reduced-motion: reduce) {
+  .mf .mf-marquee { overflow-x: auto; }
+  .mf .mf-marquee-track { animation: none; }
+}

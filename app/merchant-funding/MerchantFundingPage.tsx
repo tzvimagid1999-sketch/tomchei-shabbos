@@ -53,7 +53,6 @@ export default function MerchantFundingPage() {
   // Ticking this suppresses the donor's entry entirely — no name, no amount.
   const [anonymous, setAnonymous] = useState(false);
   const [donors, setDonors] = useState<Donor[]>([]);
-  const [donorIdx, setDonorIdx] = useState(0);
   const [monthly, setMonthly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -96,15 +95,6 @@ export default function MerchantFundingPage() {
     const id = setInterval(() => { refresh(); refreshDonors(); }, 60_000);
     return () => clearInterval(id);
   }, [refresh, refreshDonors]);
-
-  // Cycle through the names one at a time. Paused under reduced motion, where
-  // the full list is rendered instead.
-  useEffect(() => {
-    if (donors.length < 2) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = setInterval(() => setDonorIdx((i) => (i + 1) % donors.length), 3200);
-    return () => clearInterval(id);
-  }, [donors.length]);
 
   // Always open at the top. Browsers restore the previous scroll position on a
   // revisit, which on a phone dropped returning visitors straight into the
@@ -255,9 +245,9 @@ export default function MerchantFundingPage() {
         MCA Donation Page
       </p>
 
-      <section className="grid items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.3fr)] lg:gap-14">
-        <div>
-          <h1 className="mf-display max-w-[16ch] text-[clamp(2.4rem,4.6vw,4rem)]" style={{ color: "#2D2D2D" }}>
+      <section className="pb-14 sm:pb-20">
+        <div className="px-5 pb-12 sm:px-8 sm:pb-14">
+          <h1 className="mf-display max-w-[18ch] text-[clamp(2.4rem,5.4vw,4.8rem)]" style={{ color: "#2D2D2D" }}>
             When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
           </h1>
           <a href="#give" className="mt-10 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
@@ -270,15 +260,14 @@ export default function MerchantFundingPage() {
             was resolving against the viewport and the greeting overflowed the
             frame by roughly double.
 
-            Below lg the frame breaks out of the section's horizontal padding to
-            run edge to edge, and is taller, since a wide inset crop left dead
-            space around it. The inset, rounded, original-ratio version returns
-            at lg, where it sits in a column beside the headline. */}
+            The frame runs edge to edge at every width, below the headline
+            rather than beside it, so the image fills the page. It is portrait
+            on phones and progressively wider on larger screens. */}
         <div
-          className="relative -mx-5 aspect-[4/5] w-auto overflow-hidden sm:-mx-8 sm:aspect-[4/3] lg:mx-0 lg:aspect-[4/3] lg:w-full lg:rounded-[32px]"
+          className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[4/3] lg:aspect-[16/9]"
           style={{ containerType: "inline-size" }}
         >
-          <Image src="/apples-honey.jpg" alt="An apple and a jar of honey with a dipper" fill priority sizes="(min-width: 1024px) 48vw, 100vw" className="object-cover object-center" />
+          <Image src="/apples-honey.jpg" alt="An apple and a jar of honey with a dipper" fill priority sizes="100vw" className="object-cover object-center" />
           <div className="absolute inset-0" style={{ backgroundColor: "rgba(45,45,45,0.38)" }} />
           <div className="absolute inset-0 flex flex-col items-center justify-center px-3 text-center">
             <p lang="he" dir="rtl" className="mf-hebrew whitespace-nowrap text-[12.5cqw] leading-[1.15]" style={{ color: "#E8D9A8" }}>
@@ -294,22 +283,28 @@ export default function MerchantFundingPage() {
 
       <section ref={statsRef} className="px-5 pb-4 sm:px-8">
         {/* Donor wall. Only names whose owners ticked the box reach this far —
-            the API cannot return anyone else. */}
+            the API cannot return anyone else.
+
+            Every name scrolls past rather than one showing at a time, so a long
+            list can be read in full. The duration scales with the number of
+            names, which keeps the speed constant however many there are. The
+            list is rendered twice so the loop has no visible seam. */}
         {donors.length > 0 && (
-          <div className="mb-4 flex items-center justify-center gap-3 rounded-[100px] px-6 py-3.5 text-center"
+          <div className="mf-marquee mb-4 overflow-hidden rounded-[100px] py-3.5"
             style={{ backgroundColor: "#FFFFFF", border: "2px solid #C8A75B" }}>
-            <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: "#1AABAB" }} />
-            <p className="text-[15px] leading-[1.4]">
-              <strong key={donorIdx} className="mf-donor" style={{ color: "#8B6F3A" }}>
-                {donors[donorIdx % donors.length].name}
-                {donors[donorIdx % donors.length].amount > 0 && (
-                  <> · {money(donors[donorIdx % donors.length].amount)}</>
-                )}
-              </strong>
-              {donors.length > 1 && (
-                <span style={{ opacity: 0.6 }}> · and {donors.length - 1} other{donors.length - 1 === 1 ? "" : "s"}</span>
-              )}
-            </p>
+            <div className="mf-marquee-track" style={{ animationDuration: `${Math.max(18, donors.length * 7)}s` }}>
+              {[0, 1].map((copy) => (
+                <div key={copy} className="mf-marquee-group" aria-hidden={copy === 1}>
+                  {donors.map((d, i) => (
+                    <span key={`${copy}-${i}`} className="mf-marquee-item text-[15px] leading-[1.4]">
+                      <span className="mf-marquee-dot" style={{ backgroundColor: "#1AABAB" }} />
+                      <strong style={{ color: "#8B6F3A" }}>{d.name}</strong>
+                      {d.amount > 0 && <span style={{ opacity: 0.65 }}>{" · "}{money(d.amount)}</span>}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
