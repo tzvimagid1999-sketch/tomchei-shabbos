@@ -18,6 +18,26 @@ const GOAL = 50000;
 
 type Donor = { name: string; amount: number };
 
+// Sample supporters for ?demo=1, so the ticker can be shown to the campaign
+// team before any real donor has opted in. Invented names, never real donors —
+// the page labels them as samples so the preview cannot be mistaken for the
+// actual supporter list. Demo mode touches nothing but this list: the totals,
+// the bar and the donation form are unchanged.
+const DEMO_DONORS: Donor[] = [
+  { name: "Coastal Merchant Group", amount: 2500 },
+  { name: "Bright Harbor Funding", amount: 1800 },
+  { name: "Daniel Weiss", amount: 500 },
+  { name: "Sunrise Advance LLC", amount: 3600 },
+  { name: "Deerfield Capital", amount: 1250 },
+  { name: "M. Rosenberg", amount: 360 },
+  { name: "Palm Funding Co.", amount: 5000 },
+  { name: "Aventura Business Capital", amount: 720 },
+  { name: "Biscayne Working Capital", amount: 2400 },
+  { name: "The Gruen Family", amount: 1000 },
+  { name: "North Bay Advance", amount: 1500 },
+  { name: "Surfside Capital Partners", amount: 4200 },
+];
+
 const money = (n: number) => `$${Math.round(n).toLocaleString()}`;
 
 // Whole percentages only — no decimals, no "<" prefix.
@@ -53,6 +73,11 @@ export default function MerchantFundingPage() {
   // Ticking this suppresses the donor's entry entirely — no name, no amount.
   const [anonymous, setAnonymous] = useState(false);
   const [donors, setDonors] = useState<Donor[]>([]);
+  // Resolved after mount rather than during render: reading the URL while
+  // rendering would disagree with the server's HTML and break hydration. null
+  // means "not yet known", which holds the donors fetch back — starting it
+  // first let its response land after the demo list and wipe it.
+  const [demo, setDemo] = useState<boolean | null>(null);
   const [monthly, setMonthly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -90,11 +115,27 @@ export default function MerchantFundingPage() {
   );
 
   useEffect(() => {
+    setDemo(new URLSearchParams(window.location.search).get("demo") === "1");
+  }, []);
+
+  useEffect(() => {
     refresh();
-    refreshDonors();
-    const id = setInterval(() => { refresh(); refreshDonors(); }, 60_000);
+    const id = setInterval(refresh, 60_000);
     return () => clearInterval(id);
-  }, [refresh, refreshDonors]);
+  }, [refresh]);
+
+  // In demo mode the sample list stands in for the real one, and the donors
+  // endpoint is never called.
+  useEffect(() => {
+    if (demo === null) return;
+    if (demo) {
+      setDonors(DEMO_DONORS);
+      return;
+    }
+    refreshDonors();
+    const id = setInterval(refreshDonors, 60_000);
+    return () => clearInterval(id);
+  }, [demo, refreshDonors]);
 
   // Always open at the top. Browsers restore the previous scroll position on a
   // revisit, which on a phone dropped returning visitors straight into the
@@ -255,30 +296,33 @@ export default function MerchantFundingPage() {
           </a>
         </div>
 
-        {/* containerType is set inline rather than via Tailwind's @container
-            class, which does not register a container in this project — cqw
-            was resolving against the viewport and the greeting overflowed the
-            frame by roughly double.
+        {/* The campaign banner is finished artwork: it carries its own headline,
+            logo and typography, so it gets no scrim and no overlaid text — the
+            apples-and-honey photo it replaced needed both.
 
-            The image sits beside the headline at lg, taking the wider of the
-            two columns. Below lg it stacks and breaks out of the section's
-            horizontal padding to run edge to edge, since a narrow inset crop
-            left dead space around it on phones. */}
-        <div
-          className="relative -mx-5 aspect-[4/5] w-auto overflow-hidden sm:-mx-8 sm:aspect-[4/3] lg:mx-0 lg:aspect-[4/3] lg:w-full lg:rounded-[32px]"
-          style={{ containerType: "inline-size" }}
-        >
-          <Image src="/apples-honey.jpg" alt="An apple and a jar of honey with a dipper" fill priority sizes="(min-width: 1024px) 60vw, 100vw" className="object-cover object-center" />
-          <div className="absolute inset-0" style={{ backgroundColor: "rgba(45,45,45,0.38)" }} />
-          <div className="absolute inset-0 flex flex-col items-center justify-center px-3 text-center">
-            <p lang="he" dir="rtl" className="mf-hebrew whitespace-nowrap text-[12.5cqw] leading-[1.15]" style={{ color: "#E8D9A8" }}>
-              שנה טובה ומתוקה
-            </p>
-            <span className="mt-5 block h-px w-24" style={{ backgroundColor: "#C8A75B" }} />
-            <p className="mt-4 text-[clamp(0.75rem,2.6cqw,1.2rem)] uppercase tracking-[0.24em]" style={{ color: "#F0E7D3", opacity: 0.85 }}>
-              A sweet new year
-            </p>
-          </div>
+            Two crops of the same design, each shown at its own ratio so nothing
+            is cut off. The 1600x583 banner is unreadable at phone widths, where
+            it would be about 137px tall, so the 800x600 version the Rosh
+            Hashanah page uses takes over below lg. */}
+        <div className="relative -mx-5 aspect-[4/3] w-auto overflow-hidden sm:-mx-8 lg:hidden">
+          <Image
+            src="/rosh-hashanah-hero-mobile.jpg"
+            alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
+            fill
+            priority
+            sizes="100vw"
+            className="object-contain object-center"
+          />
+        </div>
+        <div className="relative hidden aspect-[1600/583] w-full overflow-hidden rounded-[24px] lg:block">
+          <Image
+            src="/rosh-hashanah-campaign-hero.jpeg"
+            alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
+            fill
+            priority
+            sizes="60vw"
+            className="object-contain object-center"
+          />
         </div>
       </section>
 
@@ -290,6 +334,11 @@ export default function MerchantFundingPage() {
             list can be read in full. The duration scales with the number of
             names, which keeps the speed constant however many there are. The
             list is rendered twice so the loop has no visible seam. */}
+        {demo && (
+          <p className="mb-2 text-center text-[12px] uppercase tracking-[0.16em]" style={{ color: "#8B6F3A" }}>
+            Preview · sample names, not real donors
+          </p>
+        )}
         {donors.length > 0 && (
           <div className="mf-marquee mb-4 overflow-hidden rounded-[100px] py-3.5"
             style={{ backgroundColor: "#FFFFFF", border: "2px solid #C8A75B" }}>
