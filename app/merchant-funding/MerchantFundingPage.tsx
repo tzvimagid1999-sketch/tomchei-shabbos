@@ -50,8 +50,8 @@ export default function MerchantFundingPage() {
   const [loadFailed, setLoadFailed] = useState(false);
   const [amount, setAmount] = useState("");
   const [honoreeType, setHonoreeType] = useState<"" | "honor" | "memory">("");
-  // Opt-in, and it stays opt-in: unticked means the gift is never attributed.
-  const [showName, setShowName] = useState(true);
+  // Ticking this suppresses the donor's entry entirely — no name, no amount.
+  const [anonymous, setAnonymous] = useState(false);
   const [donors, setDonors] = useState<Donor[]>([]);
   const [donorIdx, setDonorIdx] = useState(0);
   const [monthly, setMonthly] = useState(false);
@@ -189,7 +189,7 @@ export default function MerchantFundingPage() {
     const company = val("company");
     // Businesses are the audience here, so a company name is what goes on the
     // wall when there is one. Sent only if the donor ticked the box.
-    const displayName = showName ? company || `${firstName} ${lastName}`.trim() : "";
+    const displayName = anonymous ? "" : company || `${firstName} ${lastName}`.trim();
 
     if (!chosenAmount || Number(chosenAmount) < 1) return setError("Enter an amount to give.");
     if (!firstName || !lastName || !email || !street || !city || !state || !zip)
@@ -409,13 +409,13 @@ export default function MerchantFundingPage() {
 
           <label className="mt-2 flex cursor-pointer items-start gap-3 rounded-[16px] px-5 py-4"
             style={{ border: "1px solid rgba(45,45,45,0.12)" }}>
-            <input type="checkbox" checked={showName} onChange={(e) => setShowName(e.target.checked)}
+            <input type="checkbox" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)}
               className="mt-0.5 h-5 w-5 shrink-0" style={{ accentColor: "#C8A75B" }} />
             <span className="text-[15px] leading-[1.45]">
-              Show my name on this page
+              Anonymous
               <span className="mt-1 block text-[13px]" style={{ opacity: 0.6 }}>
-                Your name and the amount you give join the supporters listed above.
-                Leave this unticked to give anonymously.
+                Keep me off the supporters listed above. Otherwise your company name
+                is shown, or your own name if you did not give one.
               </span>
             </span>
           </label>
