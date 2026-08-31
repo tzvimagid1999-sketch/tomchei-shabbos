@@ -44,6 +44,10 @@ export default function Home() {
             className="bg-white/20 backdrop-blur-sm border-2 border-white text-white px-4 py-2 sm:px-10 sm:py-5 rounded-lg sm:rounded-xl font-black text-[11px] sm:text-base uppercase tracking-widest hover:bg-white/30 transition-all duration-150 shadow-lg whitespace-nowrap">
             Get Involved
           </Link>
+          <Link href="/contact"
+            className="bg-white/20 backdrop-blur-sm border-2 border-white text-white px-4 py-2 sm:px-10 sm:py-5 rounded-lg sm:rounded-xl font-black text-[11px] sm:text-base uppercase tracking-widest hover:bg-white/30 transition-all duration-150 shadow-lg whitespace-nowrap">
+            Contact
+          </Link>
         </div>
       </section>
 
