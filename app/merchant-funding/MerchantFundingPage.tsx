@@ -270,11 +270,12 @@ export default function MerchantFundingPage() {
             was resolving against the viewport and the greeting overflowed the
             frame by roughly double.
 
-            The frame is taller while stacked, where it runs full width and the
-            wide crop otherwise left dead space above and below; the original
-            ratio returns at lg, beside the headline. */}
+            Below lg the frame breaks out of the section's horizontal padding to
+            run edge to edge, and is taller, since a wide inset crop left dead
+            space around it. The inset, rounded, original-ratio version returns
+            at lg, where it sits in a column beside the headline. */}
         <div
-          className="relative aspect-[4/3] w-full overflow-hidden rounded-[32px] lg:aspect-[501/330]"
+          className="relative -mx-5 aspect-[4/5] w-auto overflow-hidden sm:-mx-8 sm:aspect-[4/3] lg:mx-0 lg:aspect-[501/330] lg:w-full lg:rounded-[32px]"
           style={{ containerType: "inline-size" }}
         >
           <Image src="/apples-honey.jpg" alt="An apple and a jar of honey with a dipper" fill priority sizes="(min-width: 1024px) 48vw, 100vw" className="object-cover object-center" />
