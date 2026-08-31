@@ -16,17 +16,6 @@ import Script from "next/script";
 const SUB_CAMPAIGN = "team:merchant-funding";
 const GOAL = 50000;
 
-// Amounts and labels are the organisation's own, taken from the live
-// Rosh Hashanah campaign page.
-const TIERS = [
-  { amount: 125, label: "Shabbos for a family" },
-  { amount: 250, label: "Yom Tov for a family" },
-  { amount: 600, label: "A month for a family" },
-  { amount: 1250, label: "Shabbos for 10 families" },
-  { amount: 2500, label: "Yom Tov for 10 families" },
-  { amount: 6000, label: "A month for 10 families" },
-];
-
 const money = (n: number) => `$${Math.round(n).toLocaleString()}`;
 
 // Counts up once the figure scrolls into view; skipped under reduced motion.
@@ -54,8 +43,7 @@ function useCountUp(target: number | null, run: boolean) {
 export default function MerchantFundingPage() {
   const [raised, setRaised] = useState<number | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
-  const [amount, setAmount] = useState("125");
-  const [customAmount, setCustomAmount] = useState("");
+  const [amount, setAmount] = useState("");
   const [monthly, setMonthly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -153,7 +141,7 @@ export default function MerchantFundingPage() {
     cardRef.current = card;
   }, [scriptReady, publicKey]);
 
-  const chosenAmount = amount === "other" ? customAmount : amount;
+  const chosenAmount = amount;
   const pct = raised === null ? 0 : Math.min(100, (raised / GOAL) * 100);
 
   const submit = async () => {
@@ -168,7 +156,7 @@ export default function MerchantFundingPage() {
     const state = val("state");
     const zip = val("zip");
 
-    if (!chosenAmount || Number(chosenAmount) < 1) return setError("Choose an amount to give.");
+    if (!chosenAmount || Number(chosenAmount) < 1) return setError("Enter an amount to give.");
     if (!firstName || !lastName || !email || !street || !city || !state || !zip)
       return setError("Fill in your name, email and billing address.");
     if (!clientRef.current || !cardRef.current)
@@ -217,7 +205,7 @@ export default function MerchantFundingPage() {
         <a href="/" className="flex items-center">
           <Image src="/logo-transparent.png" alt="Tomchei Shabbos of Florida" width={670} height={120} priority className="h-9 w-auto sm:h-10" />
         </a>
-        <a href="#amounts" className="rounded-[100px] px-9 py-4 text-[17px] font-bold" style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}>
+        <a href="#give" className="rounded-[100px] px-9 py-4 text-[17px] font-bold" style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}>
           Donate Now
         </a>
       </header>
@@ -231,7 +219,7 @@ export default function MerchantFundingPage() {
           <h1 className="mf-display max-w-[16ch] text-[clamp(2.4rem,6.2vw,5.2rem)]" style={{ color: "#2D2D2D" }}>
             When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
           </h1>
-          <a href="#amounts" className="mt-10 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
+          <a href="#give" className="mt-10 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
             Help us reach {money(GOAL)}
           </a>
         </div>
@@ -287,33 +275,9 @@ export default function MerchantFundingPage() {
 
       </section>
 
-      <section id="amounts" className="scroll-mt-6 px-5 py-16 sm:px-8 sm:py-24">
-        <h2 className="mf-reveal mf-display text-[clamp(2rem,4.5vw,3.5rem)]">Help provide Shabbos for a family</h2>
-        <div className="mf-reveal mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {TIERS.map((t) => {
-            const on = amount === String(t.amount);
-            return (
-              <button
-                key={t.amount}
-                type="button"
-                onClick={() => { setAmount(String(t.amount)); document.getElementById("give")?.scrollIntoView({ behavior: "smooth" }); }}
-                aria-pressed={on}
-                className="mf-lift rounded-[24px] px-7 py-9 text-left"
-                style={{ backgroundColor: on ? "rgba(200,167,91,0.14)" : "#FFFFFF", color: "#2D2D2D", border: "2px solid #C8A75B" }}
-              >
-                <span className="mf-display block text-[clamp(2.4rem,4vw,3.2rem)] tabular-nums" style={{ color: "#C8A75B" }}>
-                  ${t.amount.toLocaleString()}
-                </span>
-                <span className="mt-3 block text-[16px] leading-[1.25]" style={{ opacity: 0.7 }}>{t.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      <section id="give" className="px-5 pb-20 sm:px-8">
+      <section id="give" className="scroll-mt-6 px-5 pb-20 sm:px-8">
         <div className="mf-reveal mx-auto max-w-[720px] rounded-[32px] px-6 py-10 sm:px-12 sm:py-12" style={{ backgroundColor: "#FFFFFF" }}>
-          <h2 className="mf-display text-center text-[clamp(1.9rem,4vw,2.8rem)]">Complete your donation</h2>
+          <h2 className="mf-display text-center text-[clamp(1.9rem,4vw,2.8rem)]">Help provide Shabbos for a family</h2>
           <p className="mt-3 text-center text-[14px]" style={{ opacity: 0.65 }}>Secure payment · All information is encrypted</p>
 
           <div className="mt-9 flex gap-3">
@@ -335,9 +299,9 @@ export default function MerchantFundingPage() {
           <Legend>Amount</Legend>
           <div className="flex items-center rounded-[16px] px-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid rgba(45,45,45,0.12)" }}>
             <span className="mf-display text-[1.6rem]" style={{ color: "#C8A75B" }}>$</span>
-            <input aria-label="Donation amount" inputMode="decimal"
-              value={amount === "other" ? customAmount : amount}
-              onChange={(e) => { setAmount("other"); setCustomAmount(e.target.value.replace(/[^0-9.]/g, "")); }}
+            <input aria-label="Donation amount" inputMode="decimal" placeholder="0"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))}
               className="mf-display h-16 w-full bg-transparent px-3 text-[1.6rem] tabular-nums focus:outline-none" />
           </div>
 
