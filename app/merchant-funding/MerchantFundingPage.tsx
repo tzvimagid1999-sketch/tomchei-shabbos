@@ -255,9 +255,9 @@ export default function MerchantFundingPage() {
         MCA Donation Page
       </p>
 
-      <section className="grid items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-14">
+      <section className="grid items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.3fr)] lg:gap-14">
         <div>
-          <h1 className="mf-display max-w-[16ch] text-[clamp(2.4rem,6.2vw,5.2rem)]" style={{ color: "#2D2D2D" }}>
+          <h1 className="mf-display max-w-[16ch] text-[clamp(2.4rem,4.6vw,4rem)]" style={{ color: "#2D2D2D" }}>
             When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
           </h1>
           <a href="#give" className="mt-10 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
@@ -275,7 +275,7 @@ export default function MerchantFundingPage() {
             space around it. The inset, rounded, original-ratio version returns
             at lg, where it sits in a column beside the headline. */}
         <div
-          className="relative -mx-5 aspect-[4/5] w-auto overflow-hidden sm:-mx-8 sm:aspect-[4/3] lg:mx-0 lg:aspect-[501/330] lg:w-full lg:rounded-[32px]"
+          className="relative -mx-5 aspect-[4/5] w-auto overflow-hidden sm:-mx-8 sm:aspect-[4/3] lg:mx-0 lg:aspect-[4/3] lg:w-full lg:rounded-[32px]"
           style={{ containerType: "inline-size" }}
         >
           <Image src="/apples-honey.jpg" alt="An apple and a jar of honey with a dipper" fill priority sizes="(min-width: 1024px) 48vw, 100vw" className="object-cover object-center" />
