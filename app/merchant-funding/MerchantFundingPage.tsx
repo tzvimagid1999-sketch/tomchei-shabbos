@@ -314,7 +314,7 @@ export default function MerchantFundingPage() {
           {[
             ["Goal", money(GOAL)],
             ["Raised", shownRaised === null ? (loadFailed ? "Unavailable" : "—") : money(shownRaised)],
-            ["Funded", raised === null ? "—" : `${pct.toFixed(1)}%`],
+            ["Progress", raised === null ? "—" : `${pct.toFixed(1)}%`],
           ].map(([label, value]) => (
             <div key={label} className="rounded-[24px] px-7 py-8" style={{ backgroundColor: "#FFFFFF", border: "2px solid #E5E5E5" }}>
               <p className="text-[12px] uppercase tracking-[0.1em]" style={{ opacity: 0.7 }}>{label}</p>
