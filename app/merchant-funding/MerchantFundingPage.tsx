@@ -289,36 +289,25 @@ export default function MerchantFundingPage() {
       {/* Hero band: the campaign artwork runs the full width of the page, with
           the headline beneath it rather than beside it.
 
-          Finished artwork — it carries its own headline, logo and typography —
-          so no scrim and nothing overlaid on top of it. Two crops of the same
-          design, each at its own ratio so nothing is cropped away: the wide
-          1600x583 banner from lg up, and the 800x600 version below that, since
-          the wide crop is only about 137px tall on a phone and its small print
-          is unreadable at that size.
+          Sized and built to match the hero on /RoshHashanah: a fixed 300px
+          band, object-contain so nothing is cropped, and the same two files it
+          uses — the 1920x300 crop from 640px up, the 800x600 one below that,
+          since the wide crop's small print is unreadable on a phone.
 
-          The ground in both files samples at #FBF8F3, which is exactly the
-          page's cream, so the artwork has no visible edge against the page. */}
-      <section style={{ backgroundColor: "#FBF8F3" }}>
-        <div className="relative aspect-[4/3] w-full overflow-hidden lg:hidden">
-          <Image
+          Finished artwork — it carries its own headline, logo and typography —
+          so no scrim and nothing overlaid on it. contain leaves bands at the
+          sides on most widths; the ground in both files samples at #FBF8F3,
+          which is exactly this page's cream, so those bands are invisible. */}
+      <section className="relative h-[300px] w-full overflow-hidden" style={{ backgroundColor: "#FBF8F3" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <picture>
+          <source media="(min-width: 640px)" srcSet="/rosh-hashanah-hero-v2.jpg" />
+          <img
             src="/rosh-hashanah-hero-mobile.jpg"
             alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
-            fill
-            priority
-            sizes="100vw"
-            className="object-contain object-center"
+            className="absolute inset-0 h-full w-full object-contain object-center"
           />
-        </div>
-        <div className="relative hidden aspect-[1600/583] w-full overflow-hidden lg:block">
-          <Image
-            src="/rosh-hashanah-campaign-hero.jpeg"
-            alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
-            fill
-            priority
-            sizes="100vw"
-            className="object-contain object-center"
-          />
-        </div>
+        </picture>
       </section>
 
       <section className="px-5 pb-14 pt-12 sm:px-8 sm:pb-20 sm:pt-16">
