@@ -20,14 +20,8 @@ type Donor = { name: string; amount: number };
 
 const money = (n: number) => `$${Math.round(n).toLocaleString()}`;
 
-// Whole percentages read better on a donor-facing bar than "0.0%" or "100.0%".
-// Anything above zero but under 1% shows as "<1%" rather than rounding to 0%,
-// which would otherwise tell early donors their gift did nothing.
-const percent = (pct: number) => {
-  if (pct <= 0) return "0%";
-  if (pct < 1) return "<1%";
-  return `${Math.round(pct)}%`;
-};
+// Whole percentages only — no decimals, no "<" prefix.
+const percent = (pct: number) => `${Math.round(pct)}%`;
 
 // Counts up once the figure scrolls into view; skipped under reduced motion.
 function useCountUp(target: number | null, run: boolean) {
@@ -305,7 +299,6 @@ export default function MerchantFundingPage() {
             style={{ backgroundColor: "#FFFFFF", border: "2px solid #C8A75B" }}>
             <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: "#1AABAB" }} />
             <p className="text-[15px] leading-[1.4]">
-              <span style={{ opacity: 0.6 }}>Thank you </span>
               <strong key={donorIdx} className="mf-donor" style={{ color: "#8B6F3A" }}>
                 {donors[donorIdx % donors.length].name}
                 {donors[donorIdx % donors.length].amount > 0 && (

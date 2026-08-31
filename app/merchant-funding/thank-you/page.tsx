@@ -87,22 +87,6 @@ export default async function ThankYouPage({
             because of you.
           </p>
 
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-            <a
-              href="/merchant-funding"
-              className="rounded-[100px] px-8 py-4 text-[16px] font-bold"
-              style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}
-            >
-              Back to the campaign
-            </a>
-            <a
-              href="/"
-              className="rounded-[100px] px-8 py-4 text-[16px] font-bold"
-              style={{ border: "1.5px solid #C8A75B", color: "#2D2D2D" }}
-            >
-              Visit our website
-            </a>
-          </div>
         </div>
       </main>
 
