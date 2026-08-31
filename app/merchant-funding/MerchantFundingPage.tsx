@@ -265,15 +265,19 @@ export default function MerchantFundingPage() {
         {/* containerType is set inline rather than via Tailwind's @container
             class, which does not register a container in this project — cqw
             was resolving against the viewport and the greeting overflowed the
-            frame by roughly double. */}
+            frame by roughly double.
+
+            The frame is taller while stacked, where it runs full width and the
+            wide crop otherwise left dead space above and below; the original
+            ratio returns at lg, beside the headline. */}
         <div
-          className="relative aspect-[501/330] w-full overflow-hidden rounded-[32px]"
+          className="relative aspect-[4/3] w-full overflow-hidden rounded-[32px] lg:aspect-[501/330]"
           style={{ containerType: "inline-size" }}
         >
           <Image src="/apples-honey.jpg" alt="An apple and a jar of honey with a dipper" fill priority sizes="(min-width: 1024px) 48vw, 100vw" className="object-cover object-center" />
           <div className="absolute inset-0" style={{ backgroundColor: "rgba(45,45,45,0.38)" }} />
           <div className="absolute inset-0 flex flex-col items-center justify-center px-3 text-center">
-            <p lang="he" dir="rtl" className="mf-hebrew whitespace-nowrap text-[11.5cqw] leading-[1.15]" style={{ color: "#E8D9A8" }}>
+            <p lang="he" dir="rtl" className="mf-hebrew whitespace-nowrap text-[12.5cqw] leading-[1.15]" style={{ color: "#E8D9A8" }}>
               שנה טובה ומתוקה
             </p>
             <span className="mt-5 block h-px w-24" style={{ backgroundColor: "#C8A75B" }} />
