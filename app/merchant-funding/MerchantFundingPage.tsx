@@ -1,0 +1,407 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import Script from "next/script";
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+// Merchant funding campaign page. Unlisted: not in the navigation, not in the
+// sitemap, noindex — reachable only by the link the organisation sends out.
+//
+// It posts to the site's existing /api/usaepay routes rather than its own, so
+// there is one payment implementation on this site and donations land in the
+// same MerchPay account as every other page. The subCampaign tag lets this
+// page total its own donations while they still count on the main $250k bar.
+const SUB_CAMPAIGN = "team:merchant-funding";
+const GOAL = 50000;
+
+// Amounts and labels are the organisation's own, taken from the live
+// Rosh Hashanah campaign page.
+const TIERS = [
+  { amount: 125, label: "Shabbos for a family" },
+  { amount: 250, label: "Yom Tov for a family" },
+  { amount: 600, label: "A month for a family" },
+  { amount: 1250, label: "Shabbos for 10 families" },
+  { amount: 2500, label: "Yom Tov for 10 families" },
+  { amount: 6000, label: "A month for 10 families" },
+];
+
+const money = (n: number) => `$${Math.round(n).toLocaleString()}`;
+
+// Counts up once the figure scrolls into view; skipped under reduced motion.
+function useCountUp(target: number | null, run: boolean) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (target === null || !run) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setN(target);
+      return;
+    }
+    const start = performance.now();
+    let raf = 0;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - start) / 900);
+      setN(Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, run]);
+  return target === null ? null : n;
+}
+
+export default function MerchantFundingPage() {
+  const [raised, setRaised] = useState<number | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [amount, setAmount] = useState("125");
+  const [customAmount, setCustomAmount] = useState("");
+  const [monthly, setMonthly] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState<{ name: string; amount: string; monthly: boolean } | null>(null);
+
+  const publicKey = process.env.NEXT_PUBLIC_USAEPAY_PUBLIC_KEY;
+  const [scriptReady, setScriptReady] = useState(false);
+  const clientRef = useRef<any>(null);
+  const cardRef = useRef<any>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
+  // Polls once a minute — no faster. Polling harder than this once got the
+  // site's IP throttled by USAePay and took live donations down for an hour.
+  const refresh = useCallback(
+    () =>
+      fetch("/api/merchant-funding-total")
+        .then((r) => r.json())
+        .then((d) => {
+          if (typeof d?.total === "number") {
+            setRaised(d.total);
+            setLoadFailed(Boolean(d.error));
+          } else setLoadFailed(true);
+        })
+        .catch(() => setLoadFailed(true)),
+    []
+  );
+
+  useEffect(() => {
+    refresh();
+    const id = setInterval(refresh, 60_000);
+    return () => clearInterval(id);
+  }, [refresh]);
+
+  // Reveals are armed only once JS can un-arm them, so a failed observer can
+  // never leave the donation form invisible.
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const els = document.querySelectorAll(".mf-reveal");
+    let io: IntersectionObserver | null = null;
+    if ("IntersectionObserver" in window && !reduced) {
+      io = new IntersectionObserver(
+        (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("mf-shown")),
+        { rootMargin: "0px 0px -10% 0px" }
+      );
+      els.forEach((el) => { el.classList.add("mf-armed"); io!.observe(el); });
+      setTimeout(() => els.forEach((el) => el.classList.add("mf-shown")), 2000);
+    }
+    let statsIo: IntersectionObserver | null = null;
+    if ("IntersectionObserver" in window && statsRef.current) {
+      statsIo = new IntersectionObserver(([e]) => e.isIntersecting && setInView(true), { threshold: 0.3 });
+      statsIo.observe(statsRef.current);
+    }
+    const fallback = setTimeout(() => setInView(true), 1500);
+    return () => { io?.disconnect(); statsIo?.disconnect(); clearTimeout(fallback); };
+  }, []);
+
+  const shownRaised = useCountUp(raised, inView);
+
+  // pay.js is often cached, so it can load before onLoad attaches.
+  useEffect(() => {
+    if (scriptReady) return;
+    if ((window as any).usaepay) return setScriptReady(true);
+    const id = setInterval(() => {
+      if ((window as any).usaepay) { setScriptReady(true); clearInterval(id); }
+    }, 100);
+    return () => clearInterval(id);
+  }, [scriptReady]);
+
+  useEffect(() => {
+    if (!scriptReady || !(window as any).usaepay || !publicKey || cardRef.current) return;
+    const client = new (window as any).usaepay.Client(publicKey);
+    clientRef.current = client;
+    const card = client.createPaymentCardEntry();
+    card.generateHTML({
+      styles: `
+        .payjs-base { font-size: 16px; color: #2D2D2D; font-family: inherit; }
+        .payjs-base::placeholder { color: #8a8a86; }
+        .payjs-container { display: flex; flex-wrap: wrap; gap: 10px; }
+        .payjs-wrapper { margin-bottom: 0; }
+        .payjs-wrapper:nth-child(1) { flex: 1 1 100%; }
+        .payjs-wrapper:nth-child(2) { flex: 1 1 90px; }
+        .payjs-wrapper:nth-child(3) { flex: 1 1 90px; }
+        .payjs-wrapper:nth-child(4) { flex: 1 1 70px; }
+      `,
+    });
+    card.addHTML("card-field");
+    cardRef.current = card;
+  }, [scriptReady, publicKey]);
+
+  const chosenAmount = amount === "other" ? customAmount : amount;
+  const pct = raised === null ? 0 : Math.min(100, (raised / GOAL) * 100);
+
+  const submit = async () => {
+    setError("");
+    const val = (id: string) => (document.getElementById(id) as HTMLInputElement)?.value?.trim() || "";
+    const firstName = val("firstName");
+    const lastName = val("lastName");
+    const email = val("email");
+    const phone = val("phone");
+    const street = val("street");
+    const city = val("city");
+    const state = val("state");
+    const zip = val("zip");
+
+    if (!chosenAmount || Number(chosenAmount) < 1) return setError("Choose an amount to give.");
+    if (!firstName || !lastName || !email || !street || !city || !state || !zip)
+      return setError("Fill in your name, email and billing address.");
+    if (!clientRef.current || !cardRef.current)
+      return setError("The card form is still loading. Give it a moment and try again.");
+
+    setLoading(true);
+    try {
+      const result = await clientRef.current.getPaymentKey(cardRef.current);
+      const paymentKey = result?.key || (typeof result === "string" ? result : "");
+      if (!paymentKey) throw new Error("Your card details could not be read. Check them and try again.");
+
+      // The site's existing routes — same implementation the donate and Rosh
+      // Hashanah pages use, so the money lands in the same account.
+      const res = await fetch(monthly ? "/api/usaepay/recurring" : "/api/usaepay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: parseFloat(chosenAmount),
+          paymentKey,
+          campaign: "rosh-hashanah",
+          subCampaign: SUB_CAMPAIGN,
+          ...(monthly ? { name: `${firstName} ${lastName}` } : { firstName, lastName }),
+          email, phone, street, city, state, zip,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || "Your card was declined. Please try another card.");
+
+      // Move the bar straight away, then reconcile — the totals endpoint caches
+      // for 60s, so an immediate refetch returns the pre-donation figure.
+      const given = parseFloat(chosenAmount);
+      setRaised((r) => (r === null ? r : r + given));
+      refresh();
+
+      setDone({ name: firstName, amount: chosenAmount, monthly });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="mf" style={{ backgroundColor: "#F8F4EC", color: "#2D2D2D", fontFamily: "var(--font-dm), ui-sans-serif, system-ui, sans-serif", fontWeight: 500 }}>
+      <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
+
+      <header className="flex w-full items-center justify-between gap-5 px-5 py-5 sm:px-8">
+        <a href="/merchant-funding" className="flex items-center">
+          <Image src="/logo-transparent.png" alt="Tomchei Shabbos of Florida" width={670} height={120} priority className="h-9 w-auto sm:h-10" />
+        </a>
+        <a href="#amounts" className="rounded-[100px] px-9 py-4 text-[17px] font-bold" style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}>
+          Donate Now
+        </a>
+      </header>
+
+      <p className="px-5 pb-7 pt-1 text-center text-[13px] uppercase tracking-[0.2em] sm:px-8" style={{ color: "#2D2D2D", opacity: 0.55 }}>
+        MCA Donation Page
+      </p>
+
+      <section className="grid items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-14">
+        <div>
+          <h1 className="mf-display max-w-[16ch] text-[clamp(2.4rem,6.2vw,5.2rem)]" style={{ color: "#2D2D2D" }}>
+            When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
+          </h1>
+          <a href="#amounts" className="mt-10 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
+            Help us reach {money(GOAL)}
+          </a>
+        </div>
+
+        <div className="@container relative aspect-[501/330] w-full overflow-hidden rounded-[32px]">
+          <Image src="/apples-honey.jpg" alt="An apple and a jar of honey with a dipper" fill priority sizes="(min-width: 1024px) 48vw, 100vw" className="object-cover object-center" />
+          <div className="absolute inset-0" style={{ backgroundColor: "rgba(45,45,45,0.38)" }} />
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-3 text-center">
+            <p lang="he" dir="rtl" className="mf-hebrew whitespace-nowrap text-[14cqw] leading-[1.15]" style={{ color: "#E8D9A8" }}>
+              שנה טובה ומתוקה
+            </p>
+            <span className="mt-5 block h-px w-24" style={{ backgroundColor: "#C8A75B" }} />
+            <p className="mt-4 text-[clamp(0.75rem,2.6cqw,1.2rem)] uppercase tracking-[0.24em]" style={{ color: "#F0E7D3", opacity: 0.85 }}>
+              A sweet new year
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section ref={statsRef} className="px-5 sm:px-8">
+        <div className="mf-reveal grid gap-4 sm:grid-cols-3">
+          {[
+            ["Goal", money(GOAL)],
+            ["Raised", shownRaised === null ? (loadFailed ? "Unavailable" : "—") : money(shownRaised)],
+            ["Funded", raised === null ? "—" : `${pct.toFixed(1)}%`],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-[24px] px-7 py-8" style={{ backgroundColor: "#FFFFFF", border: "2px solid #E5E5E5" }}>
+              <p className="text-[12px] uppercase tracking-[0.1em]" style={{ opacity: 0.7 }}>{label}</p>
+              <p className="mf-display mt-3 text-[clamp(2.2rem,5vw,3.5rem)] tabular-nums" style={{ color: "#C8A75B" }}>{value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Fill capped at 100% so the bar can never overrun. */}
+        <div className="mf-reveal mt-4 overflow-hidden rounded-[100px]" style={{ backgroundColor: "#E5E5E5" }}>
+          <div
+            className="h-5 rounded-[100px]"
+            style={{ width: inView ? `${pct}%` : "0%", backgroundImage: "linear-gradient(to right, #1AABAB, #3DC4C4)", transition: "width 1.1s cubic-bezier(.22,.61,.36,1)" }}
+            role="progressbar"
+            aria-valuenow={Math.round(pct)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`${Math.round(pct)} percent of the ${money(GOAL)} goal raised`}
+          />
+        </div>
+
+        {done && (
+          <p role="status" className="mt-8 rounded-[24px] px-7 py-6 text-[16px] leading-[1.55]" style={{ backgroundColor: "#FFFFFF", border: "2px solid #1AABAB", color: "#0a6e78" }}>
+            <strong>Thank you, {done.name}.</strong> Your {done.monthly ? "monthly gift" : "gift"} of {money(Number(done.amount))} went through and the bar above has moved. A receipt is on its way to your inbox.
+          </p>
+        )}
+      </section>
+
+      <section id="amounts" className="scroll-mt-6 px-5 py-16 sm:px-8 sm:py-24">
+        <h2 className="mf-reveal mf-display text-[clamp(2rem,4.5vw,3.5rem)]">Help provide Shabbos for a family</h2>
+        <div className="mf-reveal mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {TIERS.map((t) => {
+            const on = amount === String(t.amount);
+            return (
+              <button
+                key={t.amount}
+                type="button"
+                onClick={() => { setAmount(String(t.amount)); document.getElementById("give")?.scrollIntoView({ behavior: "smooth" }); }}
+                aria-pressed={on}
+                className="mf-lift rounded-[24px] px-7 py-9 text-left"
+                style={{ backgroundColor: on ? "rgba(200,167,91,0.14)" : "#FFFFFF", color: "#2D2D2D", border: "2px solid #C8A75B" }}
+              >
+                <span className="mf-display block text-[clamp(2.4rem,4vw,3.2rem)] tabular-nums" style={{ color: "#C8A75B" }}>
+                  ${t.amount.toLocaleString()}
+                </span>
+                <span className="mt-3 block text-[16px] leading-[1.25]" style={{ opacity: 0.7 }}>{t.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      <section id="give" className="px-5 pb-20 sm:px-8">
+        <div className="mf-reveal mx-auto max-w-[720px] rounded-[32px] px-6 py-10 sm:px-12 sm:py-12" style={{ backgroundColor: "#FFFFFF" }}>
+          <h2 className="mf-display text-center text-[clamp(1.9rem,4vw,2.8rem)]">Complete your donation</h2>
+          <p className="mt-3 text-center text-[14px]" style={{ opacity: 0.65 }}>Secure payment · All information is encrypted</p>
+
+          <div className="mt-9 flex gap-3">
+            {[
+              { label: "One-time", on: !monthly, set: () => setMonthly(false) },
+              { label: "Monthly", on: monthly, set: () => setMonthly(true) },
+            ].map((o) => (
+              <button key={o.label} type="button" onClick={o.set} aria-pressed={o.on}
+                className="flex-1 rounded-[100px] py-3.5 text-[16px] font-bold"
+                style={{ backgroundColor: o.on ? "#2D2D2D" : "transparent", color: o.on ? "#FFFFFF" : "#2D2D2D", border: o.on ? "1px solid #2D2D2D" : "1px solid rgba(45,45,45,0.2)" }}>
+                {o.label}
+              </button>
+            ))}
+          </div>
+          {monthly && (
+            <p className="mt-3 text-[14px]" style={{ opacity: 0.65 }}>Charged monthly until you cancel.</p>
+          )}
+
+          <Legend>Amount</Legend>
+          <div className="flex items-center rounded-[16px] px-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid rgba(45,45,45,0.12)" }}>
+            <span className="mf-display text-[1.6rem]" style={{ color: "#C8A75B" }}>$</span>
+            <input aria-label="Donation amount" inputMode="decimal"
+              value={amount === "other" ? customAmount : amount}
+              onChange={(e) => { setAmount("other"); setCustomAmount(e.target.value.replace(/[^0-9.]/g, "")); }}
+              className="mf-display h-16 w-full bg-transparent px-3 text-[1.6rem] tabular-nums focus:outline-none" />
+          </div>
+
+          <Legend>Your details</Legend>
+          <div className="grid gap-x-4 sm:grid-cols-2">
+            <Field id="firstName" label="First name" />
+            <Field id="lastName" label="Last name" />
+          </div>
+          <Field id="email" label="Email" type="email" hint="Where your receipt is sent." />
+          <Field id="phone" label="Phone" type="tel" optional />
+
+          <Legend>Billing address</Legend>
+          <Field id="street" label="Street address" />
+          <div className="grid gap-x-4 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
+            <Field id="city" label="City" />
+            <Field id="state" label="State" />
+            <Field id="zip" label="ZIP" />
+          </div>
+
+          <Legend>Payment details</Legend>
+          <div id="card-field" className="rounded-[16px] px-5 py-4" style={{ backgroundColor: "#FFFFFF", border: "1px solid rgba(45,45,45,0.12)" }} />
+
+          {error && (
+            <p role="alert" className="mt-5 rounded-[16px] px-5 py-4 text-[15px]" style={{ backgroundColor: "#FCEEEC", color: "#8C1D18", border: "1px solid #E4B4AE" }}>{error}</p>
+          )}
+
+          <button onClick={submit} disabled={loading}
+            className="mt-8 w-full rounded-[100px] py-5 text-[17px] font-bold disabled:opacity-60"
+            style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
+            {loading ? "Processing…" : `Give ${chosenAmount ? money(Number(chosenAmount)) : ""}${monthly ? " a month" : ""}`}
+          </button>
+          <p className="mt-4 text-center text-[12px]" style={{ opacity: 0.6 }}>
+            Secure checkout · Tax-deductible · 501(c)(3) · Tax ID 83-2155012
+          </p>
+        </div>
+      </section>
+
+      <footer className="px-5 py-14 sm:px-8" style={{ backgroundColor: "#0a6e78", color: "#FFFFFF" }}>
+        <div className="grid gap-8 sm:grid-cols-2">
+          <div>
+            <p className="mf-display text-[1.6rem]">Tomchei Shabbos of Florida</p>
+            <address className="mt-3 text-[15px] not-italic" style={{ opacity: 0.75 }}>
+              194 NE 186th Terrace<br />North Miami Beach, FL 33179
+            </address>
+          </div>
+          <div className="text-[15px] sm:text-right" style={{ opacity: 0.75 }}>
+            <p>501(c)(3) tax-exempt organization · Tax ID 83-2155012</p>
+            <p className="mt-2">Donations are tax-deductible to the extent allowed by law.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+function Legend({ children }: { children: React.ReactNode }) {
+  return <p className="mt-9 mb-4 text-[12px] uppercase tracking-[0.1em]" style={{ opacity: 0.55 }}>{children}</p>;
+}
+
+function Field({ id, label, type = "text", optional, hint }: { id: string; label: string; type?: string; optional?: boolean; hint?: string }) {
+  return (
+    <div className="mb-4">
+      <label htmlFor={id} className="mb-2 block text-[14px]">
+        {label}
+        {optional && <span className="ml-1.5" style={{ opacity: 0.5 }}>(optional)</span>}
+      </label>
+      <input id={id} type={type}
+        className="h-14 w-full rounded-[16px] px-5 text-[16px] focus:outline-none"
+        style={{ backgroundColor: "#FFFFFF", border: "1px solid rgba(45,45,45,0.12)", color: "#2D2D2D" }} />
+      {hint && <p className="mt-2 text-[13px]" style={{ opacity: 0.55 }}>{hint}</p>}
+    </div>
+  );
+}

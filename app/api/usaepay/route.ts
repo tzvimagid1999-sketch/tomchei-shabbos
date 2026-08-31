@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, firstName, lastName, name, email, phone, street, city, state, zip, campaign, honoreeType, honoreeName, honoreeEmail } = await req.json();
+    const { amount, paymentKey, firstName, lastName, name, email, phone, street, city, state, zip, campaign, subCampaign, honoreeType, honoreeName, honoreeEmail } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -91,9 +91,13 @@ export async function POST(req: NextRequest) {
         customerid: donorName || undefined,
         // Name also leads the description, so it shows in exports and detail
         // views regardless of which report is used.
+        // subCampaign adds a machine-readable tag so a campaign page can total
+        // its own donations. The Rosh Hashanah wording the main bar counts is
+        // unchanged, so a tagged donation still lands on that bar too.
         description:
           donorName +
           " - " +
+          (subCampaign ? `[${subCampaign}] ` : "") +
           (campaign === "rosh-hashanah"
             ? "Rosh Hashanah Campaign donation to Tomchei Shabbos of Florida"
             : "Donation to Tomchei Shabbos of Florida") +

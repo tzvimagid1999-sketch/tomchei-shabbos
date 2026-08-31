@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign } = await req.json();
+    const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign, subCampaign } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -47,7 +47,10 @@ export async function POST(req: NextRequest) {
     const dedication = honoreeType && honoreeName
       ? ` (${honoreeType === "memory" ? "In Memory of" : "In Honor of"} ${honoreeName})`
       : "";
-    const campaignTag = campaign === "rosh-hashanah" ? "Rosh Hashanah Campaign " : "";
+    // subCampaign tags the donation for a campaign page's own total; the Rosh
+    // Hashanah wording the main bar counts is unchanged.
+    const subTag = subCampaign ? `[${subCampaign}] ` : "";
+    const campaignTag = subTag + (campaign === "rosh-hashanah" ? "Rosh Hashanah Campaign " : "");
 
     const auth = () => {
       const seed = crypto.randomBytes(16).toString("hex");
