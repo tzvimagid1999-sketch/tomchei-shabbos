@@ -282,7 +282,7 @@ export default function MerchantFundingPage() {
         </div>
       </section>
 
-      <section ref={statsRef} className="px-5 sm:px-8">
+      <section ref={statsRef} className="px-5 pb-4 sm:px-8">
         {/* Donor wall. Only names whose owners ticked the box reach this far —
             the API cannot return anyone else. */}
         {donors.length > 0 && (
@@ -315,7 +315,7 @@ export default function MerchantFundingPage() {
         </div>
 
         {/* Fill capped at 100% so the bar can never overrun. */}
-        <div className="mf-reveal mt-4 overflow-hidden rounded-[100px]" style={{ backgroundColor: "#E5E5E5" }}>
+        <div className="mf-reveal mt-10 overflow-hidden rounded-[100px]" style={{ backgroundColor: "#E5E5E5" }}>
           <div
             className="h-5 rounded-[100px]"
             style={{ width: inView ? `${pct}%` : "0%", backgroundImage: "linear-gradient(to right, #1AABAB, #3DC4C4)", transition: "width 1.1s cubic-bezier(.22,.61,.36,1)" }}
@@ -329,7 +329,7 @@ export default function MerchantFundingPage() {
 
       </section>
 
-      <section id="give" className="scroll-mt-6 px-5 pb-20 sm:px-8">
+      <section id="give" className="scroll-mt-6 px-5 pb-20 pt-14 sm:px-8 sm:pt-20">
         <div className="mf-reveal mx-auto max-w-[720px] rounded-[32px] px-6 py-10 sm:px-12 sm:py-12" style={{ backgroundColor: "#FFFFFF" }}>
           <h2 className="mf-display text-center text-[clamp(1.9rem,4vw,2.8rem)]">Help provide Shabbos for a family</h2>
           <p className="mt-3 text-center text-[14px]" style={{ opacity: 0.65 }}>Secure payment · All information is encrypted</p>
