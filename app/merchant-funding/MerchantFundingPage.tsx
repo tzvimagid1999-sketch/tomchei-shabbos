@@ -245,9 +245,9 @@ export default function MerchantFundingPage() {
         MCA Donation Page
       </p>
 
-      <section className="pb-14 sm:pb-20">
-        <div className="px-5 pb-12 sm:px-8 sm:pb-14">
-          <h1 className="mf-display max-w-[18ch] text-[clamp(2.4rem,5.4vw,4.8rem)]" style={{ color: "#2D2D2D" }}>
+      <section className="grid items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.3fr)] lg:gap-14">
+        <div>
+          <h1 className="mf-display max-w-[16ch] text-[clamp(2.4rem,4.6vw,4rem)]" style={{ color: "#2D2D2D" }}>
             When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
           </h1>
           <a href="#give" className="mt-10 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
@@ -260,14 +260,15 @@ export default function MerchantFundingPage() {
             was resolving against the viewport and the greeting overflowed the
             frame by roughly double.
 
-            The frame runs edge to edge at every width, below the headline
-            rather than beside it, so the image fills the page. It is portrait
-            on phones and progressively wider on larger screens. */}
+            The image sits beside the headline at lg, taking the wider of the
+            two columns. Below lg it stacks and breaks out of the section's
+            horizontal padding to run edge to edge, since a narrow inset crop
+            left dead space around it on phones. */}
         <div
-          className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[4/3] lg:aspect-[16/9]"
+          className="relative -mx-5 aspect-[4/5] w-auto overflow-hidden sm:-mx-8 sm:aspect-[4/3] lg:mx-0 lg:aspect-[4/3] lg:w-full lg:rounded-[32px]"
           style={{ containerType: "inline-size" }}
         >
-          <Image src="/apples-honey.jpg" alt="An apple and a jar of honey with a dipper" fill priority sizes="100vw" className="object-cover object-center" />
+          <Image src="/apples-honey.jpg" alt="An apple and a jar of honey with a dipper" fill priority sizes="(min-width: 1024px) 60vw, 100vw" className="object-cover object-center" />
           <div className="absolute inset-0" style={{ backgroundColor: "rgba(45,45,45,0.38)" }} />
           <div className="absolute inset-0 flex flex-col items-center justify-center px-3 text-center">
             <p lang="he" dir="rtl" className="mf-hebrew whitespace-nowrap text-[12.5cqw] leading-[1.15]" style={{ color: "#E8D9A8" }}>
