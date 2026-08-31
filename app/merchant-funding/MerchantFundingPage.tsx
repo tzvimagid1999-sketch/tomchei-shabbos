@@ -286,7 +286,7 @@ export default function MerchantFundingPage() {
         MCA Donation Page
       </p>
 
-      <section className="grid items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.3fr)] lg:gap-14">
+      <section className="grid items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-14">
         <div>
           <h1 className="mf-display max-w-[16ch] text-[clamp(2.4rem,4.6vw,4rem)]" style={{ color: "#2D2D2D" }}>
             When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
