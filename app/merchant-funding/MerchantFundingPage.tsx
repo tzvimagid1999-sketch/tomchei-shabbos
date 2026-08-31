@@ -59,7 +59,6 @@ export default function MerchantFundingPage() {
   const [monthly, setMonthly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [done, setDone] = useState<{ name: string; amount: string; monthly: boolean } | null>(null);
 
   const publicKey = process.env.NEXT_PUBLIC_USAEPAY_PUBLIC_KEY;
   const [scriptReady, setScriptReady] = useState(false);
@@ -89,6 +88,14 @@ export default function MerchantFundingPage() {
     const id = setInterval(refresh, 60_000);
     return () => clearInterval(id);
   }, [refresh]);
+
+  // Always open at the top. Browsers restore the previous scroll position on a
+  // revisit, which on a phone dropped returning visitors straight into the
+  // middle of the card form instead of the campaign's opening.
+  useEffect(() => {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    if (!window.location.hash) window.scrollTo(0, 0);
+  }, []);
 
   // Reveals are armed only once JS can un-arm them, so a failed observer can
   // never leave the donation form invisible.
@@ -190,17 +197,14 @@ export default function MerchantFundingPage() {
       const data = await res.json();
       if (!data.success) throw new Error(data.error || "Your card was declined. Please try another card.");
 
-      // Move the bar straight away, then reconcile — the totals endpoint caches
-      // for 60s, so an immediate refetch returns the pre-donation figure.
-      const given = parseFloat(chosenAmount);
-      setRaised((r) => (r === null ? r : r + given));
-      refresh();
-
-      setDone({ name: firstName, amount: chosenAmount, monthly });
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      // Hand the donor off to the thank-you page. Kept as a full navigation so
+      // the back button cannot land them on a filled-in card form, and so the
+      // page they end on is a stable URL the organisation can point at.
+      const q = new URLSearchParams({ name: firstName, amount: chosenAmount });
+      if (monthly) q.set("monthly", "1");
+      window.location.assign(`/merchant-funding/thank-you?${q.toString()}`);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
@@ -210,7 +214,7 @@ export default function MerchantFundingPage() {
       <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
       <header className="flex w-full items-center justify-between gap-5 px-5 py-5 sm:px-8">
-        <a href="/merchant-funding" className="flex items-center">
+        <a href="/" className="flex items-center">
           <Image src="/logo-transparent.png" alt="Tomchei Shabbos of Florida" width={670} height={120} priority className="h-9 w-auto sm:h-10" />
         </a>
         <a href="#amounts" className="rounded-[100px] px-9 py-4 text-[17px] font-bold" style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}>
@@ -232,11 +236,18 @@ export default function MerchantFundingPage() {
           </a>
         </div>
 
-        <div className="@container relative aspect-[501/330] w-full overflow-hidden rounded-[32px]">
+        {/* containerType is set inline rather than via Tailwind's @container
+            class, which does not register a container in this project — cqw
+            was resolving against the viewport and the greeting overflowed the
+            frame by roughly double. */}
+        <div
+          className="relative aspect-[501/330] w-full overflow-hidden rounded-[32px]"
+          style={{ containerType: "inline-size" }}
+        >
           <Image src="/apples-honey.jpg" alt="An apple and a jar of honey with a dipper" fill priority sizes="(min-width: 1024px) 48vw, 100vw" className="object-cover object-center" />
           <div className="absolute inset-0" style={{ backgroundColor: "rgba(45,45,45,0.38)" }} />
           <div className="absolute inset-0 flex flex-col items-center justify-center px-3 text-center">
-            <p lang="he" dir="rtl" className="mf-hebrew whitespace-nowrap text-[14cqw] leading-[1.15]" style={{ color: "#E8D9A8" }}>
+            <p lang="he" dir="rtl" className="mf-hebrew whitespace-nowrap text-[11.5cqw] leading-[1.15]" style={{ color: "#E8D9A8" }}>
               שנה טובה ומתוקה
             </p>
             <span className="mt-5 block h-px w-24" style={{ backgroundColor: "#C8A75B" }} />
@@ -274,11 +285,6 @@ export default function MerchantFundingPage() {
           />
         </div>
 
-        {done && (
-          <p role="status" className="mt-8 rounded-[24px] px-7 py-6 text-[16px] leading-[1.55]" style={{ backgroundColor: "#FFFFFF", border: "2px solid #1AABAB", color: "#0a6e78" }}>
-            <strong>Thank you, {done.name}.</strong> Your {done.monthly ? "monthly gift" : "gift"} of {money(Number(done.amount))} went through and the bar above has moved. A receipt is on its way to your inbox.
-          </p>
-        )}
       </section>
 
       <section id="amounts" className="scroll-mt-6 px-5 py-16 sm:px-8 sm:py-24">

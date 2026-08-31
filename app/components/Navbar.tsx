@@ -19,8 +19,8 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  // Standalone campaign landing page — it carries its own header and footer.
-  if (pathname === "/merchant-funding") return null;
+  // Standalone campaign pages — they carry their own header and footer.
+  if (pathname.startsWith("/merchant-funding")) return null;
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-white shadow-sm border-b border-gray-100">

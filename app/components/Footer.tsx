@@ -4,8 +4,8 @@ import { usePathname } from "next/navigation";
 import { DONATE_HREF } from "../lib/site-config";
 
 export default function Footer() {
-  // Standalone campaign landing page — it carries its own header and footer.
-  if (usePathname() === "/merchant-funding") return null;
+  // Standalone campaign pages — they carry their own header and footer.
+  if (usePathname().startsWith("/merchant-funding")) return null;
 
   const year = new Date().getFullYear();
 
