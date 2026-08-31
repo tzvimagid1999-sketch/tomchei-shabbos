@@ -286,44 +286,49 @@ export default function MerchantFundingPage() {
         MCA Donation Page
       </p>
 
-      <section className="grid items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-14">
-        <div>
-          <h1 className="mf-display max-w-[16ch] text-[clamp(2.4rem,4.6vw,4rem)]" style={{ color: "#2D2D2D" }}>
-            When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
-          </h1>
-          <a href="#give" className="mt-10 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
-            Help us reach {money(GOAL)}
-          </a>
-        </div>
+      {/* Hero band: the campaign artwork runs the full width of the page, with
+          the headline beneath it rather than beside it.
 
-        {/* The campaign banner is finished artwork: it carries its own headline,
-            logo and typography, so it gets no scrim and no overlaid text — the
-            apples-and-honey photo it replaced needed both.
+          Finished artwork — it carries its own headline, logo and typography —
+          so no scrim and nothing overlaid on top of it. Two crops of the same
+          design, each at its own ratio so nothing is cropped away: the wide
+          1600x583 banner from lg up, and the 800x600 version below that, since
+          the wide crop is only about 137px tall on a phone and its small print
+          is unreadable at that size.
 
-            This is the 4:3 crop of the design, not the 1600x583 banner. Beside
-            the headline the wide crop was only 252px tall; the same column fits
-            this one at 519px, and it is the crop drawn to be read in a squarer
-            shape.
-
-            The artwork carries its own near-white ground, sampled at #FBF8F3,
-            which read as a pale rectangle against the page's old #F8F4EC cream.
-            The page now uses that same #FBF8F3, so the two are the same colour
-            and the edge disappears. Blending was the wrong tool here: multiply
-            only resolves to the backdrop for pure white, and this ground is not
-            pure white, so it came out darker than the page instead. */}
-        <div
-          className="relative -mx-5 aspect-[4/3] w-auto overflow-hidden sm:-mx-8 lg:mx-0 lg:w-full"
-          style={{ backgroundColor: "#FBF8F3" }}
-        >
+          The ground in both files samples at #FBF8F3, which is exactly the
+          page's cream, so the artwork has no visible edge against the page. */}
+      <section style={{ backgroundColor: "#FBF8F3" }}>
+        <div className="relative aspect-[4/3] w-full overflow-hidden lg:hidden">
           <Image
             src="/rosh-hashanah-hero-mobile.jpg"
             alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
             fill
             priority
-            sizes="(min-width: 1024px) 60vw, 100vw"
+            sizes="100vw"
             className="object-contain object-center"
           />
         </div>
+        <div className="relative hidden aspect-[1600/583] w-full overflow-hidden lg:block">
+          <Image
+            src="/rosh-hashanah-campaign-hero.jpeg"
+            alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
+            fill
+            priority
+            sizes="100vw"
+            className="object-contain object-center"
+          />
+        </div>
+      </section>
+
+      <section className="px-5 pb-14 pt-12 sm:px-8 sm:pb-20 sm:pt-16">
+        {/* No max-width: the headline is meant to run the width of the page. */}
+        <h1 className="mf-display text-[clamp(2.4rem,5.2vw,4.6rem)]" style={{ color: "#2D2D2D" }}>
+          When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
+        </h1>
+        <a href="#give" className="mt-10 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
+          Help us reach {money(GOAL)}
+        </a>
       </section>
 
       <section ref={statsRef} className="px-5 pb-4 sm:px-8">
