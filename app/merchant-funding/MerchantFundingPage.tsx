@@ -317,9 +317,6 @@ export default function MerchantFundingPage() {
         </div>
       </section>
 
-      {/* The gold rule that closes the hero on /RoshHashanah. */}
-      <div className="h-1 w-full" style={{ backgroundColor: "#C8A75B" }} />
-
       <section ref={statsRef} className="px-5 pb-4 sm:px-8">
         {/* Donor wall. Only names whose owners ticked the box reach this far —
             the API cannot return anyone else.
