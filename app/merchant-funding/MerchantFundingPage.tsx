@@ -387,11 +387,15 @@ export default function MerchantFundingPage() {
       {heroV === "words" && (
         <section
           style={{
+            backgroundColor: "#0a6e78",
             backgroundImage:
               "linear-gradient(rgba(10,110,120,0.86), rgba(10,110,120,0.88)), url('/rosh-hashanah-campaign-hero.jpeg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
+            // The wash covers; the artwork is contained, so the whole picture
+            // fits with nothing cut off the top or bottom. The teal behind
+            // fills whatever the contained image does not reach.
+            backgroundSize: "cover, contain",
+            backgroundPosition: "center, center",
+            backgroundRepeat: "no-repeat, no-repeat",
           }}
         >
           <div className="mx-auto flex max-w-[60rem] flex-col items-center px-5 py-16 text-center sm:px-8 sm:py-24">
@@ -677,9 +681,6 @@ export default function MerchantFundingPage() {
         </section>
       )}
 
-      {/* Gold rule closing off the hero — the header, banner and headline above
-          it, the totals and the form below. */}
-      {heroV && <div className="h-1 w-full" style={{ backgroundColor: "#C8A75B" }} />}
 
       {/* The banner runs full width as its own band, with the headline centred
           beneath it.
