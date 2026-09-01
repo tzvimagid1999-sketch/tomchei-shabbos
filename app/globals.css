@@ -90,12 +90,17 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
 
 /* "MERCHANT FUNDING" in the hero headline.
 
-   Gold caps in the serif, which is the treatment the campaign settled on. Flat
-   colour — no gradient and no glow; a tonal-gradient version was tried and read
-   as an effect rather than as printing. 3.44:1 against the cream, above the 3:1
-   minimum for display type at this size. */
+   Gold caps, weighted heavy against the lighter sentence around them — the
+   same contrast the home page hero uses between "Making Shabbos Possible for
+   Families in" and "Florida". 800 is the heaviest weight loaded for this face;
+   anything above it would be synthesised and distort the letterforms.
+
+   Flat colour, no gradient and no glow: a tonal-gradient version was tried and
+   read as an effect rather than as printing. 3.44:1 against the cream, above
+   the 3:1 minimum for display type at this size. */
 .mf .mf-highlight {
   color: #A08243;
+  font-weight: 800;
   letter-spacing: 0.015em;
 }
 
