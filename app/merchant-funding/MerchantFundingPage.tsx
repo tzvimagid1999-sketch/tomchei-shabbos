@@ -416,6 +416,34 @@ export default function MerchantFundingPage() {
               <strong style={{ color: goldAccent, fontWeight: 700 }}>350+</strong> Florida families served every week.
             </p>
           </div>
+
+          {/* Both actions go to the donation form; the second lands there with
+              the monthly option already chosen. */}
+          <div className="grid grid-cols-2">
+            <a
+              href="#give"
+              onClick={() => setMonthly(false)}
+              className="flex items-center justify-center gap-3 px-4 py-5 text-center text-[clamp(0.9375rem,1.5vw,1.25rem)] font-bold"
+              style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="h-[1.2em] w-[1.2em] shrink-0" aria-hidden="true">
+                <path d="M20.8 8.6c0 4.4-8.8 9.4-8.8 9.4S3.2 13 3.2 8.6a4.6 4.6 0 0 1 8.8-1.8 4.6 4.6 0 0 1 8.8 1.8Z" />
+              </svg>
+              Make a donation
+            </a>
+            <a
+              href="#give"
+              onClick={() => setMonthly(true)}
+              className="flex items-center justify-center gap-3 px-4 py-5 text-center text-[clamp(0.9375rem,1.5vw,1.25rem)] font-bold"
+              style={{ backgroundColor: "#0a6e78", color: "#FFFFFF" }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="h-[1.2em] w-[1.2em] shrink-0" aria-hidden="true">
+                <rect x="3.2" y="5" width="17.6" height="16" rx="2.4" />
+                <path d="M3.2 10h17.6M8 3v4M16 3v4" />
+              </svg>
+              Give monthly
+            </a>
+          </div>
         </section>
       )}
 
