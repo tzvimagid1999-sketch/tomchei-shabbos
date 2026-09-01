@@ -82,6 +82,10 @@ export default function MerchantFundingPage() {
   // full-page backdrop and the inline hero frame is dropped, since keeping both
   // would show the same picture twice.
   const [bgArt, setBgArt] = useState(false);
+  // ?hero=left | right | center — previews the photographic hero: a full-bleed
+  // photograph with the headline set over it, in place of the headline-beside-
+  // artwork row. Preview only; the plain URL is untouched.
+  const [heroV, setHeroV] = useState("");
   const [monthly, setMonthly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -122,6 +126,8 @@ export default function MerchantFundingPage() {
     const q = new URLSearchParams(window.location.search);
     setDemo(q.get("demo") === "1");
     setBgArt(q.get("bg") === "1");
+    const h = q.get("hero") || "";
+    setHeroV(["left", "right", "center"].includes(h) ? h : "");
   }, []);
 
   useEffect(() => {
@@ -290,9 +296,14 @@ export default function MerchantFundingPage() {
     >
       <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
-      <header className="relative flex w-full items-center justify-between gap-5 px-5 py-5 sm:px-8">
+      <header
+        className="relative flex w-full items-center justify-between gap-5 px-5 py-5 sm:px-8"
+        style={heroV ? { backgroundColor: "#0a6e78" } : undefined}
+      >
         <a href="/" className="flex items-center">
-          <Image src="/logo-transparent.png" alt="Tomchei Shabbos of Florida" width={670} height={120} priority className="h-9 w-auto sm:h-10" />
+          {/* The logo is dark artwork, so on the teal bar it is knocked out to
+              white rather than swapped for a second file. */}
+          <Image src="/logo-transparent.png" alt="Tomchei Shabbos of Florida" width={670} height={120} priority className={`h-9 w-auto sm:h-10 ${heroV ? "brightness-0 invert" : ""}`} />
         </a>
 
         {/* Centred on the page rather than between the logo and the button,
@@ -304,7 +315,7 @@ export default function MerchantFundingPage() {
             drops to its own line under the header instead. */}
         <p
           className="pointer-events-none absolute left-1/2 hidden -translate-x-1/2 whitespace-nowrap text-[13px] uppercase tracking-[0.2em] sm:block"
-          style={{ color: "#2D2D2D", opacity: 0.55 }}
+          style={heroV ? { color: "#FFFFFF", opacity: 0.75 } : { color: "#2D2D2D", opacity: 0.55 }}
         >
           MCA Donation Page
         </p>
@@ -322,9 +333,67 @@ export default function MerchantFundingPage() {
         MCA Donation Page
       </p>
 
+      {/* ?hero= — the photographic hero. A full-bleed photograph with the
+          headline set over it, in place of the headline-beside-artwork row.
+
+          It uses a photograph rather than the Out For Delivery banner because
+          that banner already carries its own headline, logo and body copy;
+          a second headline on top of it would collide.
+
+          The wash is a gradient, not a flat overlay, so the side the type sits
+          on is dark enough to read white against while the other side of the
+          frame stays as photographed. */}
+      {heroV && (
+        <section className="relative isolate grid min-h-[clamp(20rem,44vw,34rem)]">
+          <Image
+            src="/photos/boys-filling-boxes.jpg"
+            alt="Volunteers packing Shabbos boxes with fresh produce"
+            fill
+            priority
+            sizes="100vw"
+            className="-z-20 object-cover object-center"
+          />
+          <div
+            className="absolute inset-0 -z-10"
+            style={{
+              background:
+                heroV === "center"
+                  ? "linear-gradient(180deg, rgba(10,40,44,.55) 0%, rgba(10,40,44,.75) 100%)"
+                  : `linear-gradient(${heroV === "left" ? "270deg" : "90deg"}, rgba(10,40,44,0) 22%, rgba(10,40,44,.62) 52%, rgba(10,40,44,.88) 100%)`,
+            }}
+          />
+          <div
+            className={`relative w-full max-w-[34rem] self-center px-5 py-12 sm:px-10 ${
+              heroV === "left" ? "mr-auto" : heroV === "right" ? "ml-auto text-right" : "mx-auto text-center"
+            }`}
+          >
+            <h1
+              className="text-[clamp(1.8rem,3.4vw,2.9rem)] font-bold leading-[1.12]"
+              style={{
+                fontFamily: "var(--font-playfair), Georgia, serif",
+                color: "#FFFFFF",
+                textShadow: "0 2px 14px rgba(6,26,29,.5)",
+              }}
+            >
+              When <span style={{ fontStyle: "italic" }}>merchant funding</span> comes together, communities move forward.
+            </h1>
+            <p className="mt-4 text-[clamp(0.9375rem,1.4vw,1.0625rem)] leading-[1.5]" style={{ color: "rgba(255,255,255,.92)" }}>
+              This Yom Tov, help put food on 350 South Florida tables.
+            </p>
+            <a
+              href="#give"
+              className="mt-7 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold"
+              style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}
+            >
+              Help us reach {money(GOAL)}
+            </a>
+          </div>
+        </section>
+      )}
+
       {/* Headline left, artwork right in a rounded, inset frame — both columns
           sit inside the section's padding. */}
-      <section className={`grid items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:gap-14 ${bgArt ? "lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]"}`}>
+      <section className={`${heroV ? "hidden" : "grid"} items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:gap-14 ${bgArt ? "lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]"}`}>
         <div className="order-2 lg:order-1">
           {/* Deliberately large and stacked: the type is sized so the line
               breaks fall inside the column and the words pile up, rather than
@@ -377,7 +446,26 @@ export default function MerchantFundingPage() {
             Preview · sample names, not real donors
           </p>
         )}
-        {donors.length > 0 && (
+        {/* In the photographic hero preview the pill is replaced by a ruled
+            band: hairline rules, a small label, names in a row. No border, no
+            dots, no scrolling — a printed credit rather than a ticker. */}
+        {heroV && donors.length > 0 && (
+          <div className="mb-6 flex flex-wrap items-baseline gap-x-6 gap-y-2 py-3.5"
+            style={{ borderTop: "1px solid rgba(35,32,27,.16)", borderBottom: "1px solid rgba(35,32,27,.16)" }}>
+            <span className="text-[11px] uppercase tracking-[0.16em]" style={{ opacity: 0.5 }}>Our supporters</span>
+            <span className="text-[15px]">
+              {donors.map((d, i) => (
+                <span key={i}>
+                  {i > 0 && <span style={{ opacity: 0.3 }}>{"  /  "}</span>}
+                  <strong>{d.name}</strong>
+                  {d.amount > 0 && <span style={{ opacity: 0.5 }}>{" "}{money(d.amount)}</span>}
+                </span>
+              ))}
+            </span>
+          </div>
+        )}
+
+        {!heroV && donors.length > 0 && (
           <div className="mf-marquee mb-4 overflow-hidden rounded-[100px] py-3.5"
             style={{ backgroundColor: "#FFFFFF", border: "2px solid #C8A75B" }}>
             <div className="mf-marquee-track" style={{ animationDuration: `${Math.max(18, donors.length * 7)}s` }}>
