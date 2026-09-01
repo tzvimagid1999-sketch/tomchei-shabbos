@@ -286,19 +286,14 @@ export default function MerchantFundingPage() {
         MCA Donation Page
       </p>
 
-      {/* Headline left, artwork right. Nothing frames the image: no rounded
-          corners, no border, no card. The section carries no horizontal padding
-          of its own — the text column supplies its own — so the image runs off
-          the right edge of the viewport at lg and off both edges when stacked.
-          Together with a ground that is the page's exact cream (#FBF8F3), the
-          artwork has no edge of any kind and reads as part of the page rather
-          than a picture placed on it. */}
-      <section className="grid items-center gap-8 pb-14 sm:pb-20 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:gap-10">
-        <div className="order-2 px-5 sm:px-8 lg:order-1 lg:pr-0">
+      {/* Headline left, artwork right in a rounded, inset frame — both columns
+          sit inside the section's padding. */}
+      <section className="grid items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-14">
+        <div className="order-2 lg:order-1">
           {/* Deliberately large and stacked: the type is sized so the line
               breaks fall inside the column and the words pile up, rather than
               being shrunk to fit fewer lines. */}
-          <h1 className="mf-display max-w-[22ch] text-[clamp(2.4rem,4.4vw,3.75rem)]" style={{ color: "#2D2D2D" }}>
+          <h1 className="mf-display text-[clamp(2.4rem,3.9vw,4.5rem)]" style={{ color: "#2D2D2D" }}>
             When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
           </h1>
           <a href="#give" className="mt-9 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
@@ -306,14 +301,18 @@ export default function MerchantFundingPage() {
           </a>
         </div>
 
-        <div className="relative order-1 aspect-[4/3] w-full overflow-hidden lg:order-2">
+        {/* The frame is 4:3 because the artwork is 800x600. Matching the two
+            means the image fills the rounded frame corner to corner — no
+            letterboxing, and no cropping of artwork that carries its own
+            lettering. */}
+        <div className="relative order-1 aspect-[4/3] w-full overflow-hidden rounded-[32px] lg:order-2">
           <Image
             src="/rosh-hashanah-hero-mobile.jpg"
             alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
             fill
             priority
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            className="object-contain object-center"
+            sizes="(min-width: 1024px) 55vw, 100vw"
+            className="object-cover object-center"
           />
         </div>
       </section>
