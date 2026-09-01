@@ -584,6 +584,17 @@ export default function MerchantFundingPage() {
             194 NE 186th Terrace<br />North Miami Beach, FL 33179
           </address>
           <p className="mt-3 text-[15px]" style={{ opacity: 0.75 }}>Tax ID 83-2155012</p>
+
+          {/* The way back to the main site. Someone arriving on this link has
+              no navigation otherwise — only the logo, which reads as a mark
+              rather than a link to most people. */}
+          <a
+            href="/"
+            className="mt-6 inline-block text-[15px] font-bold underline underline-offset-4"
+            style={{ color: "#FFFFFF", textDecorationColor: "rgba(255,255,255,.5)" }}
+          >
+            Visit tomcheishabbosflorida.org
+          </a>
         </div>
       </footer>
     </div>
