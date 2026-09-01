@@ -68,33 +68,94 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
   .mf .mf-lift:hover { transform: none; }
 }
 
-/* Each set of supporter names fades in as the panel swaps. Keyed on the set
-   index in the markup, so React remounts the list and restarts the animation. */
-.mf .mf-donor-set { animation: mf-donor-set-in .45s ease-out; }
-@keyframes mf-donor-set-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .mf .mf-donor-set { animation: none; } }
 
 /* ?bg=1 — the campaign artwork as a page backdrop, under a cream wash.
-   Two layers: the wash sits on top of the artwork rather than the artwork
-   being faded, so type keeps full contrast against flat colour.
+   The wash sits on top of the artwork rather than the artwork being faded, so
+   type keeps full contrast against flat colour.
 
-   The wash always covers. The artwork does not: on phones it fills the screen
-   (cover), because a 4:3 image contained at 375px wide is only a 281px band
-   across the top. From lg up there is room to show the whole banner, so it
-   switches to contain — the lettering and logo it carries survive intact. */
-.mf.mf-bgart {
-  background-image:
-    linear-gradient(rgba(251, 248, 243, 0.90), rgba(251, 248, 243, 0.90)),
-    url("/rosh-hashanah-hero-mobile.jpg");
-  background-repeat: no-repeat, no-repeat;
-  background-attachment: fixed, fixed;
-  background-position: center center, center center;
-  background-size: cover, cover;
-}
-
+   Desktop only. Filling a phone screen crops so far into the banner that what
+   shows is an unreadable fragment of its lettering sitting behind the
+   headline, so below lg the page keeps its plain cream. */
 @media (min-width: 1024px) {
   .mf.mf-bgart {
+    background-image:
+      linear-gradient(rgba(251, 248, 243, 0.90), rgba(251, 248, 243, 0.90)),
+      url("/rosh-hashanah-hero-mobile.jpg");
+    background-repeat: no-repeat, no-repeat;
+    background-attachment: fixed, fixed;
     background-position: center center, center top;
     background-size: cover, contain;
   }
+}
+
+/* "MERCHANT FUNDING" in the hero headline — the page's signature.
+
+   Gold ink rather than flat colour: a vertical tonal gradient clipped to the
+   glyphs, with a brighter band about two-fifths down where the light catches,
+   the way foil or gold ink behaves on print. A hairline cream highlight sits
+   directly under the letterforms and a soft warm shadow below that, so the
+   words lift off the cream instead of sitting flat on it.
+
+   Every stop is checked against the page cream (#FBF8F3): the darkest is
+   6.8:1, the brightest 3.3:1, all clear of the 3:1 minimum for display type.
+   The earlier #B08F4A highlight measured 2.88:1 and was replaced.
+
+   The solid colour is declared first and the gradient only inside @supports,
+   so a browser without background-clip:text shows readable gold rather than
+   transparent text. Print falls back the same way, since clipped gradients
+   frequently drop out of print rendering. */
+.mf .mf-gold {
+  color: #7A5C22;
+  font-weight: 600;
+  letter-spacing: 0.015em;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .mf .mf-gold {
+    background-image: linear-gradient(
+      177deg,
+      #8B6A2B 0%,
+      #A5813A 34%,
+      #A8843F 44%,
+      #8B6A2B 56%,
+      #70521C 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    filter:
+      drop-shadow(0 1px 0 rgba(255, 253, 247, 0.9))
+      drop-shadow(0 2px 4px rgba(96, 72, 26, 0.16));
+  }
+}
+
+@media print {
+  .mf .mf-gold {
+    background-image: none;
+    color: #7A5C22;
+    -webkit-text-fill-color: #7A5C22;
+    filter: none;
+  }
+}
+
+/* Supporter names scroll continuously above the Goal/Raised/Progress boxes.
+   The track holds two identical copies of the list and scrolls exactly one
+   copy's width, so the loop is seamless. Duration is set per-render from the
+   donor count, keeping speed constant as names are added. */
+.mf .mf-marquee { position: relative; }
+.mf .mf-marquee-track { display: flex; width: max-content; animation: mf-marquee-scroll linear infinite; }
+.mf .mf-marquee-group { display: flex; }
+.mf .mf-marquee-item { display: inline-flex; align-items: center; gap: .6rem; padding: 0 1.6rem; white-space: nowrap; }
+.mf .mf-marquee-dot { width: .5rem; height: .5rem; border-radius: 9999px; flex: none; }
+@keyframes mf-marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Let people stop it to read a name. */
+.mf .mf-marquee:hover .mf-marquee-track,
+.mf .mf-marquee:focus-within .mf-marquee-track { animation-play-state: paused; }
+
+/* No motion: no scroll. The list stays readable by dragging instead. */
+@media (prefers-reduced-motion: reduce) {
+  .mf .mf-marquee { overflow-x: auto; }
+  .mf .mf-marquee-track { animation: none; }
 }

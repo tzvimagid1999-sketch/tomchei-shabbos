@@ -38,11 +38,6 @@ const DEMO_DONORS: Donor[] = [
   { name: "Surfside Capital Partners", amount: 4200 },
 ];
 
-// Supporters are shown a set at a time beside the headline, swapping every few
-// seconds, rather than scrolling continuously.
-const DONORS_PER_SET = 6;
-const DONOR_SET_MS = 3000;
-
 const money = (n: number) => `$${Math.round(n).toLocaleString()}`;
 
 // Whole percentages only — no decimals, no "<" prefix.
@@ -78,7 +73,6 @@ export default function MerchantFundingPage() {
   // Ticking this suppresses the donor's entry entirely — no name, no amount.
   const [anonymous, setAnonymous] = useState(false);
   const [donors, setDonors] = useState<Donor[]>([]);
-  const [donorSet, setDonorSet] = useState(0);
   // Resolved after mount rather than during render: reading the URL while
   // rendering would disagree with the server's HTML and break hydration. null
   // means "not yet known", which holds the donors fetch back — starting it
@@ -148,22 +142,6 @@ export default function MerchantFundingPage() {
     const id = setInterval(refreshDonors, 60_000);
     return () => clearInterval(id);
   }, [demo, refreshDonors]);
-
-  // Swap to the next set of supporters. Only runs when there is more than one
-  // set to show, so a short list simply sits still.
-  const donorSetCount = Math.max(1, Math.ceil(donors.length / DONORS_PER_SET));
-  useEffect(() => {
-    if (donorSetCount < 2) {
-      setDonorSet(0);
-      return;
-    }
-    const id = setInterval(() => setDonorSet((s) => (s + 1) % donorSetCount), DONOR_SET_MS);
-    return () => clearInterval(id);
-  }, [donorSetCount]);
-
-  // A refresh can shrink the list; keep the index inside it.
-  const safeSet = donorSet % donorSetCount;
-  const shownDonors = donors.slice(safeSet * DONORS_PER_SET, safeSet * DONORS_PER_SET + DONORS_PER_SET);
 
   // Always open at the top. Browsers restore the previous scroll position on a
   // revisit, which on a phone dropped returning visitors straight into the
@@ -358,45 +336,12 @@ export default function MerchantFundingPage() {
             className={`mf-display text-[clamp(2.4rem,3.9vw,4.5rem)] ${bgArt ? "max-w-[20ch]" : ""}`}
             style={{ color: "#2D2D2D" }}
           >
-            When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
+            When <span className="mf-gold">MERCHANT FUNDING</span> comes together, communities move forward.
           </h1>
           <a href="#give" className="mt-9 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
             Help us reach {money(GOAL)}
           </a>
         </div>
-
-        {/* Supporters, beside the headline. Only names whose owners left
-            Anonymous unticked reach this far — the API cannot return anyone
-            else.
-
-            Shown a set at a time rather than scrolling: six names sit still
-            long enough to actually be read, then the whole set swaps. The key
-            on the list restarts the fade each time the set changes. */}
-        {donors.length > 0 && (
-          <div className="order-3 rounded-[24px] px-6 py-6 sm:px-7"
-            style={{ backgroundColor: "#FFFFFF", border: "2px solid #C8A75B" }}>
-            <p className="mb-4 text-[12px] uppercase tracking-[0.16em]" style={{ opacity: 0.6 }}>
-              {demo ? "Preview · sample names, not real donors" : "Our supporters"}
-            </p>
-            <ul key={safeSet} className="mf-donor-set">
-              {shownDonors.map((d, i) => (
-                <li key={`${safeSet}-${i}`}
-                  className="flex items-baseline justify-between gap-4 border-b py-2.5 last:border-b-0 text-[16px]"
-                  style={{ borderColor: "rgba(45,45,45,0.08)" }}>
-                  <span className="min-w-0 truncate font-bold" style={{ color: "#8B6F3A" }}>{d.name}</span>
-                  {d.amount > 0 && (
-                    <span className="shrink-0 tabular-nums" style={{ opacity: 0.7 }}>{money(d.amount)}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-            {donorSetCount > 1 && (
-              <p className="mt-4 text-[13px]" style={{ opacity: 0.55 }}>
-                {donors.length} supporters and counting
-              </p>
-            )}
-          </div>
-        )}
 
         {/* The frame is 4:3 because the artwork is 800x600. Matching the two
             means the image fills the rounded frame corner to corner — no
@@ -415,6 +360,37 @@ export default function MerchantFundingPage() {
       </section>
 
       <section ref={statsRef} className="px-5 pb-4 sm:px-8">
+        {/* Supporter names, scrolling directly above the totals. Only names
+            whose owners left Anonymous unticked reach this far — the API
+            cannot return anyone else.
+
+            The list is rendered twice so the loop has no visible seam, and the
+            duration scales with the donor count to hold the speed steady
+            however many names there are. */}
+        {demo && (
+          <p className="mb-2 text-center text-[12px] uppercase tracking-[0.16em]" style={{ color: "#8B6F3A" }}>
+            Preview · sample names, not real donors
+          </p>
+        )}
+        {donors.length > 0 && (
+          <div className="mf-marquee mb-4 overflow-hidden rounded-[100px] py-3.5"
+            style={{ backgroundColor: "#FFFFFF", border: "2px solid #C8A75B" }}>
+            <div className="mf-marquee-track" style={{ animationDuration: `${Math.max(18, donors.length * 7)}s` }}>
+              {[0, 1].map((copy) => (
+                <div key={copy} className="mf-marquee-group" aria-hidden={copy === 1}>
+                  {donors.map((d, i) => (
+                    <span key={`${copy}-${i}`} className="mf-marquee-item text-[15px] leading-[1.4]">
+                      <span className="mf-marquee-dot" style={{ backgroundColor: "#1AABAB" }} />
+                      <strong style={{ color: "#8B6F3A" }}>{d.name}</strong>
+                      {d.amount > 0 && <span style={{ opacity: 0.65 }}>{" · "}{money(d.amount)}</span>}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="mf-reveal grid gap-4 sm:grid-cols-3">
           {[
             ["Goal", money(GOAL)],
