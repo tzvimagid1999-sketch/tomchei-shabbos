@@ -364,14 +364,14 @@ export default function MerchantFundingPage() {
               "radial-gradient(120% 90% at 50% 8%, #0d8089 0%, #0a6e78 45%, #075A63 100%)",
           }}
         >
-          <div className="flex flex-col items-center gap-2 px-5 pb-8 pt-6 sm:px-8 sm:pt-8">
+          <div className="grid items-center gap-6 px-5 pb-8 pt-6 sm:px-8 sm:pt-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-10">
             <svg
               viewBox="0 0 1120 560"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               role="img"
               aria-label="A Tomchei Shabbos box, Shabbos candles and a delivery van travelling the length of Florida"
-              className="h-auto w-full max-w-[46rem]"
+              className="h-auto w-full"
             >
               <defs>
                 <filter id="mfglow" x="-25%" y="-25%" width="150%" height="150%">
@@ -383,7 +383,9 @@ export default function MerchantFundingPage() {
                 </filter>
               </defs>
               <g stroke="#E8D9A8" strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round" filter="url(#mfglow)">
-                <path d="M470 132 L516 112 L578 118 L648 106 L742 110 L816 100 L878 106 L900 158 L918 214 L940 268 L960 324 L976 380 L988 434 L976 482 L946 504 L914 488 L896 444 L884 392 L866 342 L838 300 L804 268 L766 250 L720 242 L672 234 L626 214 L578 196 L534 172 Z" />
+                {/* The state sits back as a ground for the route rather than
+                    competing with the box and the van in front of it. */}
+                <path opacity=".45" d="M470 132 L516 112 L578 118 L648 106 L742 110 L816 100 L878 106 L900 158 L918 214 L940 268 L960 324 L976 380 L988 434 L976 482 L946 504 L914 488 L896 444 L884 392 L866 342 L838 300 L804 268 L766 250 L720 242 L672 234 L626 214 L578 196 L534 172 Z" />
                 <path d="M962 516 l-26 14 M922 534 l-28 12 M878 548 l-26 8" opacity=".8" />
                 <path d="M556 168 C 640 206, 726 250, 800 316 C 862 372, 900 430, 918 470" strokeDasharray="14 16" opacity=".75" />
                 <g transform="translate(742 292) rotate(34)">
@@ -414,31 +416,48 @@ export default function MerchantFundingPage() {
               </g>
             </svg>
 
-            <div className="flex max-w-[44rem] flex-col items-center text-center">
-              <p className="text-[13px] uppercase tracking-[0.24em]" style={{ color: "#E8D9A8" }}>
+            {/* Type to the right of the drawing, ranged left within its
+                column, so the statement has a straight edge to sit against. */}
+            <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+              <p className="text-[clamp(0.8125rem,1.3vw,1rem)] uppercase tracking-[0.24em]" style={{ color: "#F5A020" }}>
                 This Yom Tov
               </p>
               <h1
-                className="mt-2 text-[clamp(2.4rem,6vw,4.6rem)]"
-                style={{ fontFamily: "var(--font-anton), sans-serif", color: "#FFFFFF", lineHeight: 0.94, letterSpacing: "0.01em" }}
+                className="mt-2 text-[clamp(2.6rem,6.4vw,5.4rem)]"
+                style={{ fontFamily: "var(--font-anton), sans-serif", color: "#FFFFFF", lineHeight: 0.92, letterSpacing: "0.01em" }}
               >
                 SHABBOS<br />DELIVERED
               </h1>
-              <span className="my-4 block h-0.5 w-16" style={{ backgroundColor: "#E8D9A8", opacity: 0.7 }} />
-              <p className="text-[clamp(0.8125rem,1.4vw,1rem)] uppercase tracking-[0.18em]" style={{ color: "rgba(255,255,255,.9)" }}>
-                Powered by <strong style={{ color: "#F5A020", fontWeight: 700 }}>merchant funding</strong>
+              <span className="my-5 block h-0.5 w-16" style={{ backgroundColor: "#F5A020", opacity: 0.85 }} />
+              <p className="text-[clamp(0.875rem,1.4vw,1.0625rem)] uppercase tracking-[0.16em] font-bold" style={{ color: "#FFFFFF" }}>
+                Powered by <span style={{ color: "#F5A020" }}>merchant funding</span>
               </p>
-              <p className="mt-4 text-[16px]" style={{ color: "rgba(255,255,255,.85)" }}>
-                <strong style={{ color: "#F5A020", fontWeight: 700 }}>350+</strong> Florida families, every week
+              <p className="mt-5 text-[clamp(1rem,1.5vw,1.25rem)]" style={{ color: "rgba(255,255,255,.88)" }}>
+                <strong style={{ color: "#F5A020", fontWeight: 700 }}>350+</strong> Florida families, every week.
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-2">
-            <a href="#give" className="py-4 text-center text-[15px] font-bold" style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}>
+            <a
+              href="#give"
+              className="flex items-center justify-center gap-3 px-4 py-5 text-center text-[clamp(0.9375rem,1.5vw,1.25rem)] font-bold"
+              style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="h-[1.2em] w-[1.2em] shrink-0" aria-hidden="true">
+                <path d="M20.8 8.6c0 4.4-8.8 9.4-8.8 9.4S3.2 13 3.2 8.6a4.6 4.6 0 0 1 8.8-1.8 4.6 4.6 0 0 1 8.8 1.8Z" />
+              </svg>
               Make a donation
             </a>
-            <a href="#give" className="py-4 text-center text-[15px] font-bold" style={{ backgroundColor: "rgba(255,255,255,.1)", color: "#FFFFFF" }}>
+            <a
+              href="#give"
+              className="flex items-center justify-center gap-3 px-4 py-5 text-center text-[clamp(0.9375rem,1.5vw,1.25rem)] font-bold"
+              style={{ backgroundColor: "rgba(255,255,255,.08)", color: "#FFFFFF" }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="h-[1.2em] w-[1.2em] shrink-0" aria-hidden="true">
+                <rect x="3.2" y="5" width="17.6" height="16" rx="2.4" />
+                <path d="M3.2 10h17.6M8 3v4M16 3v4" />
+              </svg>
               Give monthly
             </a>
           </div>
