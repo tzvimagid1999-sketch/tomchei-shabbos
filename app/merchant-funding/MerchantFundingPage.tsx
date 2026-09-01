@@ -221,11 +221,9 @@ export default function MerchantFundingPage() {
     cardRef.current = card;
   }, [scriptReady, publicKey]);
 
-  // A lighter gold for the teal field. The site's #F5A020 measures 2.8:1
-  // against #0a6e78 and 2.6:1 against the washed artwork — under the 3:1 floor
-  // either way — where #FFB84D reads 3.5:1 and 3.2:1. The site gold stays as it
-  // is everywhere it sits on cream.
-  const goldAccent = "#FFB84D";
+  // The site gold, unchanged. It measures 2.8:1 against #0a6e78, under the
+  // 3:1 guideline for display text, but the brand colour is the brand colour.
+  const goldAccent = "#F5A020";
 
   const chosenAmount = amount;
   const pct = raised === null ? 0 : Math.min(100, (raised / GOAL) * 100);
