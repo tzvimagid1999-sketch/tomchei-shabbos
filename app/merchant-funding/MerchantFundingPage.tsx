@@ -221,6 +221,11 @@ export default function MerchantFundingPage() {
     cardRef.current = card;
   }, [scriptReady, publicKey]);
 
+  // The site gold sits at 3.0:1 against the washed artwork, which is the bare
+  // floor; a lighter cut reads properly there. On the flat teal field the site
+  // gold is fine, so it only changes when the artwork is behind the type.
+  const goldAccent = heroPic === "banner" ? "#FFB84D" : "#F5A020";
+
   const chosenAmount = amount;
   const pct = raised === null ? 0 : Math.min(100, (raised / GOAL) * 100);
 
@@ -380,10 +385,29 @@ export default function MerchantFundingPage() {
           and #0a6e78, so the colour is the site's rather than a new mix. */}
       {heroV === "words" && (
         <section
-          style={{
-            background:
-              "radial-gradient(120% 90% at 50% 10%, #0F9FAE 0%, #0a6e78 48%, #06525A 100%)",
-          }}
+          style={
+            heroPic === "banner"
+              ? {
+                  // The banner sits behind the type under a teal wash. The wash
+                  // has to be heavy: the artwork's ground is cream, so white
+                  // type over it is unreadable without one.
+                  //
+                  // 90% lands the blend near #20686f. White reads 6.4:1 there.
+                  // The gold has to move too — the site's #F5A020 measures only
+                  // 3.0:1 against that, so the accents use #FFB84D in this mode
+                  // at 3.7:1. At an 85% wash the gold fell to 2.7:1, under the
+                  // floor for any text size.
+                  backgroundImage:
+                    "linear-gradient(rgba(8,88,96,0.90), rgba(6,76,84,0.92)), url('/rosh-hashanah-campaign-hero.jpeg')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }
+              : {
+                  background:
+                    "radial-gradient(120% 90% at 50% 10%, #0F9FAE 0%, #0a6e78 48%, #06525A 100%)",
+                }
+          }
         >
           <div className="mx-auto flex max-w-[60rem] flex-col items-center px-5 py-16 text-center sm:px-8 sm:py-24">
             <h1
@@ -398,17 +422,19 @@ export default function MerchantFundingPage() {
               SHABBOS<br />DELIVERED
             </h1>
 
-            <span className="my-7 block h-0.5 w-20" style={{ backgroundColor: "#F5A020" }} />
+            <span className="my-7 block h-0.5 w-20" style={{ backgroundColor: goldAccent }} />
 
             <p
               className="text-[clamp(0.9375rem,1.8vw,1.375rem)] font-bold uppercase tracking-[0.16em]"
               style={{ color: "#FFFFFF" }}
             >
-              Powered by <span style={{ color: "#F5A020" }}>merchant funding</span>
+              Powered by <span style={{ color: goldAccent }}>merchant funding</span>
             </p>
 
-            <p className="mt-6 text-[clamp(1.0625rem,1.7vw,1.375rem)]" style={{ color: "rgba(255,255,255,.88)" }}>
-              <strong style={{ color: "#F5A020", fontWeight: 700 }}>350+</strong> Florida families served every week.
+            {/* Bold and at least 20px, so it counts as large text and holds up
+                against the washed artwork behind it. */}
+            <p className="mt-6 text-[clamp(1.25rem,1.8vw,1.5rem)] font-bold" style={{ color: "#FFFFFF" }}>
+              <strong style={{ color: goldAccent, fontWeight: 700 }}>350+</strong> Florida families served every week.
             </p>
           </div>
         </section>
@@ -743,26 +769,7 @@ export default function MerchantFundingPage() {
             Preview · sample names, not real donors
           </p>
         )}
-        {/* In the photographic hero preview the pill is replaced by a ruled
-            band: hairline rules, a small label, names in a row. No border, no
-            dots, no scrolling — a printed credit rather than a ticker. */}
-        {heroV && donors.length > 0 && (
-          <div className="mb-6 flex flex-wrap items-baseline gap-x-6 gap-y-2 py-3.5"
-            style={{ borderTop: "1px solid rgba(35,32,27,.16)", borderBottom: "1px solid rgba(35,32,27,.16)" }}>
-            <span className="text-[11px] uppercase tracking-[0.16em]" style={{ opacity: 0.5 }}>Our supporters</span>
-            <span className="text-[15px]">
-              {donors.map((d, i) => (
-                <span key={i}>
-                  {i > 0 && <span style={{ opacity: 0.3 }}>{"  /  "}</span>}
-                  <strong>{d.name}</strong>
-                  {d.amount > 0 && <span style={{ opacity: 0.5 }}>{" "}{money(d.amount)}</span>}
-                </span>
-              ))}
-            </span>
-          </div>
-        )}
-
-        {!heroV && donors.length > 0 && (
+        {donors.length > 0 && (
           <div className="mf-marquee mb-4 overflow-hidden rounded-[100px] py-3.5"
             style={{ backgroundColor: "#FFFFFF", border: "2px solid #C8A75B" }}>
             <div className="mf-marquee-track" style={{ animationDuration: `${Math.max(18, donors.length * 7)}s` }}>
