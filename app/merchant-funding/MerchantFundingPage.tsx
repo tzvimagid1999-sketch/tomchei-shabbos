@@ -333,13 +333,13 @@ export default function MerchantFundingPage() {
               the headline in, so it takes its own width cap and stays stacked
               on the left instead of running the full page.
 
-              The headline is gold rather than near-black, taken from the
-              artwork's orange lettering — though not that orange literally:
-              #E28D3F measures 2.44:1 on this cream, under the 3:1 floor for
-              display type. #B4761A holds the same warmth at 3.57:1. */}
+              The headline is warm gold rather than near-black. Not the
+              artwork's orange literally — #E28D3F measures 2.44:1 on this
+              cream, under the 3:1 floor for display type — but #A0742E, which
+              keeps the warmth at 3.94:1. */}
           <h1
             className={`mf-banner text-[clamp(2.4rem,3.9vw,4.5rem)] ${bgArt ? "max-w-[20ch]" : ""}`}
-            style={{ color: "#B4761A" }}
+            style={{ color: "#A0742E" }}
           >
             When <span className="mf-highlight">MERCHANT FUNDING</span> comes together, communities move forward.
           </h1>
