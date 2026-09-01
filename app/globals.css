@@ -136,3 +136,32 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
+
+/* The words hero: the campaign artwork behind a white wash.
+
+   Two crops. The 1600x583 banner is right on a wide screen, but a phone hero is
+   near square, and contained there the wide crop drew only 375x137 — about a
+   third of the hero, with the rest empty. Below sm the 800x600 crop is used
+   instead, which fills roughly three quarters of the same space.
+
+   The wash is white rather than teal, so the type is dark ink on light rather
+   than white on dark. Against the artwork's darkest patch — its teal lettering
+   — 85% white leaves ink at 11:1 and the gold at 3:1; over the cream ground,
+   which is most of the frame, both are higher. */
+.mf .mf-words-bg {
+  background-color: #FBF8F3;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.88)),
+    url("/rosh-hashanah-hero-mobile.jpg");
+  background-size: cover, contain;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+@media (min-width: 640px) {
+  .mf .mf-words-bg {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.88)),
+      url("/rosh-hashanah-campaign-hero.jpeg");
+  }
+}

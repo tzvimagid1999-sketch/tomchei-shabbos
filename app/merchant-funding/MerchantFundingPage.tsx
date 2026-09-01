@@ -221,9 +221,11 @@ export default function MerchantFundingPage() {
     cardRef.current = card;
   }, [scriptReady, publicKey]);
 
-  // The site gold, unchanged. It measures 2.8:1 against #0a6e78, under the
-  // 3:1 guideline for display text, but the brand colour is the brand colour.
-  const goldAccent = "#F5A020";
+  // On the white wash the field is light, so the gold has to be the darker one
+  // the page already uses on cream. #F5A020 measures about 2:1 against white
+  // and would be unreadable; #A08243 is the gold in the headline and reads
+  // 3.4:1 over the cream ground, 3.0:1 over the artwork's darkest patch.
+  const goldAccent = "#A08243";
 
   const chosenAmount = amount;
   const pct = raised === null ? 0 : Math.min(100, (raised / GOAL) * 100);
@@ -385,25 +387,13 @@ export default function MerchantFundingPage() {
           ground. Lighter shows more of the picture but the type starts to
           struggle — 78% drops white to 3.9:1 and 74% to 3.6:1. */}
       {heroV === "words" && (
-        <section
-          style={{
-            backgroundColor: "#0a6e78",
-            backgroundImage:
-              "linear-gradient(rgba(10,110,120,0.86), rgba(10,110,120,0.88)), url('/rosh-hashanah-campaign-hero.jpeg')",
-            // The wash covers; the artwork is contained, so the whole picture
-            // fits with nothing cut off the top or bottom. The teal behind
-            // fills whatever the contained image does not reach.
-            backgroundSize: "cover, contain",
-            backgroundPosition: "center, center",
-            backgroundRepeat: "no-repeat, no-repeat",
-          }}
-        >
+        <section className="mf-words-bg">
           <div className="mx-auto flex max-w-[60rem] flex-col items-center px-5 py-16 text-center sm:px-8 sm:py-24">
             <h1
               className="text-[clamp(2.8rem,8vw,7rem)]"
               style={{
                 fontFamily: "var(--font-anton), sans-serif",
-                color: "#FFFFFF",
+                color: "#2D2D2D",
                 lineHeight: 0.92,
                 letterSpacing: "0.01em",
               }}
@@ -415,14 +405,14 @@ export default function MerchantFundingPage() {
 
             <p
               className="text-[clamp(0.9375rem,1.8vw,1.375rem)] font-bold uppercase tracking-[0.16em]"
-              style={{ color: "#FFFFFF" }}
+              style={{ color: "#2D2D2D" }}
             >
               Powered by <span style={{ color: goldAccent }}>merchant funding</span>
             </p>
 
-            {/* Bold and at least 20px, so it counts as large text and holds up
-                against the washed artwork behind it. */}
-            <p className="mt-6 text-[clamp(1.25rem,1.8vw,1.5rem)] font-bold" style={{ color: "#FFFFFF" }}>
+            {/* Bold and at least 20px, so it counts as large text against the
+                washed artwork behind it. */}
+            <p className="mt-6 text-[clamp(1.25rem,1.8vw,1.5rem)] font-bold" style={{ color: "#2D2D2D" }}>
               <strong style={{ color: goldAccent, fontWeight: 700 }}>350+</strong> Florida families served every week.
             </p>
           </div>
