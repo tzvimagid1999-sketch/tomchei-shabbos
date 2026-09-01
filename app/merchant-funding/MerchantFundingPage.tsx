@@ -442,8 +442,8 @@ export default function MerchantFundingPage() {
               cream, under the 3:1 floor for display type — but #A0742E, which
               keeps the warmth at 3.94:1. */}
           <h1
-            className={`mf-banner text-[clamp(2.4rem,3.9vw,4.5rem)] ${bgArt ? "max-w-[20ch]" : ""}`}
-            style={{ color: "#A0742E" }}
+            className={`mf-display text-[clamp(2.4rem,3.9vw,4.5rem)] ${bgArt ? "max-w-[20ch]" : ""}`}
+            style={{ color: "#2D2D2D" }}
           >
             When <span className="mf-highlight">MERCHANT FUNDING</span> comes together, communities move forward.
           </h1>
