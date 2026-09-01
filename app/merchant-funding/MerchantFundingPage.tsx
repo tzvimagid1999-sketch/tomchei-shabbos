@@ -293,10 +293,12 @@ export default function MerchantFundingPage() {
           Together with a ground that is the page's exact cream (#FBF8F3), the
           artwork has no edge of any kind and reads as part of the page rather
           than a picture placed on it. */}
-      <section className="grid items-center gap-8 pb-14 sm:pb-20 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-10">
+      <section className="grid items-center gap-8 pb-14 sm:pb-20 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:gap-10">
         <div className="order-2 px-5 sm:px-8 lg:order-1 lg:pr-0">
-          {/* Sized to hold three lines in this column — 3.6vw tipped it to four. */}
-          <h1 className="mf-display max-w-[26ch] text-[clamp(2.2rem,3.3vw,2.75rem)]" style={{ color: "#2D2D2D" }}>
+          {/* Deliberately large and stacked: the type is sized so the line
+              breaks fall inside the column and the words pile up, rather than
+              being shrunk to fit fewer lines. */}
+          <h1 className="mf-display max-w-[22ch] text-[clamp(2.4rem,4.4vw,3.75rem)]" style={{ color: "#2D2D2D" }}>
             When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
           </h1>
           <a href="#give" className="mt-9 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
