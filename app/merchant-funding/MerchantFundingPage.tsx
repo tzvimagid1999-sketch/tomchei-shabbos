@@ -388,9 +388,9 @@ export default function MerchantFundingPage() {
           struggle — 78% drops white to 3.9:1 and 74% to 3.6:1. */}
       {heroV === "words" && (
         <section className="mf-words-bg">
-          <div className="mx-auto flex max-w-[60rem] flex-col items-center px-5 py-16 text-center sm:px-8 sm:py-24">
+          <div className="mx-auto flex max-w-[68rem] flex-col items-center px-5 py-20 text-center sm:px-8 sm:py-28">
             <h1
-              className="text-[clamp(2.8rem,8vw,7rem)]"
+              className="text-[clamp(3.25rem,10vw,9rem)]"
               style={{
                 fontFamily: "var(--font-anton), sans-serif",
                 color: "#2D2D2D",
@@ -401,10 +401,10 @@ export default function MerchantFundingPage() {
               SHABBOS<br />DELIVERED
             </h1>
 
-            <span className="my-7 block h-0.5 w-20" style={{ backgroundColor: goldAccent }} />
+            <span className="my-9 block h-0.5 w-28" style={{ backgroundColor: goldAccent }} />
 
             <p
-              className="text-[clamp(0.9375rem,1.8vw,1.375rem)] font-bold uppercase tracking-[0.16em]"
+              className="text-[clamp(1rem,2.4vw,1.75rem)] font-bold uppercase tracking-[0.16em]"
               style={{ color: "#2D2D2D" }}
             >
               Powered by <span style={{ color: goldAccent }}>merchant funding</span>
@@ -412,7 +412,7 @@ export default function MerchantFundingPage() {
 
             {/* Bold and at least 20px, so it counts as large text against the
                 washed artwork behind it. */}
-            <p className="mt-6 text-[clamp(1.25rem,1.8vw,1.5rem)] font-bold" style={{ color: "#2D2D2D" }}>
+            <p className="mt-7 text-[clamp(1.25rem,2.2vw,1.875rem)] font-bold" style={{ color: "#2D2D2D" }}>
               <strong style={{ color: goldAccent, fontWeight: 700 }}>350+</strong> Florida families served every week.
             </p>
           </div>
