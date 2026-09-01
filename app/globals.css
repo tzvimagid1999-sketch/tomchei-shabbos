@@ -90,16 +90,17 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
 
 /* "MERCHANT FUNDING" in the hero headline.
 
-   Flat gold ink, no gradient and no glow. A tonal-gradient version was tried
-   and read as an effect rather than as printing, which is not what this
-   campaign should look like.
+   The exact teal the Out For Delivery artwork letters its headline in, sampled
+   from the file itself: averaging the pixels inside those glyphs gives
+   #0E8F8B. Using the site's own #0a6e78 or #1AABAB would have been close but
+   visibly not the same ink as the banner sitting beside it.
 
-   The colour is a deeper gold than the page's ornamental #C8A75B: it measures
-   5.9:1 against the cream, where the previous #A08243 managed 3.4:1, so the
-   words carry more weight without any treatment at all. A little tracking
-   keeps the caps from closing up. */
-.mf .mf-gold {
-  color: #7A5C22;
+   Flat colour, no gradient and no glow — a tonal-gradient version was tried and
+   read as an effect rather than as printing. 3.73:1 against the cream, above
+   the 3:1 minimum for display type at this size. A little tracking keeps the
+   caps from closing up. */
+.mf .mf-highlight {
+  color: #0E8F8B;
   letter-spacing: 0.015em;
 }
 

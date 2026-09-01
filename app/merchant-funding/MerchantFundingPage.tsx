@@ -336,7 +336,7 @@ export default function MerchantFundingPage() {
             className={`mf-banner text-[clamp(2.4rem,3.9vw,4.5rem)] ${bgArt ? "max-w-[20ch]" : ""}`}
             style={{ color: "#2D2D2D" }}
           >
-            When <span className="mf-gold">MERCHANT FUNDING</span> comes together, communities move forward.
+            When <span className="mf-highlight">MERCHANT FUNDING</span> comes together, communities move forward.
           </h1>
           <a href="#give" className="mt-9 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
             Help us reach {money(GOAL)}
