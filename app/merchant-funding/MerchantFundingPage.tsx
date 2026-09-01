@@ -221,10 +221,11 @@ export default function MerchantFundingPage() {
     cardRef.current = card;
   }, [scriptReady, publicKey]);
 
-  // The site gold sits at 3.0:1 against the washed artwork, which is the bare
-  // floor; a lighter cut reads properly there. On the flat teal field the site
-  // gold is fine, so it only changes when the artwork is behind the type.
-  const goldAccent = heroPic === "banner" ? "#FFB84D" : "#F5A020";
+  // A lighter gold for the teal field. The site's #F5A020 measures 2.8:1
+  // against #0a6e78 and 2.6:1 against the washed artwork — under the 3:1 floor
+  // either way — where #FFB84D reads 3.5:1 and 3.2:1. The site gold stays as it
+  // is everywhere it sits on cream.
+  const goldAccent = "#FFB84D";
 
   const chosenAmount = amount;
   const pct = raised === null ? 0 : Math.min(100, (raised / GOAL) * 100);
@@ -388,24 +389,28 @@ export default function MerchantFundingPage() {
           style={
             heroPic === "banner"
               ? {
-                  // The banner sits behind the type under a teal wash. The wash
-                  // has to be heavy: the artwork's ground is cream, so white
-                  // type over it is unreadable without one.
+                  // The banner sits behind the type under a wash of the site's
+                  // own #0a6e78 rather than a darker mix, so the field reads as
+                  // the brand colour instead of a dark green.
                   //
-                  // 90% lands the blend near #20686f. White reads 6.4:1 there.
-                  // The gold has to move too — the site's #F5A020 measures only
-                  // 3.0:1 against that, so the accents use #FFB84D in this mode
-                  // at 3.7:1. At an 85% wash the gold fell to 2.7:1, under the
-                  // floor for any text size.
+                  // The wash is heavy by necessity — the artwork's ground is
+                  // cream, so white type over it needs one. At 95% the blend
+                  // lands near #16757e: white reads 5.4:1 and the lighter gold
+                  // 3.2:1. The trade is that the artwork behind is very faint at
+                  // this depth; a lighter wash shows more of it but drops the
+                  // gold under 3:1, which is the floor for any text size.
                   backgroundImage:
-                    "linear-gradient(rgba(8,88,96,0.90), rgba(6,76,84,0.92)), url('/rosh-hashanah-campaign-hero.jpeg')",
+                    "linear-gradient(rgba(10,110,120,0.94), rgba(10,110,120,0.96)), url('/rosh-hashanah-campaign-hero.jpeg')",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   backgroundRepeat: "no-repeat",
                 }
               : {
+                  // Centred on the site teal, with only a slight lift and fall
+                  // either side of it. The previous bottom stop, #06525A, is
+                  // what made the field read as dark green.
                   background:
-                    "radial-gradient(120% 90% at 50% 10%, #0F9FAE 0%, #0a6e78 48%, #06525A 100%)",
+                    "radial-gradient(120% 90% at 50% 10%, #0a7a85 0%, #0a6e78 55%, #08606a 100%)",
                 }
           }
         >
@@ -770,7 +775,7 @@ export default function MerchantFundingPage() {
           </p>
         )}
         {donors.length > 0 && (
-          <div className="mf-marquee mb-4 overflow-hidden rounded-[100px] py-3.5"
+          <div className="mf-marquee mb-4 overflow-hidden rounded-none py-3.5"
             style={{ backgroundColor: "#FFFFFF", border: "2px solid #C8A75B" }}>
             <div className="mf-marquee-track" style={{ animationDuration: `${Math.max(18, donors.length * 7)}s` }}>
               {[0, 1].map((copy) => (
