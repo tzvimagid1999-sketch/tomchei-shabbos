@@ -345,7 +345,10 @@ export default function MerchantFundingPage() {
           MCA Donation Page
         </p>
 
-        <a href="#give" className="rounded-[100px] px-9 py-4 text-[17px] font-bold" style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}>
+        {/* whitespace-nowrap and the smaller phone padding stop this wrapping
+            to "Donate / Now", which it did at 375px and left an 83px-tall
+            button next to the logo. */}
+        <a href="#give" className="shrink-0 whitespace-nowrap rounded-[100px] px-6 py-3 text-[15px] font-bold sm:px-9 sm:py-4 sm:text-[17px]" style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}>
           Donate Now
         </a>
       </header>
