@@ -377,40 +377,22 @@ export default function MerchantFundingPage() {
           in lightness. Lifting it enough to match clips the gold lettering to
           yellow, and a targeted lighten blend flattens the Florida map into the
           background, since map and field both sit below the site teal. */}
-      {/* ?hero=words — the hero reduced to the three lines, with nothing else
-          in it. No illustration, no photograph, no buttons.
+      {/* ?hero=words — the three lines over the campaign artwork.
 
-          The field is built from the two teals the site already uses, #0F9FAE
-          and #0a6e78, so the colour is the site's rather than a new mix. */}
+          The artwork always sits behind this hero; it is not a variant. Over it
+          a wash of the site's own #0a6e78 at 86%, which is the lightest setting
+          that still holds white type at 4.5:1 against the artwork's cream
+          ground. Lighter shows more of the picture but the type starts to
+          struggle — 78% drops white to 3.9:1 and 74% to 3.6:1. */}
       {heroV === "words" && (
         <section
-          style={
-            heroPic === "banner"
-              ? {
-                  // The banner sits behind the type under a wash of the site's
-                  // own #0a6e78 rather than a darker mix, so the field reads as
-                  // the brand colour instead of a dark green.
-                  //
-                  // The wash is heavy by necessity — the artwork's ground is
-                  // cream, so white type over it needs one. At 95% the blend
-                  // lands near #16757e: white reads 5.4:1 and the lighter gold
-                  // 3.2:1. The trade is that the artwork behind is very faint at
-                  // this depth; a lighter wash shows more of it but drops the
-                  // gold under 3:1, which is the floor for any text size.
-                  backgroundImage:
-                    "linear-gradient(rgba(10,110,120,0.94), rgba(10,110,120,0.96)), url('/rosh-hashanah-campaign-hero.jpeg')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                }
-              : {
-                  // Centred on the site teal, with only a slight lift and fall
-                  // either side of it. The previous bottom stop, #06525A, is
-                  // what made the field read as dark green.
-                  background:
-                    "radial-gradient(120% 90% at 50% 10%, #0a7a85 0%, #0a6e78 55%, #08606a 100%)",
-                }
-          }
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(10,110,120,0.86), rgba(10,110,120,0.88)), url('/rosh-hashanah-campaign-hero.jpeg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
         >
           <div className="mx-auto flex max-w-[60rem] flex-col items-center px-5 py-16 text-center sm:px-8 sm:py-24">
             <h1
