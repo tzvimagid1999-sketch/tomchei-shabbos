@@ -133,7 +133,7 @@ export default function MerchantFundingPage() {
     setDemo(q.get("demo") === "1");
     setBgArt(q.get("bg") === "1");
     const h = q.get("hero") || "";
-    setHeroV(["left", "right", "center", "field"].includes(h) ? h : "");
+    setHeroV(["left", "right", "center", "field", "concept"].includes(h) ? h : "");
     setHeroPic(q.get("pic") === "banner" ? "banner" : "photo");
     setShortCopy(q.get("copy") === "short");
   }, []);
@@ -357,6 +357,55 @@ export default function MerchantFundingPage() {
           Its vocabulary is the campaign's own — the state, the route, the van,
           the packed box, the candles — drawn at one line weight with rounded
           joins, matching the icons already on the Out For Delivery artwork. */}
+      {/* ?hero=concept — the rendered concept image used as the hero.
+
+          The image bakes its own action bar into the bottom ~16% of the frame,
+          which cannot be clicked, so the frame is cropped above it and real
+          links are rendered underneath in the same colours.
+
+          No colour filter is applied. The image's teal measures 186 degrees of
+          hue against the site's 185 — the same colour family — and differs only
+          in lightness. Lifting it enough to match clips the gold lettering to
+          yellow, and a targeted lighten blend flattens the Florida map into the
+          background, since map and field both sit below the site teal. */}
+      {heroV === "concept" && (
+        <section>
+          <div className="relative aspect-[1672/786] w-full overflow-hidden">
+            <Image
+              src="/hero-concept.png"
+              alt="This Yom Tov, Shabbos delivered, powered by merchant funding. 350+ Florida families, every week."
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-top"
+            />
+          </div>
+          <div className="grid grid-cols-2">
+            <a
+              href="#give"
+              className="flex items-center justify-center gap-3 px-4 py-5 text-center text-[clamp(0.9375rem,1.5vw,1.25rem)] font-bold"
+              style={{ backgroundColor: "#EFA31D", color: "#1A1A1A" }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="h-[1.2em] w-[1.2em] shrink-0" aria-hidden="true">
+                <path d="M20.8 8.6c0 4.4-8.8 9.4-8.8 9.4S3.2 13 3.2 8.6a4.6 4.6 0 0 1 8.8-1.8 4.6 4.6 0 0 1 8.8 1.8Z" />
+              </svg>
+              Make a donation
+            </a>
+            <a
+              href="#give"
+              className="flex items-center justify-center gap-3 px-4 py-5 text-center text-[clamp(0.9375rem,1.5vw,1.25rem)] font-bold"
+              style={{ backgroundColor: "#12494F", color: "#FFFFFF" }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="h-[1.2em] w-[1.2em] shrink-0" aria-hidden="true">
+                <rect x="3.2" y="5" width="17.6" height="16" rx="2.4" />
+                <path d="M3.2 10h17.6M8 3v4M16 3v4" />
+              </svg>
+              Give monthly
+            </a>
+          </div>
+        </section>
+      )}
+
       {heroV === "field" && (
         <section
           style={{
@@ -483,7 +532,7 @@ export default function MerchantFundingPage() {
         </section>
       )}
 
-      {heroV && heroV !== "field" && (
+      {heroV && heroV !== "field" && heroV !== "concept" && (
         <section className="relative isolate grid min-h-[clamp(20rem,44vw,34rem)]">
           <Image
             src={heroPic === "banner" ? "/rosh-hashanah-hero-mobile.jpg" : "/photos/boys-filling-boxes.jpg"}
