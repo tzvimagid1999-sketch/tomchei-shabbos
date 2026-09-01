@@ -290,8 +290,13 @@ export default function MerchantFundingPage() {
           ? {
               backgroundImage:
                 "linear-gradient(rgba(251,248,243,0.90), rgba(251,248,243,0.90)), url(/rosh-hashanah-hero-mobile.jpg)",
-              backgroundSize: "cover",
+              // contain, not cover: cover fills the viewport but crops the
+              // artwork, and this artwork is a designed banner whose lettering
+              // and logo have to survive. contain shows all of it, with cream
+              // either side on wide screens.
+              backgroundSize: "contain",
               backgroundPosition: "center top",
+              backgroundRepeat: "no-repeat",
               backgroundAttachment: "fixed",
             }
           : {}),
@@ -369,7 +374,13 @@ export default function MerchantFundingPage() {
           {/* Deliberately large and stacked: the type is sized so the line
               breaks fall inside the column and the words pile up, rather than
               being shrunk to fit fewer lines. */}
-          <h1 className="mf-display text-[clamp(2.4rem,3.9vw,4.5rem)]" style={{ color: "#2D2D2D" }}>
+          {/* With the artwork behind the page there is no image column to hold
+              the headline in, so it takes its own width cap and stays stacked
+              on the left instead of running the full page. */}
+          <h1
+            className={`mf-display text-[clamp(2.4rem,3.9vw,4.5rem)] ${bgArt ? "max-w-[20ch]" : ""}`}
+            style={{ color: "#2D2D2D" }}
+          >
             When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
           </h1>
           <a href="#give" className="mt-9 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
