@@ -459,6 +459,9 @@ export default function MerchantFundingPage() {
           />
         </div>
 
+        {/* Gold rule closing the banner off from the headline beneath it. */}
+        <div className="h-1 w-full" style={{ backgroundColor: "#C8A75B" }} />
+
         <div className="mx-auto w-full max-w-[52rem] px-5 pb-14 pt-10 text-center sm:px-8 sm:pb-20 sm:pt-12">
           {/* Jost, the face the home page hero uses, with MERCHANT FUNDING
               carrying the weight and the gold. */}
