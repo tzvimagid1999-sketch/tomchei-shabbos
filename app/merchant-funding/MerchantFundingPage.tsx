@@ -398,7 +398,7 @@ export default function MerchantFundingPage() {
                 letterSpacing: "0.01em",
               }}
             >
-              SHABBOS<br />DELIVERED
+              YOM TOV<br />DELIVERED
             </h1>
 
             <span className="my-9 block h-0.5 w-28" style={{ backgroundColor: goldAccent }} />
@@ -423,24 +423,17 @@ export default function MerchantFundingPage() {
             <a
               href="#give"
               onClick={() => setMonthly(false)}
-              className="flex items-center justify-center gap-3 px-4 py-5 text-center text-[clamp(0.9375rem,1.5vw,1.25rem)] font-bold"
+              className="flex items-center justify-center px-4 py-5 text-center text-[clamp(0.9375rem,1.5vw,1.25rem)] font-bold"
               style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="h-[1.2em] w-[1.2em] shrink-0" aria-hidden="true">
-                <path d="M20.8 8.6c0 4.4-8.8 9.4-8.8 9.4S3.2 13 3.2 8.6a4.6 4.6 0 0 1 8.8-1.8 4.6 4.6 0 0 1 8.8 1.8Z" />
-              </svg>
-              Make a donation
+              Donate Now
             </a>
             <a
               href="#give"
               onClick={() => setMonthly(true)}
-              className="flex items-center justify-center gap-3 px-4 py-5 text-center text-[clamp(0.9375rem,1.5vw,1.25rem)] font-bold"
+              className="flex items-center justify-center px-4 py-5 text-center text-[clamp(0.9375rem,1.5vw,1.25rem)] font-bold"
               style={{ backgroundColor: "#0a6e78", color: "#FFFFFF" }}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="h-[1.2em] w-[1.2em] shrink-0" aria-hidden="true">
-                <rect x="3.2" y="5" width="17.6" height="16" rx="2.4" />
-                <path d="M3.2 10h17.6M8 3v4M16 3v4" />
-              </svg>
               Give monthly
             </a>
           </div>
@@ -767,15 +760,18 @@ export default function MerchantFundingPage() {
 
             The list is rendered twice so the loop has no visible seam, and the
             duration scales with the donor count to hold the speed steady
-            however many names there are. */}
+            however many names there are.
+
+            No box around them: no background, no border. The negative margins
+            cancel the section's padding so the names run off both edges of the
+            screen rather than stopping at a container. */}
         {demo && (
           <p className="mb-2 text-center text-[12px] uppercase tracking-[0.16em]" style={{ color: "#8B6F3A" }}>
             Preview · sample names, not real donors
           </p>
         )}
         {donors.length > 0 && (
-          <div className="mf-marquee mb-4 overflow-hidden rounded-none py-3.5"
-            style={{ backgroundColor: "#FFFFFF", border: "2px solid #C8A75B" }}>
+          <div className="mf-marquee -mx-5 mb-4 overflow-hidden py-3.5 sm:-mx-8">
             <div className="mf-marquee-track" style={{ animationDuration: `${Math.max(18, donors.length * 7)}s` }}>
               {[0, 1].map((copy) => (
                 <div key={copy} className="mf-marquee-group" aria-hidden={copy === 1}>
@@ -917,7 +913,7 @@ export default function MerchantFundingPage() {
           <button onClick={submit} disabled={loading}
             className="mt-8 w-full rounded-[100px] py-5 text-[17px] font-bold disabled:opacity-60"
             style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
-            {loading ? "Processing…" : `Give ${chosenAmount ? money(Number(chosenAmount)) : ""}${monthly ? " a month" : ""}`}
+            {loading ? "Processing…" : "Help Feed a Family"}
           </button>
           <p className="mt-4 text-center text-[12px]" style={{ opacity: 0.6 }}>
             Secure checkout · Tax-deductible · 501(c)(3) · Tax ID 83-2155012
