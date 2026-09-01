@@ -329,6 +329,9 @@ export default function MerchantFundingPage() {
         </a>
       </header>
 
+      {/* Gold rule closing the white header off from the page below it. */}
+      {heroV && <div className="h-1 w-full" style={{ backgroundColor: "#C8A75B" }} />}
+
       {/* Phone fallback for the line that sits inside the header at sm+. */}
       <p className="px-5 pb-4 pt-1 text-center text-[13px] uppercase tracking-[0.2em] sm:hidden" style={{ color: "#2D2D2D", opacity: 0.55 }}>
         MCA Donation Page
