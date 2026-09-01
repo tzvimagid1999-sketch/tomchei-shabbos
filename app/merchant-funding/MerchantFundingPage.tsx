@@ -282,7 +282,41 @@ export default function MerchantFundingPage() {
         </a>
       </header>
 
-      <p className="px-5 pb-7 pt-1 text-center text-[13px] uppercase tracking-[0.2em] sm:px-8" style={{ color: "#2D2D2D", opacity: 0.55 }}>
+      {/* Supporter names, directly under the header. Only names whose owners
+          left Anonymous unticked reach this far — the API cannot return anyone
+          else.
+
+          Every name scrolls past rather than one showing at a time, so a long
+          list can be read in full. The duration scales with the number of
+          names, which holds the speed steady however many there are. The list
+          is rendered twice so the loop has no visible seam. */}
+      <div className="px-5 sm:px-8">
+        {demo && (
+          <p className="mb-2 text-center text-[12px] uppercase tracking-[0.16em]" style={{ color: "#8B6F3A" }}>
+            Preview · sample names, not real donors
+          </p>
+        )}
+        {donors.length > 0 && (
+          <div className="mf-marquee overflow-hidden rounded-[100px] py-3.5"
+            style={{ backgroundColor: "#FFFFFF", border: "2px solid #C8A75B" }}>
+            <div className="mf-marquee-track" style={{ animationDuration: `${Math.max(18, donors.length * 7)}s` }}>
+              {[0, 1].map((copy) => (
+                <div key={copy} className="mf-marquee-group" aria-hidden={copy === 1}>
+                  {donors.map((d, i) => (
+                    <span key={`${copy}-${i}`} className="mf-marquee-item text-[15px] leading-[1.4]">
+                      <span className="mf-marquee-dot" style={{ backgroundColor: "#1AABAB" }} />
+                      <strong style={{ color: "#8B6F3A" }}>{d.name}</strong>
+                      {d.amount > 0 && <span style={{ opacity: 0.65 }}>{" · "}{money(d.amount)}</span>}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <p className="px-5 pb-7 pt-5 text-center text-[13px] uppercase tracking-[0.2em] sm:px-8" style={{ color: "#2D2D2D", opacity: 0.55 }}>
         MCA Donation Page
       </p>
 
@@ -318,37 +352,6 @@ export default function MerchantFundingPage() {
       </section>
 
       <section ref={statsRef} className="px-5 pb-4 sm:px-8">
-        {/* Donor wall. Only names whose owners ticked the box reach this far —
-            the API cannot return anyone else.
-
-            Every name scrolls past rather than one showing at a time, so a long
-            list can be read in full. The duration scales with the number of
-            names, which keeps the speed constant however many there are. The
-            list is rendered twice so the loop has no visible seam. */}
-        {demo && (
-          <p className="mb-2 text-center text-[12px] uppercase tracking-[0.16em]" style={{ color: "#8B6F3A" }}>
-            Preview · sample names, not real donors
-          </p>
-        )}
-        {donors.length > 0 && (
-          <div className="mf-marquee mb-4 overflow-hidden rounded-[100px] py-3.5"
-            style={{ backgroundColor: "#FFFFFF", border: "2px solid #C8A75B" }}>
-            <div className="mf-marquee-track" style={{ animationDuration: `${Math.max(18, donors.length * 7)}s` }}>
-              {[0, 1].map((copy) => (
-                <div key={copy} className="mf-marquee-group" aria-hidden={copy === 1}>
-                  {donors.map((d, i) => (
-                    <span key={`${copy}-${i}`} className="mf-marquee-item text-[15px] leading-[1.4]">
-                      <span className="mf-marquee-dot" style={{ backgroundColor: "#1AABAB" }} />
-                      <strong style={{ color: "#8B6F3A" }}>{d.name}</strong>
-                      {d.amount > 0 && <span style={{ opacity: 0.65 }}>{" · "}{money(d.amount)}</span>}
-                    </span>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         <div className="mf-reveal grid gap-4 sm:grid-cols-3">
           {[
             ["Goal", money(GOAL)],
