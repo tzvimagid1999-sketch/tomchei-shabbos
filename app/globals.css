@@ -88,21 +88,7 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
   }
 }
 
-/* "MERCHANT FUNDING" in the hero headline.
 
-   Gold caps, weighted heavy against the lighter sentence around them — the
-   same contrast the home page hero uses between "Making Shabbos Possible for
-   Families in" and "Florida". 800 is the heaviest weight loaded for this face;
-   anything above it would be synthesised and distort the letterforms.
-
-   Flat colour, no gradient and no glow: a tonal-gradient version was tried and
-   read as an effect rather than as printing. 3.44:1 against the cream, above
-   the 3:1 minimum for display type at this size. */
-.mf .mf-highlight {
-  color: #A08243;
-  font-weight: 800;
-  letter-spacing: 0.015em;
-}
 
 /* Supporter names scroll continuously above the Goal/Raised/Progress boxes.
    The track holds two identical copies of the list and scrolls exactly one
@@ -125,13 +111,28 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
   .mf .mf-marquee-track { animation: none; }
 }
 
-/* The campaign hero headline, set in the same face as the lettering on the
-   Out For Delivery artwork. Anton is condensed and heavy, so it wants a
-   tighter line-height than the serif it replaces and a touch of tracking to
-   stop the caps closing up. */
-.mf .mf-banner {
-  font-family: var(--font-anton), "Arial Narrow", Impact, sans-serif;
-  font-weight: 400;
-  letter-spacing: 0.005em;
-  line-height: 1.05;
+
+
+/* The campaign hero headline.
+
+   Fraunces at 600 — a warm editorial serif, picked over DM Serif Display and
+   Cormorant Garamond, which read colder and thinner respectively at this size.
+   The whole sentence sits in one family, including the highlighted phrase, so
+   the line reads as a sentence rather than a logo dropped into a sentence. */
+.mf .mf-headline {
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.14;
+  text-wrap: balance;
+}
+
+/* "merchant funding" — same serif, same weight, warm gold, and a little more
+   tracking. The tracking is the whole treatment: enough to give the phrase
+   presence, not so much that it detaches from the words around it. */
+.mf .mf-headline .mf-highlight {
+  color: #A08243;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }

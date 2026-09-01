@@ -463,13 +463,22 @@ export default function MerchantFundingPage() {
         <div className="h-1 w-full" style={{ backgroundColor: "#C8A75B" }} />
 
         <div className="mx-auto w-full max-w-[52rem] px-5 pb-14 pt-10 text-center sm:px-8 sm:pb-20 sm:pt-12">
-          {/* Jost, the face the home page hero uses, with MERCHANT FUNDING
-              carrying the weight and the gold. */}
-          <h1
-            className="font-jost text-[clamp(2.4rem,3.9vw,4.5rem)]"
-            style={{ color: "#2D2D2D", fontWeight: 400, lineHeight: 1.12 }}
-          >
-            When <span className="mf-highlight">MERCHANT FUNDING</span> comes together, communities move forward.
+          {/* The line breaks are set deliberately from lg up, where there is
+              room for the intended shape:
+
+                When Florida's
+                merchant funding community
+                comes together, local families
+                move forward.
+
+              Below lg the breaks are hidden and the sentence wraps to the
+              column; "merchant funding" is nowrap so the phrase never splits
+              across a line at any width. */}
+          <h1 className="mf-headline mx-auto max-w-[54rem] text-[clamp(2rem,4vw,3.1rem)]" style={{ color: "#2D2D2D" }}>
+            When Florida&rsquo;s<br className="hidden lg:inline" />{" "}
+            <span className="mf-highlight">merchant funding</span> community<br className="hidden lg:inline" />{" "}
+            comes together, local families<br className="hidden lg:inline" />{" "}
+            move forward.
           </h1>
           <a href="#give" className="mt-9 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
             Help us reach {money(GOAL)}

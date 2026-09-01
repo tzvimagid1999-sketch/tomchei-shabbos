@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Nunito, Playfair_Display, Caveat, Manrope, Josefin_Sans, Figtree, Jost, PT_Serif, Lora, DM_Sans, Frank_Ruhl_Libre, Anton } from "next/font/google";
+import { Nunito, Playfair_Display, Caveat, Manrope, Josefin_Sans, Figtree, Jost, PT_Serif, Lora, DM_Sans, Frank_Ruhl_Libre, Anton, Fraunces } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -15,6 +15,9 @@ const frankRuhl = Frank_Ruhl_Libre({ subsets: ["hebrew"], variable: "--font-hebr
 // artwork. Anton ships a single weight, so nothing may ask it for bold — the
 // browser would synthesise one and distort the glyphs.
 const anton    = Anton({ subsets: ["latin"], variable: "--font-anton", weight: ["400"] });
+// The campaign hero headline: a warm editorial serif, chosen over DM Serif
+// Display and Cormorant Garamond, which read colder and thinner at hero size.
+const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", weight: ["500", "600", "700"] });
 
 const nunito   = Nunito({ subsets: ["latin"], variable: "--font-nunito",   weight: ["400", "500", "600", "700", "800", "900"] });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", style: ["normal", "italic"] });
@@ -45,7 +48,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${nunito.variable} ${playfair.variable} ${caveat.variable} ${manrope.variable} ${josefin.variable} ${figtree.variable} ${jost.variable} ${ptSerif.variable} ${lora.variable} ${dmSans.variable} ${frankRuhl.variable} ${anton.variable} font-sans`}>
+      <body className={`${nunito.variable} ${playfair.variable} ${caveat.variable} ${manrope.variable} ${josefin.variable} ${figtree.variable} ${jost.variable} ${ptSerif.variable} ${lora.variable} ${dmSans.variable} ${frankRuhl.variable} ${anton.variable} ${fraunces.variable} font-sans`}>
         <Navbar />
         <PopupBanner />
         {children}
