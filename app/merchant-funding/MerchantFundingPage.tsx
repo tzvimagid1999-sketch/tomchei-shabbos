@@ -360,8 +360,12 @@ export default function MerchantFundingPage() {
       {heroV === "field" && (
         <section
           style={{
+            // Built from the two teals the site already uses — #0F9FAE and
+            // #0a6e78 — rather than a new mix. Both sit at 185-186 degrees of
+            // hue, where the previous centre stop was greener and pulled the
+            // whole field away from the brand.
             background:
-              "radial-gradient(120% 90% at 50% 8%, #0d8089 0%, #0a6e78 45%, #075A63 100%)",
+              "radial-gradient(120% 90% at 50% 8%, #0F9FAE 0%, #0a6e78 48%, #06525A 100%)",
           }}
         >
           <div className="grid items-center gap-6 px-5 pb-8 pt-6 sm:px-8 sm:pt-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-10">
@@ -406,6 +410,21 @@ export default function MerchantFundingPage() {
                   <path d="M-70 -38 c 12 -14, 40 -18, 54 -6" opacity=".55" />
                   <path d="M28 -52 v -26 h 16 v 26 c 10 6, 14 14, 14 24 v 22 h -44 v -22 c 0 -10, 4 -18, 14 -24 Z" />
                   <path d="M14 -22 h 44" opacity=".55" />
+                  {/* The wordmark on the box, set as real text so the letters
+                      are correct rather than drawn approximations. Skewed to
+                      follow the box's right face. */}
+                  <text
+                    x="58"
+                    y="66"
+                    transform="skewY(15)"
+                    textAnchor="middle"
+                    stroke="none"
+                    fill="#E8D9A8"
+                    opacity=".85"
+                    style={{ fontFamily: "var(--font-dm), sans-serif", fontSize: "15px", fontWeight: 700, letterSpacing: "0.12em" }}
+                  >
+                    TOMCHEI SHABBOS
+                  </text>
                 </g>
                 <g transform="translate(336 58)" stroke="#F5A020">
                   <path d="M-30 46 v -44 M 30 46 v -44" />
