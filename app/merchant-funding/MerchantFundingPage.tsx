@@ -329,9 +329,6 @@ export default function MerchantFundingPage() {
         </a>
       </header>
 
-      {/* Gold rule closing the white header off from the page below it. */}
-      {heroV && <div className="h-1 w-full" style={{ backgroundColor: "#C8A75B" }} />}
-
       {/* Phone fallback for the line that sits inside the header at sm+. */}
       <p className="px-5 pb-4 pt-1 text-center text-[13px] uppercase tracking-[0.2em] sm:hidden" style={{ color: "#2D2D2D", opacity: 0.55 }}>
         MCA Donation Page
@@ -445,6 +442,10 @@ export default function MerchantFundingPage() {
           </div>
         </section>
       )}
+
+      {/* Gold rule closing off the hero — the header, banner and headline above
+          it, the totals and the form below. */}
+      {heroV && <div className="h-1 w-full" style={{ backgroundColor: "#C8A75B" }} />}
 
       {/* Headline left, artwork right in a rounded, inset frame — both columns
           sit inside the section's padding. */}
