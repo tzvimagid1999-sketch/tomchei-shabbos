@@ -301,12 +301,10 @@ export default function MerchantFundingPage() {
 
       <header
         className="relative flex w-full items-center justify-between gap-5 px-5 py-5 sm:px-8"
-        style={heroV ? { backgroundColor: "#0a6e78" } : undefined}
+        style={heroV ? { backgroundColor: "#FFFFFF" } : undefined}
       >
         <a href="/" className="flex items-center">
-          {/* The logo is dark artwork, so on the teal bar it is knocked out to
-              white rather than swapped for a second file. */}
-          <Image src="/logo-transparent.png" alt="Tomchei Shabbos of Florida" width={670} height={120} priority className={`h-9 w-auto sm:h-10 ${heroV ? "brightness-0 invert" : ""}`} />
+          <Image src="/logo-transparent.png" alt="Tomchei Shabbos of Florida" width={670} height={120} priority className="h-9 w-auto sm:h-10" />
         </a>
 
         {/* Centred on the page rather than between the logo and the button,
@@ -318,7 +316,7 @@ export default function MerchantFundingPage() {
             drops to its own line under the header instead. */}
         <p
           className="pointer-events-none absolute left-1/2 hidden -translate-x-1/2 whitespace-nowrap text-[13px] uppercase tracking-[0.2em] sm:block"
-          style={heroV ? { color: "#FFFFFF", opacity: 0.75 } : { color: "#2D2D2D", opacity: 0.55 }}
+          style={{ color: "#2D2D2D", opacity: 0.55 }}
         >
           MCA Donation Page
         </p>
