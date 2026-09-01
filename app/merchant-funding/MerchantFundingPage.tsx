@@ -133,7 +133,7 @@ export default function MerchantFundingPage() {
     setDemo(q.get("demo") === "1");
     setBgArt(q.get("bg") === "1");
     const h = q.get("hero") || "";
-    setHeroV(["left", "right", "center"].includes(h) ? h : "");
+    setHeroV(["left", "right", "center", "field"].includes(h) ? h : "");
     setHeroPic(q.get("pic") === "banner" ? "banner" : "photo");
     setShortCopy(q.get("copy") === "short");
   }, []);
@@ -349,7 +349,103 @@ export default function MerchantFundingPage() {
           The wash is a gradient, not a flat overlay, so the side the type sits
           on is dark enough to read white against while the other side of the
           frame stays as photographed. */}
-      {heroV && (
+      {/* ?hero=field — the colour-field hero: one deep teal field carrying a
+          line drawing and the statement, with the two actions across the foot.
+
+          The drawing is inline SVG rather than an image file so it stays sharp
+          at any size and can be recoloured from the same tokens as the page.
+          Its vocabulary is the campaign's own — the state, the route, the van,
+          the packed box, the candles — drawn at one line weight with rounded
+          joins, matching the icons already on the Out For Delivery artwork. */}
+      {heroV === "field" && (
+        <section
+          style={{
+            background:
+              "radial-gradient(120% 90% at 50% 8%, #0d8089 0%, #0a6e78 45%, #075A63 100%)",
+          }}
+        >
+          <div className="flex flex-col items-center gap-2 px-5 pb-8 pt-6 sm:px-8 sm:pt-8">
+            <svg
+              viewBox="0 0 1120 560"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="A Tomchei Shabbos box, Shabbos candles and a delivery van travelling the length of Florida"
+              className="h-auto w-full max-w-[46rem]"
+            >
+              <defs>
+                <filter id="mfglow" x="-25%" y="-25%" width="150%" height="150%">
+                  <feGaussianBlur stdDeviation="4.5" result="b" />
+                  <feMerge>
+                    <feMergeNode in="b" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <g stroke="#E8D9A8" strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round" filter="url(#mfglow)">
+                <path d="M470 132 L516 112 L578 118 L648 106 L742 110 L816 100 L878 106 L900 158 L918 214 L940 268 L960 324 L976 380 L988 434 L976 482 L946 504 L914 488 L896 444 L884 392 L866 342 L838 300 L804 268 L766 250 L720 242 L672 234 L626 214 L578 196 L534 172 Z" />
+                <path d="M962 516 l-26 14 M922 534 l-28 12 M878 548 l-26 8" opacity=".8" />
+                <path d="M556 168 C 640 206, 726 250, 800 316 C 862 372, 900 430, 918 470" strokeDasharray="14 16" opacity=".75" />
+                <g transform="translate(742 292) rotate(34)">
+                  <path d="M-58 -22 H 16 a10 10 0 0 1 10 10 V 16 H -58 a10 10 0 0 1 -10 -10 V -12 a10 10 0 0 1 10 -10 Z" />
+                  <path d="M26 -6 H 48 l 18 20 V 16 H 26 Z" />
+                  <path d="M30 -2 H 46 l 12 14 H 30 Z" opacity=".6" />
+                  <circle cx="-36" cy="16" r="11" />
+                  <circle cx="40" cy="16" r="11" />
+                  <path d="M-46 -6 h 20" opacity=".55" />
+                </g>
+                <g transform="translate(196 250)">
+                  <path d="M-118 -34 L 0 -66 L 118 -34 L 118 78 L 0 110 L -118 78 Z" />
+                  <path d="M-118 -34 L 0 2 L 118 -34" />
+                  <path d="M0 2 L 0 110" />
+                  <path d="M-96 -52 L -118 -96 L -8 -122 L 8 -84" opacity=".85" />
+                  <path d="M96 -52 L 118 -96 L 8 -122" opacity=".85" />
+                  <path d="M-74 -46 c 10 -18, 44 -24, 60 -10" opacity=".9" />
+                  <path d="M-70 -38 c 12 -14, 40 -18, 54 -6" opacity=".55" />
+                  <path d="M28 -52 v -26 h 16 v 26 c 10 6, 14 14, 14 24 v 22 h -44 v -22 c 0 -10, 4 -18, 14 -24 Z" />
+                  <path d="M14 -22 h 44" opacity=".55" />
+                </g>
+                <g transform="translate(336 58)" stroke="#F5A020">
+                  <path d="M-30 46 v -44 M 30 46 v -44" />
+                  <path d="M-46 46 h 32 M 14 46 h 32" />
+                  <path d="M-30 -6 c -9 -10, -2 -20, 0 -26 c 2 6, 9 16, 0 26 Z" />
+                  <path d="M30 -6 c -9 -10, -2 -20, 0 -26 c 2 6, 9 16, 0 26 Z" />
+                </g>
+              </g>
+            </svg>
+
+            <div className="flex max-w-[44rem] flex-col items-center text-center">
+              <p className="text-[13px] uppercase tracking-[0.24em]" style={{ color: "#E8D9A8" }}>
+                This Yom Tov
+              </p>
+              <h1
+                className="mt-2 text-[clamp(2.4rem,6vw,4.6rem)]"
+                style={{ fontFamily: "var(--font-anton), sans-serif", color: "#FFFFFF", lineHeight: 0.94, letterSpacing: "0.01em" }}
+              >
+                SHABBOS<br />DELIVERED
+              </h1>
+              <span className="my-4 block h-0.5 w-16" style={{ backgroundColor: "#E8D9A8", opacity: 0.7 }} />
+              <p className="text-[clamp(0.8125rem,1.4vw,1rem)] uppercase tracking-[0.18em]" style={{ color: "rgba(255,255,255,.9)" }}>
+                Powered by <strong style={{ color: "#F5A020", fontWeight: 700 }}>merchant funding</strong>
+              </p>
+              <p className="mt-4 text-[16px]" style={{ color: "rgba(255,255,255,.85)" }}>
+                <strong style={{ color: "#F5A020", fontWeight: 700 }}>350+</strong> Florida families, every week
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2">
+            <a href="#give" className="py-4 text-center text-[15px] font-bold" style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}>
+              Make a donation
+            </a>
+            <a href="#give" className="py-4 text-center text-[15px] font-bold" style={{ backgroundColor: "rgba(255,255,255,.1)", color: "#FFFFFF" }}>
+              Give monthly
+            </a>
+          </div>
+        </section>
+      )}
+
+      {heroV && heroV !== "field" && (
         <section className="relative isolate grid min-h-[clamp(20rem,44vw,34rem)]">
           <Image
             src={heroPic === "banner" ? "/rosh-hashanah-hero-mobile.jpg" : "/photos/boys-filling-boxes.jpg"}
