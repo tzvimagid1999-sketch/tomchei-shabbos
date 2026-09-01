@@ -39,9 +39,10 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop links — every item is a plain link; Donate Now is the only
-              button, pushed hard right. whitespace-nowrap stops the longer
-              labels wrapping onto a second line. */}
-          <div className="hidden md:flex flex-1 items-center gap-0.5 lg:gap-1">
+              button. justify-end keeps the whole group against the right edge,
+              with the logo alone on the left. whitespace-nowrap stops the
+              longer labels wrapping onto a second line. */}
+          <div className="hidden md:flex flex-1 items-center justify-end gap-0.5 lg:gap-1">
             {links.map((l) => (
               <Link key={l.href} href={l.href}
                 className={`whitespace-nowrap px-2.5 lg:px-3.5 py-2 rounded-lg text-sm font-semibold transition-all ${
@@ -57,7 +58,7 @@ export default function Navbar() {
               🍎 Rosh Hashanah Campaign
             </Link>
             <Link href={DONATE_HREF}
-              className="ml-auto whitespace-nowrap bg-[#F5A020] text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-[#D48810] transition-all tracking-wide active:translate-y-[2px]">
+              className="ml-1.5 whitespace-nowrap bg-[#F5A020] text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-[#D48810] transition-all tracking-wide active:translate-y-[2px]">
               Donate Now
             </Link>
           </div>
