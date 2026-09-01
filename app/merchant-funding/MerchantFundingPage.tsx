@@ -333,7 +333,7 @@ export default function MerchantFundingPage() {
               the headline in, so it takes its own width cap and stays stacked
               on the left instead of running the full page. */}
           <h1
-            className={`mf-display text-[clamp(2.4rem,3.9vw,4.5rem)] ${bgArt ? "max-w-[20ch]" : ""}`}
+            className={`mf-banner text-[clamp(2.4rem,3.9vw,4.5rem)] ${bgArt ? "max-w-[20ch]" : ""}`}
             style={{ color: "#2D2D2D" }}
           >
             When <span className="mf-gold">MERCHANT FUNDING</span> comes together, communities move forward.
