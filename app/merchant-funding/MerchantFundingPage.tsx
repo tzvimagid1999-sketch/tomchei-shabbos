@@ -299,29 +299,15 @@ export default function MerchantFundingPage() {
 
   return (
     <div
-      className="mf"
+      // The backdrop lives in globals.css as .mf-bgart, because it needs a
+      // media query — it fills the screen on phones and shows the whole banner
+      // from lg up — and inline styles cannot express that.
+      className={`mf ${bgArt ? "mf-bgart" : ""}`}
       style={{
         backgroundColor: "#FBF8F3",
         color: "#2D2D2D",
         fontFamily: "var(--font-dm), ui-sans-serif, system-ui, sans-serif",
         fontWeight: 500,
-        // The cream wash sits on top of the artwork rather than the artwork
-        // being faded, so the type keeps its full contrast against a flat
-        // colour instead of against whatever the photo is doing underneath.
-        ...(bgArt
-          ? {
-              backgroundImage:
-                "linear-gradient(rgba(251,248,243,0.90), rgba(251,248,243,0.90)), url(/rosh-hashanah-hero-mobile.jpg)",
-              // contain, not cover: cover fills the viewport but crops the
-              // artwork, and this artwork is a designed banner whose lettering
-              // and logo have to survive. contain shows all of it, with cream
-              // either side on wide screens.
-              backgroundSize: "contain",
-              backgroundPosition: "center top",
-              backgroundRepeat: "no-repeat",
-              backgroundAttachment: "fixed",
-            }
-          : {}),
       }}
     >
       <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />

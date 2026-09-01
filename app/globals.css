@@ -73,3 +73,28 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
 .mf .mf-donor-set { animation: mf-donor-set-in .45s ease-out; }
 @keyframes mf-donor-set-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .mf .mf-donor-set { animation: none; } }
+
+/* ?bg=1 — the campaign artwork as a page backdrop, under a cream wash.
+   Two layers: the wash sits on top of the artwork rather than the artwork
+   being faded, so type keeps full contrast against flat colour.
+
+   The wash always covers. The artwork does not: on phones it fills the screen
+   (cover), because a 4:3 image contained at 375px wide is only a 281px band
+   across the top. From lg up there is room to show the whole banner, so it
+   switches to contain — the lettering and logo it carries survive intact. */
+.mf.mf-bgart {
+  background-image:
+    linear-gradient(rgba(251, 248, 243, 0.90), rgba(251, 248, 243, 0.90)),
+    url("/rosh-hashanah-hero-mobile.jpg");
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: fixed, fixed;
+  background-position: center center, center center;
+  background-size: cover, cover;
+}
+
+@media (min-width: 1024px) {
+  .mf.mf-bgart {
+    background-position: center center, center top;
+    background-size: cover, contain;
+  }
+}
