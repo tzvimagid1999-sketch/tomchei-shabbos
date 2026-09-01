@@ -290,7 +290,11 @@ export default function MerchantFundingPage() {
           list can be read in full. The duration scales with the number of
           names, which holds the speed steady however many there are. The list
           is rendered twice so the loop has no visible seam. */}
-      <div className="px-5 sm:px-8">
+      <p className="px-5 pb-4 pt-1 text-center text-[13px] uppercase tracking-[0.2em] sm:px-8" style={{ color: "#2D2D2D", opacity: 0.55 }}>
+        MCA Donation Page
+      </p>
+
+      <div className="px-5 pb-7 sm:px-8">
         {demo && (
           <p className="mb-2 text-center text-[12px] uppercase tracking-[0.16em]" style={{ color: "#8B6F3A" }}>
             Preview · sample names, not real donors
@@ -315,10 +319,6 @@ export default function MerchantFundingPage() {
           </div>
         )}
       </div>
-
-      <p className="px-5 pb-7 pt-5 text-center text-[13px] uppercase tracking-[0.2em] sm:px-8" style={{ color: "#2D2D2D", opacity: 0.55 }}>
-        MCA Donation Page
-      </p>
 
       {/* Headline left, artwork right in a rounded, inset frame — both columns
           sit inside the section's padding. */}
