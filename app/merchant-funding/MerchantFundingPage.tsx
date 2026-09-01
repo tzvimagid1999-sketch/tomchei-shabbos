@@ -86,6 +86,8 @@ export default function MerchantFundingPage() {
   // photograph with the headline set over it, in place of the headline-beside-
   // artwork row. Preview only; the plain URL is untouched.
   const [heroV, setHeroV] = useState("");
+  // ?pic=banner swaps the hero photograph for the Out For Delivery artwork.
+  const [heroPic, setHeroPic] = useState("photo");
   const [monthly, setMonthly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -128,6 +130,7 @@ export default function MerchantFundingPage() {
     setBgArt(q.get("bg") === "1");
     const h = q.get("hero") || "";
     setHeroV(["left", "right", "center"].includes(h) ? h : "");
+    setHeroPic(q.get("pic") === "banner" ? "banner" : "photo");
   }, []);
 
   useEffect(() => {
@@ -346,8 +349,12 @@ export default function MerchantFundingPage() {
       {heroV && (
         <section className="relative isolate grid min-h-[clamp(20rem,44vw,34rem)]">
           <Image
-            src="/photos/boys-filling-boxes.jpg"
-            alt="Volunteers packing Shabbos boxes with fresh produce"
+            src={heroPic === "banner" ? "/rosh-hashanah-hero-mobile.jpg" : "/photos/boys-filling-boxes.jpg"}
+            alt={
+              heroPic === "banner"
+                ? "Your generosity out for delivery. This Yom Tov, it's going a long way."
+                : "Volunteers packing Shabbos boxes with fresh produce"
+            }
             fill
             priority
             sizes="100vw"
