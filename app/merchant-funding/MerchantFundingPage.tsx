@@ -880,19 +880,12 @@ export default function MerchantFundingPage() {
           <Field id="company" label="Company name" optional
             hint="If given, this name will be displayed." />
           <Field id="email" label="Email" type="email" hint="Where your receipt is sent." />
-          <Field id="phone" label="Phone" type="tel" optional />
 
           <label className="mt-2 flex cursor-pointer items-start gap-3 rounded-[16px] px-5 py-4"
             style={{ border: "1px solid rgba(45,45,45,0.12)" }}>
             <input type="checkbox" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)}
               className="mt-0.5 h-5 w-5 shrink-0" style={{ accentColor: "#C8A75B" }} />
-            <span className="text-[15px] leading-[1.45]">
-              Anonymous
-              <span className="mt-1 block text-[13px]" style={{ opacity: 0.6 }}>
-                Keep me off the supporters listed above. Otherwise your company name
-                is shown, or your own name if you did not give one.
-              </span>
-            </span>
+            <span className="text-[15px] leading-[1.45]">Anonymous</span>
           </label>
 
           <Legend>Billing address</Legend>
@@ -902,6 +895,7 @@ export default function MerchantFundingPage() {
             <Field id="state" label="State" />
             <Field id="zip" label="ZIP" />
           </div>
+          <Field id="phone" label="Phone" type="tel" />
 
           <Legend>Payment details</Legend>
           <div id="card-field" className="rounded-[16px] px-5 py-4" style={{ backgroundColor: "#FFFFFF", border: "1px solid rgba(45,45,45,0.12)" }} />
