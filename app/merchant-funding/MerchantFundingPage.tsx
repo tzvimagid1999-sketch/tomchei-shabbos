@@ -310,9 +310,14 @@ export default function MerchantFundingPage() {
         </picture>
       </section>
 
+      {/* The gold rule that closes the hero on /RoshHashanah. */}
+      <div className="h-1 w-full" style={{ backgroundColor: "#C8A75B" }} />
+
       <section className="px-5 pb-14 pt-12 sm:px-8 sm:pb-20 sm:pt-16">
-        {/* No max-width: the headline is meant to run the width of the page. */}
-        <h1 className="mf-display text-[clamp(2.4rem,5.2vw,4.6rem)]" style={{ color: "#2D2D2D" }}>
+        {/* Sits on the left at three lines rather than spanning the page. The
+            width cap and the size were picked together: at the previous 4.6rem
+            no sensible column width gave three lines, so both came down. */}
+        <h1 className="mf-display max-w-[26ch] text-[clamp(2.2rem,4.1vw,3.25rem)] lg:max-w-[60%]" style={{ color: "#2D2D2D" }}>
           When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
         </h1>
         <a href="#give" className="mt-10 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
