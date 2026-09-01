@@ -133,7 +133,7 @@ export default function MerchantFundingPage() {
     setDemo(q.get("demo") === "1");
     setBgArt(q.get("bg") === "1");
     const h = q.get("hero") || "";
-    setHeroV(["left", "right", "center", "field", "concept"].includes(h) ? h : "");
+    setHeroV(["left", "right", "center", "field", "concept", "words"].includes(h) ? h : "");
     setHeroPic(q.get("pic") === "banner" ? "banner" : "photo");
     setShortCopy(q.get("copy") === "short");
   }, []);
@@ -373,6 +373,47 @@ export default function MerchantFundingPage() {
           in lightness. Lifting it enough to match clips the gold lettering to
           yellow, and a targeted lighten blend flattens the Florida map into the
           background, since map and field both sit below the site teal. */}
+      {/* ?hero=words — the hero reduced to the three lines, with nothing else
+          in it. No illustration, no photograph, no buttons.
+
+          The field is built from the two teals the site already uses, #0F9FAE
+          and #0a6e78, so the colour is the site's rather than a new mix. */}
+      {heroV === "words" && (
+        <section
+          style={{
+            background:
+              "radial-gradient(120% 90% at 50% 10%, #0F9FAE 0%, #0a6e78 48%, #06525A 100%)",
+          }}
+        >
+          <div className="mx-auto flex max-w-[60rem] flex-col items-center px-5 py-16 text-center sm:px-8 sm:py-24">
+            <h1
+              className="text-[clamp(2.8rem,8vw,7rem)]"
+              style={{
+                fontFamily: "var(--font-anton), sans-serif",
+                color: "#FFFFFF",
+                lineHeight: 0.92,
+                letterSpacing: "0.01em",
+              }}
+            >
+              SHABBOS<br />DELIVERED
+            </h1>
+
+            <span className="my-7 block h-0.5 w-20" style={{ backgroundColor: "#F5A020" }} />
+
+            <p
+              className="text-[clamp(0.9375rem,1.8vw,1.375rem)] font-bold uppercase tracking-[0.16em]"
+              style={{ color: "#FFFFFF" }}
+            >
+              Powered by <span style={{ color: "#F5A020" }}>merchant funding</span>
+            </p>
+
+            <p className="mt-6 text-[clamp(1.0625rem,1.7vw,1.375rem)]" style={{ color: "rgba(255,255,255,.88)" }}>
+              <strong style={{ color: "#F5A020", fontWeight: 700 }}>350+</strong> Florida families served every week.
+            </p>
+          </div>
+        </section>
+      )}
+
       {heroV === "concept" && (
         // Held to a max width and centred rather than run edge to edge. The
         // band behind it is painted the image's own field colour, sampled from
@@ -552,7 +593,7 @@ export default function MerchantFundingPage() {
         </section>
       )}
 
-      {heroV && heroV !== "field" && heroV !== "concept" && (
+      {heroV && heroV !== "field" && heroV !== "concept" && heroV !== "words" && (
         <section className="relative isolate grid min-h-[clamp(20rem,44vw,34rem)]">
           <Image
             src={heroPic === "banner" ? "/rosh-hashanah-hero-mobile.jpg" : "/photos/boys-filling-boxes.jpg"}
