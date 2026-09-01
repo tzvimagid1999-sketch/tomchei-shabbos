@@ -60,34 +60,10 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
    donation form invisible. */
 .mf .mf-reveal.mf-armed { opacity: 0; transform: translateY(18px); transition: opacity .6s ease-out, transform .6s ease-out; }
 .mf .mf-reveal.mf-armed.mf-shown { opacity: 1; transform: none; }
-.mf .mf-lift { transition: transform .18s ease-out; }
-.mf .mf-lift:hover { transform: translateY(-4px); }
 
 @media (prefers-reduced-motion: reduce) {
   .mf .mf-reveal { opacity: 1; transform: none; transition: none; }
-  .mf .mf-lift:hover { transform: none; }
 }
-
-
-/* ?bg=1 — the campaign artwork as a page backdrop, under a cream wash.
-   The wash sits on top of the artwork rather than the artwork being faded, so
-   type keeps full contrast against flat colour.
-
-   Desktop only. Filling a phone screen crops so far into the banner that what
-   shows is an unreadable fragment of its lettering sitting behind the
-   headline, so below lg the page keeps its plain cream. */
-@media (min-width: 1024px) {
-  .mf.mf-bgart {
-    background-image:
-      linear-gradient(rgba(251, 248, 243, 0.90), rgba(251, 248, 243, 0.90)),
-      url("/rosh-hashanah-hero-mobile.jpg");
-    background-repeat: no-repeat, no-repeat;
-    background-attachment: fixed, fixed;
-    background-position: center center, center top;
-    background-size: cover, contain;
-  }
-}
-
 
 
 /* Supporter names scroll continuously above the Goal/Raised/Progress boxes.
@@ -111,31 +87,6 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
   .mf .mf-marquee-track { animation: none; }
 }
 
-
-
-/* The campaign hero headline.
-
-   Fraunces at 600 — a warm editorial serif, picked over DM Serif Display and
-   Cormorant Garamond, which read colder and thinner respectively at this size.
-   The whole sentence sits in one family, including the highlighted phrase, so
-   the line reads as a sentence rather than a logo dropped into a sentence. */
-.mf .mf-headline {
-  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  font-weight: 600;
-  letter-spacing: -0.005em;
-  line-height: 1.14;
-  text-wrap: balance;
-}
-
-/* "merchant funding" — same serif, same weight, warm gold, and a little more
-   tracking. The tracking is the whole treatment: enough to give the phrase
-   presence, not so much that it detaches from the words around it. */
-.mf .mf-headline .mf-highlight {
-  color: #A08243;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
 
 /* The words hero: the campaign artwork behind a white wash.
 
