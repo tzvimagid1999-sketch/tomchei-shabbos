@@ -286,44 +286,38 @@ export default function MerchantFundingPage() {
         MCA Donation Page
       </p>
 
-      {/* Hero band: the campaign artwork runs the full width of the page, with
-          the headline beneath it rather than beside it.
+      {/* Headline left, artwork right. Nothing frames the image: no rounded
+          corners, no border, no card. The section carries no horizontal padding
+          of its own — the text column supplies its own — so the image runs off
+          the right edge of the viewport at lg and off both edges when stacked.
+          Together with a ground that is the page's exact cream (#FBF8F3), the
+          artwork has no edge of any kind and reads as part of the page rather
+          than a picture placed on it. */}
+      <section className="grid items-center gap-8 pb-14 sm:pb-20 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-10">
+        <div className="order-2 px-5 sm:px-8 lg:order-1 lg:pr-0">
+          {/* Sized to hold three lines in this column — 3.6vw tipped it to four. */}
+          <h1 className="mf-display max-w-[26ch] text-[clamp(2.2rem,3.3vw,2.75rem)]" style={{ color: "#2D2D2D" }}>
+            When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
+          </h1>
+          <a href="#give" className="mt-9 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
+            Help us reach {money(GOAL)}
+          </a>
+        </div>
 
-          Sized and built to match the hero on /RoshHashanah: a fixed 300px
-          band, object-contain so nothing is cropped, and the same two files it
-          uses — the 1920x300 crop from 640px up, the 800x600 one below that,
-          since the wide crop's small print is unreadable on a phone.
-
-          Finished artwork — it carries its own headline, logo and typography —
-          so no scrim and nothing overlaid on it. contain leaves bands at the
-          sides on most widths; the ground in both files samples at #FBF8F3,
-          which is exactly this page's cream, so those bands are invisible. */}
-      <section className="relative h-[300px] w-full overflow-hidden" style={{ backgroundColor: "#FBF8F3" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <picture>
-          <source media="(min-width: 640px)" srcSet="/rosh-hashanah-hero-v2.jpg" />
-          <img
+        <div className="relative order-1 aspect-[4/3] w-full overflow-hidden lg:order-2">
+          <Image
             src="/rosh-hashanah-hero-mobile.jpg"
             alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
-            className="absolute inset-0 h-full w-full object-contain object-center"
+            fill
+            priority
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="object-contain object-center"
           />
-        </picture>
+        </div>
       </section>
 
       {/* The gold rule that closes the hero on /RoshHashanah. */}
       <div className="h-1 w-full" style={{ backgroundColor: "#C8A75B" }} />
-
-      <section className="px-5 pb-14 pt-12 sm:px-8 sm:pb-20 sm:pt-16">
-        {/* Sits on the left at three lines rather than spanning the page. The
-            width cap and the size were picked together: at the previous 4.6rem
-            no sensible column width gave three lines, so both came down. */}
-        <h1 className="mf-display max-w-[26ch] text-[clamp(2.2rem,4.1vw,3.25rem)] lg:max-w-[60%]" style={{ color: "#2D2D2D" }}>
-          When <span style={{ color: "#A08243" }}>MERCHANT FUNDING</span> comes together, communities move forward.
-        </h1>
-        <a href="#give" className="mt-10 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
-          Help us reach {money(GOAL)}
-        </a>
-      </section>
 
       <section ref={statsRef} className="px-5 pb-4 sm:px-8">
         {/* Donor wall. Only names whose owners ticked the box reach this far —
