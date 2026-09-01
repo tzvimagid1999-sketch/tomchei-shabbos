@@ -349,87 +349,53 @@ export default function MerchantFundingPage() {
           The wash is a gradient, not a flat overlay, so the side the type sits
           on is dark enough to read white against while the other side of the
           frame stays as photographed. */}
-      {/* Banner mode: the artwork is shown whole rather than filled to the
-          frame. contain, its own ratio, and the page cream behind it, so
-          nothing is cropped off the ends — and no type over it, since it
-          carries its own. The copy sits underneath instead. */}
-      {heroV && heroPic === "banner" && (
-        <section style={{ backgroundColor: "#FBF8F3" }}>
-          <div className="relative aspect-[4/3] w-full sm:hidden">
-            <Image
-              src="/rosh-hashanah-hero-mobile.jpg"
-              alt="Your generosity out for delivery. This Yom Tov, it's going a long way."
-              fill
-              priority
-              sizes="100vw"
-              className="object-contain object-center"
-            />
-          </div>
-          <div className="relative hidden aspect-[1920/300] w-full sm:block">
-            <Image
-              src="/rosh-hashanah-hero-v2.jpg"
-              alt="Your generosity out for delivery. This Yom Tov, it's going a long way."
-              fill
-              priority
-              sizes="100vw"
-              className="object-contain object-center"
-            />
-          </div>
-          <div
-            className={`mx-auto w-full max-w-[46rem] px-5 pb-14 pt-10 sm:px-8 ${
-              heroV === "right" ? "text-right" : heroV === "center" ? "text-center" : ""
-            }`}
-          >
-            <h1
-              className="text-[clamp(1.8rem,3.4vw,2.9rem)] font-bold leading-[1.12]"
-              style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "#23201B" }}
-            >
-              When <span style={{ fontStyle: "italic", color: "#0E8F8B" }}>merchant funding</span> comes together, communities move forward.
-            </h1>
-            <p className="mt-4 text-[17px] leading-[1.55]" style={{ opacity: 0.75 }}>
-              This Yom Tov, help put food on 350 South Florida tables.
-            </p>
-            <a
-              href="#give"
-              className="mt-7 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold"
-              style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}
-            >
-              Help us reach {money(GOAL)}
-            </a>
-          </div>
-        </section>
-      )}
-
-      {heroV && heroPic !== "banner" && (
+      {heroV && (
         <section className="relative isolate grid min-h-[clamp(20rem,44vw,34rem)]">
           <Image
-            src="/photos/boys-filling-boxes.jpg"
-            alt="Volunteers packing Shabbos boxes with fresh produce"
+            src={heroPic === "banner" ? "/rosh-hashanah-hero-mobile.jpg" : "/photos/boys-filling-boxes.jpg"}
+            alt={
+              heroPic === "banner"
+                ? "Your generosity out for delivery. This Yom Tov, it's going a long way."
+                : "Volunteers packing Shabbos boxes with fresh produce"
+            }
             fill
             priority
             sizes="100vw"
             className="-z-20 object-cover object-center"
           />
+          {/* The banner needs a heavier wash than a photograph: it carries its
+              own lettering, and only a deep wash pushes that back far enough to
+              read as texture behind the headline rather than as a second
+              headline competing with it. */}
           <div
             className="absolute inset-0 -z-10"
             style={{
               background:
-                heroV === "center"
-                  ? "linear-gradient(180deg, rgba(10,40,44,.55) 0%, rgba(10,40,44,.75) 100%)"
-                  : `linear-gradient(${heroV === "left" ? "270deg" : "90deg"}, rgba(10,40,44,0) 22%, rgba(10,40,44,.62) 52%, rgba(10,40,44,.88) 100%)`,
+                heroPic === "banner"
+                  ? "linear-gradient(180deg, rgba(8,34,38,.80) 0%, rgba(8,34,38,.86) 100%)"
+                  : heroV === "center"
+                    ? "linear-gradient(180deg, rgba(10,40,44,.55) 0%, rgba(10,40,44,.75) 100%)"
+                    : `linear-gradient(${heroV === "left" ? "270deg" : "90deg"}, rgba(10,40,44,0) 22%, rgba(10,40,44,.62) 52%, rgba(10,40,44,.88) 100%)`,
             }}
           />
           <div
-            className={`relative w-full max-w-[34rem] self-center px-5 py-12 sm:px-10 ${
-              heroV === "left" ? "mr-auto" : heroV === "right" ? "ml-auto text-right" : "mx-auto text-center"
+            className={`relative w-full self-center px-5 py-14 sm:px-10 ${
+              heroV === "left"
+                ? "mr-auto max-w-[min(66rem,94%)]"
+                : heroV === "right"
+                  ? "ml-auto max-w-[min(66rem,94%)] text-right"
+                  : "mx-auto max-w-[min(72rem,94%)] text-center"
             }`}
           >
             <h1
-              className="text-[clamp(1.8rem,3.4vw,2.9rem)] font-bold leading-[1.12]"
+              className="font-bold"
               style={{
                 fontFamily: "var(--font-playfair), Georgia, serif",
                 color: "#FFFFFF",
-                textShadow: "0 2px 14px rgba(6,26,29,.5)",
+                // Runs the width of the hero rather than sitting in a column.
+                fontSize: "clamp(2.4rem, 7vw, 6.5rem)",
+                lineHeight: 1.04,
+                textShadow: "0 2px 18px rgba(6,26,29,.55)",
               }}
             >
               {shortCopy ? (
@@ -438,7 +404,7 @@ export default function MerchantFundingPage() {
                 <>When <span style={{ fontStyle: "italic" }}>merchant funding</span> comes together, communities move forward.</>
               )}
             </h1>
-            <p className="mt-4 text-[clamp(0.9375rem,1.4vw,1.0625rem)] leading-[1.5]" style={{ color: "rgba(255,255,255,.92)" }}>
+            <p className="mx-auto mt-6 max-w-[46rem] text-[clamp(1.0625rem,1.7vw,1.375rem)] leading-[1.5]" style={{ color: "rgba(255,255,255,.92)" }}>
               {shortCopy ? (
                 <>This Yom Tov, the <strong style={{ fontWeight: 700 }}>merchant funding</strong> community is filling 350 tables across South Florida.</>
               ) : (
