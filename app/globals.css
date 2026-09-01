@@ -68,24 +68,8 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
   .mf .mf-lift:hover { transform: none; }
 }
 
-
-
-/* Donor wall marquee. The track holds two identical copies of the list and
-   scrolls exactly one copy's width, so the loop is seamless. Duration is set
-   per-render from the donor count, keeping speed constant as names are added. */
-.mf .mf-marquee { position: relative; }
-.mf .mf-marquee-track { display: flex; width: max-content; animation: mf-marquee-scroll linear infinite; }
-.mf .mf-marquee-group { display: flex; }
-.mf .mf-marquee-item { display: inline-flex; align-items: center; gap: .6rem; padding: 0 1.6rem; white-space: nowrap; }
-.mf .mf-marquee-dot { width: .5rem; height: .5rem; border-radius: 9999px; flex: none; }
-@keyframes mf-marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-/* Let people stop it to read a name. */
-.mf .mf-marquee:hover .mf-marquee-track,
-.mf .mf-marquee:focus-within .mf-marquee-track { animation-play-state: paused; }
-
-/* No motion: no scroll. The list stays readable by dragging instead. */
-@media (prefers-reduced-motion: reduce) {
-  .mf .mf-marquee { overflow-x: auto; }
-  .mf .mf-marquee-track { animation: none; }
-}
+/* Each set of supporter names fades in as the panel swaps. Keyed on the set
+   index in the markup, so React remounts the list and restarts the animation. */
+.mf .mf-donor-set { animation: mf-donor-set-in .45s ease-out; }
+@keyframes mf-donor-set-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .mf .mf-donor-set { animation: none; } }
