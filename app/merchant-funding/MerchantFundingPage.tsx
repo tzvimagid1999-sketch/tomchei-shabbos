@@ -78,6 +78,10 @@ export default function MerchantFundingPage() {
   // means "not yet known", which holds the donors fetch back — starting it
   // first let its response land after the demo list and wipe it.
   const [demo, setDemo] = useState<boolean | null>(null);
+  // ?bg=1 — a look to try, not a decision: the artwork becomes a faint
+  // full-page backdrop and the inline hero frame is dropped, since keeping both
+  // would show the same picture twice.
+  const [bgArt, setBgArt] = useState(false);
   const [monthly, setMonthly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -115,7 +119,9 @@ export default function MerchantFundingPage() {
   );
 
   useEffect(() => {
-    setDemo(new URLSearchParams(window.location.search).get("demo") === "1");
+    const q = new URLSearchParams(window.location.search);
+    setDemo(q.get("demo") === "1");
+    setBgArt(q.get("bg") === "1");
   }, []);
 
   useEffect(() => {
@@ -270,13 +276,48 @@ export default function MerchantFundingPage() {
   };
 
   return (
-    <div className="mf" style={{ backgroundColor: "#FBF8F3", color: "#2D2D2D", fontFamily: "var(--font-dm), ui-sans-serif, system-ui, sans-serif", fontWeight: 500 }}>
+    <div
+      className="mf"
+      style={{
+        backgroundColor: "#FBF8F3",
+        color: "#2D2D2D",
+        fontFamily: "var(--font-dm), ui-sans-serif, system-ui, sans-serif",
+        fontWeight: 500,
+        // The cream wash sits on top of the artwork rather than the artwork
+        // being faded, so the type keeps its full contrast against a flat
+        // colour instead of against whatever the photo is doing underneath.
+        ...(bgArt
+          ? {
+              backgroundImage:
+                "linear-gradient(rgba(251,248,243,0.90), rgba(251,248,243,0.90)), url(/rosh-hashanah-hero-mobile.jpg)",
+              backgroundSize: "cover",
+              backgroundPosition: "center top",
+              backgroundAttachment: "fixed",
+            }
+          : {}),
+      }}
+    >
       <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
-      <header className="flex w-full items-center justify-between gap-5 px-5 py-5 sm:px-8">
+      <header className="relative flex w-full items-center justify-between gap-5 px-5 py-5 sm:px-8">
         <a href="/" className="flex items-center">
           <Image src="/logo-transparent.png" alt="Tomchei Shabbos of Florida" width={670} height={120} priority className="h-9 w-auto sm:h-10" />
         </a>
+
+        {/* Centred on the page rather than between the logo and the button,
+            which sit at different widths. Absolute so it cannot push either of
+            them around, and pointer-events-none so it never intercepts a click
+            meant for the Donate button behind it.
+
+            Below sm the logo and the button leave no room between them, so it
+            drops to its own line under the header instead. */}
+        <p
+          className="pointer-events-none absolute left-1/2 hidden -translate-x-1/2 whitespace-nowrap text-[13px] uppercase tracking-[0.2em] sm:block"
+          style={{ color: "#2D2D2D", opacity: 0.55 }}
+        >
+          MCA Donation Page
+        </p>
+
         <a href="#give" className="rounded-[100px] px-9 py-4 text-[17px] font-bold" style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}>
           Donate Now
         </a>
@@ -290,7 +331,8 @@ export default function MerchantFundingPage() {
           list can be read in full. The duration scales with the number of
           names, which holds the speed steady however many there are. The list
           is rendered twice so the loop has no visible seam. */}
-      <p className="px-5 pb-4 pt-1 text-center text-[13px] uppercase tracking-[0.2em] sm:px-8" style={{ color: "#2D2D2D", opacity: 0.55 }}>
+      {/* Phone fallback for the line that sits inside the header at sm+. */}
+      <p className="px-5 pb-4 pt-1 text-center text-[13px] uppercase tracking-[0.2em] sm:hidden" style={{ color: "#2D2D2D", opacity: 0.55 }}>
         MCA Donation Page
       </p>
 
@@ -322,7 +364,7 @@ export default function MerchantFundingPage() {
 
       {/* Headline left, artwork right in a rounded, inset frame — both columns
           sit inside the section's padding. */}
-      <section className="grid items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-14">
+      <section className={`grid items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:gap-14 ${bgArt ? "" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]"}`}>
         <div className="order-2 lg:order-1">
           {/* Deliberately large and stacked: the type is sized so the line
               breaks fall inside the column and the words pile up, rather than
@@ -339,7 +381,7 @@ export default function MerchantFundingPage() {
             means the image fills the rounded frame corner to corner — no
             letterboxing, and no cropping of artwork that carries its own
             lettering. */}
-        <div className="relative order-1 aspect-[4/3] w-full overflow-hidden rounded-[32px] lg:order-2">
+        <div className={`relative order-1 aspect-[4/3] w-full overflow-hidden rounded-[32px] lg:order-2 ${bgArt ? "hidden" : ""}`}>
           <Image
             src="/rosh-hashanah-hero-mobile.jpg"
             alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
