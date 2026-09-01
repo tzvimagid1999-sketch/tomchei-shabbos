@@ -346,15 +346,62 @@ export default function MerchantFundingPage() {
           The wash is a gradient, not a flat overlay, so the side the type sits
           on is dark enough to read white against while the other side of the
           frame stays as photographed. */}
-      {heroV && (
+      {/* Banner mode: the artwork is shown whole rather than filled to the
+          frame. contain, its own ratio, and the page cream behind it, so
+          nothing is cropped off the ends — and no type over it, since it
+          carries its own. The copy sits underneath instead. */}
+      {heroV && heroPic === "banner" && (
+        <section style={{ backgroundColor: "#FBF8F3" }}>
+          <div className="relative aspect-[4/3] w-full sm:hidden">
+            <Image
+              src="/rosh-hashanah-hero-mobile.jpg"
+              alt="Your generosity out for delivery. This Yom Tov, it's going a long way."
+              fill
+              priority
+              sizes="100vw"
+              className="object-contain object-center"
+            />
+          </div>
+          <div className="relative hidden aspect-[1920/300] w-full sm:block">
+            <Image
+              src="/rosh-hashanah-hero-v2.jpg"
+              alt="Your generosity out for delivery. This Yom Tov, it's going a long way."
+              fill
+              priority
+              sizes="100vw"
+              className="object-contain object-center"
+            />
+          </div>
+          <div
+            className={`mx-auto w-full max-w-[46rem] px-5 pb-14 pt-10 sm:px-8 ${
+              heroV === "right" ? "text-right" : heroV === "center" ? "text-center" : ""
+            }`}
+          >
+            <h1
+              className="text-[clamp(1.8rem,3.4vw,2.9rem)] font-bold leading-[1.12]"
+              style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "#23201B" }}
+            >
+              When <span style={{ fontStyle: "italic", color: "#0E8F8B" }}>merchant funding</span> comes together, communities move forward.
+            </h1>
+            <p className="mt-4 text-[17px] leading-[1.55]" style={{ opacity: 0.75 }}>
+              This Yom Tov, help put food on 350 South Florida tables.
+            </p>
+            <a
+              href="#give"
+              className="mt-7 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold"
+              style={{ backgroundColor: "#F5A020", color: "#2D2D2D" }}
+            >
+              Help us reach {money(GOAL)}
+            </a>
+          </div>
+        </section>
+      )}
+
+      {heroV && heroPic !== "banner" && (
         <section className="relative isolate grid min-h-[clamp(20rem,44vw,34rem)]">
           <Image
-            src={heroPic === "banner" ? "/rosh-hashanah-hero-mobile.jpg" : "/photos/boys-filling-boxes.jpg"}
-            alt={
-              heroPic === "banner"
-                ? "Your generosity out for delivery. This Yom Tov, it's going a long way."
-                : "Volunteers packing Shabbos boxes with fresh produce"
-            }
+            src="/photos/boys-filling-boxes.jpg"
+            alt="Volunteers packing Shabbos boxes with fresh produce"
             fill
             priority
             sizes="100vw"
