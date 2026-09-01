@@ -426,23 +426,44 @@ export default function MerchantFundingPage() {
           it, the totals and the form below. */}
       {heroV && <div className="h-1 w-full" style={{ backgroundColor: "#C8A75B" }} />}
 
-      {/* Headline left, artwork right in a rounded, inset frame — both columns
-          sit inside the section's padding. */}
-      <section className={`${heroV ? "hidden" : "grid"} items-center gap-10 px-5 pb-14 sm:px-8 sm:pb-20 lg:gap-14 ${bgArt ? "lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]"}`}>
-        <div className="order-2 lg:order-1">
-          {/* Deliberately large and stacked: the type is sized so the line
-              breaks fall inside the column and the words pile up, rather than
-              being shrunk to fit fewer lines. */}
-          {/* With the artwork behind the page there is no image column to hold
-              the headline in, so it takes its own width cap and stays stacked
-              on the left instead of running the full page.
+      {/* The banner runs full width as its own band, with the headline centred
+          beneath it.
 
-              The headline is warm gold rather than near-black. Not the
-              artwork's orange literally — #E28D3F measures 2.44:1 on this
-              cream, under the 3:1 floor for display type — but #A0742E, which
-              keeps the warmth at 3.94:1. */}
+          contain rather than cover, each crop at its own ratio — the 1920x300
+          file from sm up, the 800x600 one below — so the whole banner shows and
+          nothing is cut off the ends. The band is painted the page's cream,
+          which is also the artwork's own ground, so the letterbox either side
+          of it is invisible.
+
+          Nothing is laid over the artwork: it carries its own headline, logo
+          and body copy, and a second headline on top would collide. */}
+      <section className={heroV ? "hidden" : ""} style={{ backgroundColor: "#FBF8F3" }}>
+        <div className="relative aspect-[4/3] w-full sm:hidden">
+          <Image
+            src="/rosh-hashanah-hero-mobile.jpg"
+            alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
+            fill
+            priority
+            sizes="100vw"
+            className="object-contain object-center"
+          />
+        </div>
+        <div className="relative hidden aspect-[1920/300] w-full sm:block">
+          <Image
+            src="/rosh-hashanah-hero-v2.jpg"
+            alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
+            fill
+            priority
+            sizes="100vw"
+            className="object-contain object-center"
+          />
+        </div>
+
+        <div className="mx-auto w-full max-w-[52rem] px-5 pb-14 pt-10 text-center sm:px-8 sm:pb-20 sm:pt-12">
+          {/* Jost, the face the home page hero uses, with MERCHANT FUNDING
+              carrying the weight and the gold. */}
           <h1
-            className={`font-jost text-[clamp(2.4rem,3.9vw,4.5rem)] ${bgArt ? "max-w-[20ch]" : ""}`}
+            className="font-jost text-[clamp(2.4rem,3.9vw,4.5rem)]"
             style={{ color: "#2D2D2D", fontWeight: 400, lineHeight: 1.12 }}
           >
             When <span className="mf-highlight">MERCHANT FUNDING</span> comes together, communities move forward.
@@ -450,21 +471,6 @@ export default function MerchantFundingPage() {
           <a href="#give" className="mt-9 inline-block rounded-[100px] px-8 py-4 text-[16px] font-bold" style={{ backgroundColor: "#C8A75B", color: "#2D2D2D" }}>
             Help us reach {money(GOAL)}
           </a>
-        </div>
-
-        {/* The frame is 4:3 because the artwork is 800x600. Matching the two
-            means the image fills the rounded frame corner to corner — no
-            letterboxing, and no cropping of artwork that carries its own
-            lettering. */}
-        <div className={`relative order-1 aspect-[4/3] w-full overflow-hidden rounded-[32px] lg:order-2 ${bgArt ? "hidden" : ""}`}>
-          <Image
-            src="/rosh-hashanah-hero-mobile.jpg"
-            alt="Your generosity out for delivery. This Yom Tov, it's going a long way. A Tomchei Shabbos box packed with challah, wine and food, and a delivery van."
-            fill
-            priority
-            sizes="(min-width: 1024px) 55vw, 100vw"
-            className="object-cover object-center"
-          />
         </div>
       </section>
 
