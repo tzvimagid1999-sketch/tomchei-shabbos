@@ -304,8 +304,10 @@ export default function MerchantFundingPage() {
     >
       <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
 
+      {/* The concept hero carries its own logo and "Help a family" button
+          inside the artwork, so the page header would duplicate both. */}
       <header
-        className="relative flex w-full items-center justify-between gap-5 px-5 py-5 sm:px-8"
+        className={`relative w-full items-center justify-between gap-5 px-5 py-5 sm:px-8 ${heroV === "concept" ? "hidden" : "flex"}`}
         style={heroV ? { backgroundColor: "#FFFFFF" } : undefined}
       >
         <a href="/" className="flex items-center">
@@ -335,7 +337,10 @@ export default function MerchantFundingPage() {
       </header>
 
       {/* Phone fallback for the line that sits inside the header at sm+. */}
-      <p className="px-5 pb-4 pt-1 text-center text-[13px] uppercase tracking-[0.2em] sm:hidden" style={{ color: "#2D2D2D", opacity: 0.55 }}>
+      <p
+        className={`px-5 pb-4 pt-1 text-center text-[13px] uppercase tracking-[0.2em] sm:hidden ${heroV === "concept" ? "hidden" : ""}`}
+        style={{ color: "#2D2D2D", opacity: 0.55 }}
+      >
         MCA Donation Page
       </p>
 
@@ -369,8 +374,12 @@ export default function MerchantFundingPage() {
           yellow, and a targeted lighten blend flattens the Florida map into the
           background, since map and field both sit below the site teal. */}
       {heroV === "concept" && (
-        <section>
-          <div className="relative aspect-[1672/786] w-full overflow-hidden">
+        // Held to a max width and centred rather than run edge to edge. The
+        // band behind it is painted the image's own field colour, sampled from
+        // the file, so the margins read as part of the artwork instead of as
+        // the page showing through beside it.
+        <section style={{ backgroundColor: "#0d3e43" }}>
+          <div className="relative mx-auto aspect-[1672/786] w-full max-w-[72rem] overflow-hidden">
             <Image
               src="/hero-concept.png"
               alt="This Yom Tov, Shabbos delivered, powered by merchant funding. 350+ Florida families, every week."
@@ -379,8 +388,19 @@ export default function MerchantFundingPage() {
               sizes="100vw"
               className="object-cover object-top"
             />
+
+            {/* The "Help a family" pill is painted into the image, so it needs
+                a real link laid over it. The box is not eyeballed: the gold
+                pixels in the top-right corner of the file measure 1363,26 to
+                1627,88, which is what these percentages are derived from. */}
+            <a
+              href="#give"
+              aria-label="Help a family — go to the donation form"
+              className="absolute rounded-full"
+              style={{ left: "81.52%", top: "3.31%", width: "15.79%", height: "7.89%" }}
+            />
           </div>
-          <div className="grid grid-cols-2">
+          <div className="mx-auto grid max-w-[72rem] grid-cols-2">
             <a
               href="#give"
               className="flex items-center justify-center gap-3 px-4 py-5 text-center text-[clamp(0.9375rem,1.5vw,1.25rem)] font-bold"
