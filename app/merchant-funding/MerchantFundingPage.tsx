@@ -88,6 +88,10 @@ export default function MerchantFundingPage() {
   const [heroV, setHeroV] = useState("");
   // ?pic=banner swaps the hero photograph for the Out For Delivery artwork.
   const [heroPic, setHeroPic] = useState("photo");
+  // ?copy=short swaps the long headline for the short one from the mockups.
+  // Over a photograph the long sentence runs to four lines and fights the
+  // picture; the short one holds two.
+  const [shortCopy, setShortCopy] = useState(false);
   const [monthly, setMonthly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -131,6 +135,7 @@ export default function MerchantFundingPage() {
     const h = q.get("hero") || "";
     setHeroV(["left", "right", "center"].includes(h) ? h : "");
     setHeroPic(q.get("pic") === "banner" ? "banner" : "photo");
+    setShortCopy(q.get("copy") === "short");
   }, []);
 
   useEffect(() => {
@@ -427,10 +432,18 @@ export default function MerchantFundingPage() {
                 textShadow: "0 2px 14px rgba(6,26,29,.5)",
               }}
             >
-              When <span style={{ fontStyle: "italic" }}>merchant funding</span> comes together, communities move forward.
+              {shortCopy ? (
+                <>A single box changes <span style={{ fontStyle: "italic" }}>everything</span>.</>
+              ) : (
+                <>When <span style={{ fontStyle: "italic" }}>merchant funding</span> comes together, communities move forward.</>
+              )}
             </h1>
             <p className="mt-4 text-[clamp(0.9375rem,1.4vw,1.0625rem)] leading-[1.5]" style={{ color: "rgba(255,255,255,.92)" }}>
-              This Yom Tov, help put food on 350 South Florida tables.
+              {shortCopy ? (
+                <>This Yom Tov, the <strong style={{ fontWeight: 700 }}>merchant funding</strong> community is filling 350 tables across South Florida.</>
+              ) : (
+                <>This Yom Tov, help put food on 350 South Florida tables.</>
+              )}
             </p>
             <a
               href="#give"
