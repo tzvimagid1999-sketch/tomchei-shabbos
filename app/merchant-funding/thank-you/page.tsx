@@ -67,16 +67,12 @@ export default async function ThankYouPage({
             Thank you{name && <>, <span style={{ color: "#A08243" }}>{name}</span></>}.
           </h1>
 
-          <p lang="he" dir="rtl" className="mf-hebrew mt-8 text-[clamp(1.6rem,4.5vw,2.6rem)]" style={{ color: "#A08243" }}>
-            שנה טובה ומתוקה
-          </p>
-
           <span className="mx-auto mt-8 block h-px w-24" style={{ backgroundColor: "#C8A75B" }} />
 
           <p className="mx-auto mt-8 max-w-[34rem] text-[17px] leading-[1.65]" style={{ opacity: 0.8 }}>
             {amount !== null ? (
               <>
-                Your {monthly ? "monthly gift" : "gift"} of{" "}
+                Your {monthly ? "monthly donation" : "donation"} of{" "}
                 <strong style={{ opacity: 1 }}>{money(amount)}</strong>
                 {monthly && " a month"} went through
                 {monthly && months
@@ -89,15 +85,14 @@ export default async function ThankYouPage({
                 .
               </>
             ) : (
-              <>Your gift went through.</>
+              <>Your donation went through.</>
             )}{" "}
             A receipt is on its way to your inbox — keep it for your records, it is your
             tax documentation.
           </p>
 
           <p className="mx-auto mt-6 max-w-[34rem] text-[17px] leading-[1.65]" style={{ opacity: 0.8 }}>
-            This year a family will have food on their table for Rosh Hashanah and Succos
-            because of you.
+            This year a family will have food on their table for Yom Tov because of you.
           </p>
 
         </div>

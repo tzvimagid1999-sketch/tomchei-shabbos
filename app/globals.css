@@ -90,10 +90,15 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
   border-left: 1px solid rgba(200, 167, 91, .55);
 }
 
-/* A short list does not scroll, so it is centred and its leading divider — which
-   would otherwise hang at the start of the row — is dropped. */
-.mf .mf-marquee-track.mf-marquee-still { animation: none; width: 100%; justify-content: center; }
-.mf .mf-marquee-track.mf-marquee-still .mf-marquee-item:first-child { border-left: 0; }
+/* A list too short to fill the strip still scrolls, but each copy is padded out
+   to a full screen width and its names centred within it. The track travels
+   exactly one copy — one screen — per cycle, so only one copy is ever in view
+   and the same donor never appears twice at once. */
+.mf .mf-marquee-track.mf-marquee-pad .mf-marquee-group {
+  min-width: 100vw;
+  justify-content: center;
+}
+.mf .mf-marquee-track.mf-marquee-pad .mf-marquee-item:first-child { border-left: 0; }
 @keyframes mf-marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* Let people stop it to read a name. */

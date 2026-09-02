@@ -423,7 +423,7 @@ export default function MerchantFundingPage() {
                 not to a mailing list. Kept small and above the statement so it
                 reads as context rather than as a claim competing with it. */}
             <p
-              className="mf-h1 mb-5 max-w-[54rem] text-[clamp(0.75rem,1.2vw,0.9375rem)] font-bold uppercase tracking-[0.18em]"
+              className="mf-h1 mb-7 max-w-[54rem] text-[clamp(1.0625rem,2.1vw,1.75rem)] font-bold uppercase tracking-[0.14em]"
               style={{ color: goldAccent, textWrap: "balance" }}
             >
               An Exclusive Campaign for Merchant Funding Industry Leaders
@@ -503,15 +503,15 @@ export default function MerchantFundingPage() {
         {donors.length > 0 && (
           <div ref={marqueeRef} className="mf-marquee -mx-5 mb-4 overflow-hidden py-4 sm:-mx-8">
             <div
-              className={`mf-marquee-track${scrollNames ? "" : " mf-marquee-still"}`}
-              style={scrollNames ? { animationDuration: `${Math.max(18, donors.length * 7)}s` } : undefined}
+              className={`mf-marquee-track${scrollNames ? "" : " mf-marquee-pad"}`}
+              style={{ animationDuration: `${scrollNames ? Math.max(18, donors.length * 7) : 26}s` }}
             >
-              {/* The second copy is what makes the loop seamless: the track
-                  scrolls exactly one copy's width and lands back where it
-                  started. It is only rendered when a single copy is wider than
-                  the screen — otherwise both copies sit in view at once and a
-                  donor sees their own name twice. */}
-              {(scrollNames ? [0, 1] : [0]).map((copy) => (
+              {/* Two copies are what make the loop seamless: the track scrolls
+                  exactly one copy's width and lands back where it started.
+                  A short list would leave both copies on screen together — the
+                  same donor twice — so each copy is padded out to a full screen
+                  width instead, keeping only one of them in view at a time. */}
+              {[0, 1].map((copy) => (
                 <div key={copy} ref={copy === 0 ? namesGroupRef : undefined} className="mf-marquee-group" aria-hidden={copy === 1}>
                   {donors.map((d, i) => (
                     <span key={`${copy}-${i}`} className="mf-marquee-item text-[clamp(1rem,1.4vw,1.25rem)] leading-[1.4]">
@@ -667,7 +667,7 @@ export default function MerchantFundingPage() {
       </section>
 
       <footer className="px-5 py-14 sm:px-8" style={{ backgroundColor: "#0a6e78", color: "#FFFFFF" }}>
-        <div>
+        <div className="mx-auto max-w-[46rem] text-center">
           <p className="mf-display text-[1.6rem]">Tomchei Shabbos of Florida</p>
           <address className="mt-3 text-[15px] not-italic" style={{ opacity: 0.75 }}>
             194 NE 186th Terrace<br />North Miami Beach, FL 33179
