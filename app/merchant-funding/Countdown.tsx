@@ -8,8 +8,8 @@ import { useEffect, useState } from "react";
 // moment everywhere. A donor in another timezone sees the same time remaining
 // as the office does, which is the whole point of a countdown — "ends at 8pm"
 // would not be.
-// Started Wednesday 2 September 2026 at 5:06pm Eastern, running 36 hours.
-export const CAMPAIGN_ENDS_AT = "2026-09-04T05:06:00-04:00";
+// Started Wednesday 2 September 2026 at 6:30pm Eastern, running 36 hours.
+export const CAMPAIGN_ENDS_AT = "2026-09-04T06:30:00-04:00";
 
 const INK = "#2D2D2D";
 

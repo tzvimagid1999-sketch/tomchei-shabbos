@@ -579,13 +579,17 @@ export default function MerchantFundingPage() {
                   className="flex items-baseline justify-between gap-4 pb-4"
                   style={{ borderBottom: "1px solid rgba(45,45,45,0.10)" }}
                 >
+                  {/* The firm leads, the person sits beneath it — this campaign
+                      is addressed to companies, and the firm is what a reader
+                      scanning the list recognises. A gift with no company named
+                      simply shows the person. */}
                   <span>
                     <span className="block text-[clamp(1rem,1.3vw,1.125rem)] font-bold" style={{ color: "#2D2D2D" }}>
-                      {d.name}
+                      {d.company || d.name}
                     </span>
                     {d.company && (
                       <span className="mt-0.5 block text-[clamp(0.875rem,1.1vw,0.9375rem)]" style={{ opacity: 0.6 }}>
-                        {d.company}
+                        {d.name}
                       </span>
                     )}
                   </span>

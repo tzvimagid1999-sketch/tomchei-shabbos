@@ -41,6 +41,7 @@ function doGet(e) {
   const iFirst = headers.indexOf('first name');
   const iLast = headers.indexOf('last name');
   const iAmount = headers.indexOf('amount');
+  const iCompany = headers.indexOf('company');
 
   if (iAmount === -1) {
     return out({ error: 'no Amount column found' });
@@ -59,7 +60,8 @@ function doGet(e) {
     const first = iFirst === -1 ? '' : String(row[iFirst] || '').trim();
     const last = iLast === -1 ? '' : String(row[iLast] || '').trim();
     const name = (first + ' ' + last).trim();
-    if (name) donors.push({ name: name, amount: amount });
+    const company = iCompany === -1 ? '' : String(row[iCompany] || '').trim();
+    if (name) donors.push({ name: name, company: company, amount: amount });
   });
 
   // Largest first, so the biggest supporters lead the wall.
