@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { fetchTransactionsSince, txnDate } from "../../lib/usaepay-transactions";
+import { fetchOfflineDonations } from "../../lib/merchant-funding-offline";
 
 // How far back to read. It matches the campaign's first day: reading further
 // would start pulling in a PREVIOUS year's campaign, whose descriptions carry
@@ -158,7 +159,15 @@ export async function GET(req: NextRequest) {
     cardCache = { value: total, at: Date.now() };
 
     const other = await fetchOtherDonationsTotal();
-    const combined = total + other.total;
+
+    // The merchant funding campaign's own offline sheet counts here too. A
+    // cheque to that campaign is still a donation to this one, exactly as a
+    // card donation through the campaign page already lands on both bars.
+    // Separate sheet, separate source, so nothing is counted twice.
+    const campaignOffline = await fetchOfflineDonations();
+    if (campaignOffline.error) console.error("Campaign offline sheet:", campaignOffline.error);
+
+    const combined = total + other.total + campaignOffline.total;
 
     if (debug) {
       return json({
@@ -166,6 +175,8 @@ export async function GET(req: NextRequest) {
         debug: {
           cardTotal: Math.round(total),
           otherPlatformsTotal: Math.round(other.total),
+          campaignOfflineTotal: Math.round(campaignOffline.total),
+          campaignOfflineError: campaignOffline.error ?? null,
           otherPlatformsError: other.error ?? null,
           otherPlatformsConfigured: Boolean(process.env.OTHER_DONATIONS_URL),
           transactionCount: transactions.length,
