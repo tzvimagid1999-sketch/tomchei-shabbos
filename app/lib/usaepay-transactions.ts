@@ -32,6 +32,51 @@ const MAX_PAGES = 12;
 export const txnDate = (t: UsaepayTxn): string =>
   String(t.created ?? t.datetime ?? t.date ?? "").slice(0, 10);
 
+// Whether a customer has any recurring schedule at all.
+//
+// A fixed-term pledge is credited in full on the day it is made, which is only
+// honest if the remaining payments are actually going to be collected. When a
+// schedule fails to be created the donor is charged once and never again, so
+// crediting the whole pledge would put money on the bar that will never arrive.
+//
+// This deliberately does not care whether the schedule is still enabled. A
+// donor who cancels later made a real pledge; a schedule that was never created
+// never did.
+const scheduleMemo = new Map<string, { has: boolean; at: number }>();
+const SCHEDULE_MEMO_MS = 600_000;
+
+export async function customerHasSchedule(
+  endpoint: string,
+  sourceKey: string,
+  pin: string,
+  custkey: string
+): Promise<boolean> {
+  if (!custkey) return false;
+  const hit = scheduleMemo.get(custkey);
+  if (hit && Date.now() - hit.at < SCHEDULE_MEMO_MS) return hit.has;
+
+  const seed = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.createHash("sha256").update(sourceKey + seed + pin).digest("hex");
+  const authHeader = "Basic " + Buffer.from(`${sourceKey}:s2/${seed}/${hash}`).toString("base64");
+
+  try {
+    const res = await fetch(`${endpoint}/customers/${custkey}/billing_schedules`, {
+      headers: { Authorization: authHeader, "Content-Type": "application/json" },
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error(`billing_schedules ${res.status}`);
+    const j = await res.json();
+    const list = j.data ?? j.billing_schedules ?? [];
+    const has = Array.isArray(list) && list.length > 0;
+    scheduleMemo.set(custkey, { has, at: Date.now() });
+    return has;
+  } catch {
+    // Unknown is not the same as missing. Assume the pledge stands rather than
+    // making the bar lurch downwards because one lookup failed.
+    return true;
+  }
+}
+
 /**
  * Every sale transaction on or after `since` (YYYY-MM-DD), newest first.
  *

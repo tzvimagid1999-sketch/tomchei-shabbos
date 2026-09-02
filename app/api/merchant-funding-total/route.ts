@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { pledgeMultiplier } from "../../lib/donor-wall";
-import { fetchTransactionsSince, txnDate } from "../../lib/usaepay-transactions";
+import { fetchTransactionsSince, txnDate, customerHasSchedule } from "../../lib/usaepay-transactions";
 
 export const dynamic = "force-dynamic";
 
@@ -49,17 +49,32 @@ export async function GET() {
 
     const { txns, complete } = await fetchTransactionsSince(endpoint, sourceKey, pin, CAMPAIGN_START);
 
-    const total = txns.reduce((sum, t) => {
+    let total = 0;
+    for (const t of txns) {
       const approved = t.result_code === "A" || t.result === "Approved";
       const trantype = (t.trantype || "").toLowerCase();
-      if (!approved || trantype.includes("void") || trantype.includes("refund")) return sum;
-      if (!(t.description || "").toLowerCase().includes(TAG)) return sum;
+      if (!approved || trantype.includes("void") || trantype.includes("refund")) continue;
+      if (!(t.description || "").toLowerCase().includes(TAG)) continue;
       // The final page straddles the cutoff and can carry older transactions.
-      if (txnDate(t) < CAMPAIGN_START) return sum;
+      if (txnDate(t) < CAMPAIGN_START) continue;
+
+      const amount = parseFloat(String(t.amount)) || 0;
       // A fixed-term pledge counts its whole commitment on its first charge;
       // the scheduled charges that follow it count 0, so nothing is doubled.
-      return sum + (parseFloat(String(t.amount)) || 0) * pledgeMultiplier(t.description);
-    }, 0);
+      let multiplier = pledgeMultiplier(t.description);
+
+      // But only if the schedule that collects the rest actually exists. When
+      // schedule creation fails the donor is charged once and never again, so
+      // crediting the full pledge would put money on the bar that is never
+      // coming. This lookup runs only for pledges, which are rare, and its
+      // result is memoised.
+      if (multiplier > 1) {
+        const custkey = String((t as { custkey?: string }).custkey ?? "");
+        if (!(await customerHasSchedule(endpoint, sourceKey, pin, custkey))) multiplier = 1;
+      }
+
+      total += amount * multiplier;
+    }
 
     // An incomplete crawl is missing the oldest donations, so it would under-
     // report. Keep serving the last good figure rather than publishing a total
