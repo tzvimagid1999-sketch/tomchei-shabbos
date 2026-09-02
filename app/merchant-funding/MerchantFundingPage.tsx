@@ -30,19 +30,21 @@ type Donor = { name: string; company?: string; amount: number };
 // the page labels them as samples so the preview cannot be mistaken for the
 // actual supporter list. Demo mode touches nothing but this list: the totals,
 // the bar and the donation form are unchanged.
+// A few carry no company, which is what a personal gift looks like: those show
+// the person alone, with no dash left hanging.
 const DEMO_DONORS: Donor[] = [
-  { name: "Coastal Merchant Group", amount: 2500 },
-  { name: "Bright Harbor Funding", amount: 1800 },
+  { company: "Coastal Merchant Group", name: "Daniel Weiss", amount: 2500 },
+  { company: "Bright Harbor Funding", name: "S. Kaufman", amount: 1800 },
   { name: "Daniel Weiss", amount: 500 },
-  { name: "Sunrise Advance LLC", amount: 3600 },
-  { name: "Deerfield Capital", amount: 1250 },
+  { company: "Sunrise Advance LLC", name: "Avi Parsons", amount: 3600 },
+  { company: "Deerfield Capital", name: "M. Rosenberg", amount: 1250 },
   { name: "M. Rosenberg", amount: 360 },
-  { name: "Palm Funding Co.", amount: 5000 },
-  { name: "Aventura Business Capital", amount: 720 },
-  { name: "Biscayne Working Capital", amount: 2400 },
+  { company: "Palm Funding Co.", name: "Yosef Adler", amount: 5000 },
+  { company: "Aventura Business Capital", name: "R. Stern", amount: 720 },
+  { company: "Biscayne Working Capital", name: "L. Bernstein", amount: 2400 },
   { name: "The Gruen Family", amount: 1000 },
-  { name: "North Bay Advance", amount: 1500 },
-  { name: "Surfside Capital Partners", amount: 4200 },
+  { company: "North Bay Advance", name: "E. Feldman", amount: 1500 },
+  { company: "Surfside Capital Partners", name: "D. Aronson", amount: 4200 },
 ];
 
 const money = (n: number) => `$${Math.round(n).toLocaleString()}`;
@@ -572,23 +574,27 @@ export default function MerchantFundingPage() {
             </h2>
             <span className="mx-auto mt-5 block h-0.5 w-24" style={{ backgroundColor: "#C8A75B" }} />
 
-            <ul className="mx-auto mt-10 grid max-w-[62rem] gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Two columns, not three: "Firm — Person" plus an amount is a long
+                line, and a third column crowds it into wrapping on a laptop. */}
+            <ul className="mx-auto mt-10 grid max-w-[62rem] gap-x-12 gap-y-5 sm:grid-cols-2">
               {donors.map((d, i) => (
                 <li
                   key={`${d.name}-${i}`}
                   className="flex items-baseline justify-between gap-4 pb-4"
                   style={{ borderBottom: "1px solid rgba(45,45,45,0.10)" }}
                 >
-                  {/* The firm leads, the person sits beneath it — this campaign
-                      is addressed to companies, and the firm is what a reader
+                  {/* Firm and person on one line — "Black Tie Funding —
+                      Mordechai Perlman". The firm leads because this campaign
+                      is addressed to companies and that is what a reader
                       scanning the list recognises. A gift with no company named
-                      simply shows the person. */}
-                  <span>
-                    <span className="block text-[clamp(1rem,1.3vw,1.125rem)] font-bold" style={{ color: "#2D2D2D" }}>
+                      shows the person alone, with no dash left hanging. */}
+                  <span className="text-[clamp(1rem,1.3vw,1.125rem)]">
+                    <span className="font-bold" style={{ color: "#2D2D2D" }}>
                       {d.company || d.name}
                     </span>
                     {d.company && (
-                      <span className="mt-0.5 block text-[clamp(0.875rem,1.1vw,0.9375rem)]" style={{ opacity: 0.6 }}>
+                      <span style={{ opacity: 0.6 }}>
+                        {" — "}
                         {d.name}
                       </span>
                     )}
