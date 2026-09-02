@@ -19,11 +19,12 @@ const CAMPAIGN_START = "2026-07-24";
 
 type Donor = { name: string; amount: number };
 
-// Names change rarely, and reading them costs a full crawl of the transaction
-// feed — about 14 seconds. Five minutes in memory, and the edge cache below
-// means almost nobody ever waits for that crawl.
+// Reading the names costs a full crawl of the transaction feed — about 14
+// seconds — so it is cached hard. But a donor who has just given refreshes the
+// page looking for their own name, and not finding it reads as broken, so the
+// window is kept to about a minute rather than the several it could be.
 let cache: { value: Donor[]; at: number } | null = null;
-const CACHE_MS = 300_000;
+const CACHE_MS = 45_000;
 
 // Cached at Vercel's edge, not just in this instance's memory. The in-memory
 // cache only helps a visitor who happens to land on an already-warm instance;
@@ -32,14 +33,19 @@ const CACHE_MS = 300_000;
 //
 // stale-while-revalidate is the important half: once the edge has any copy, it
 // answers instantly and refreshes in the background, so a visitor never pays
-// for the refresh. Worst case the wall is a few minutes out of date, which for
-// a list of supporter names is not worth a ten second wait.
+// for the refresh.
+//
+// The revalidate window is deliberately short. A longer one is cheaper, but it
+// means a donor who has just given can refresh and not see their own name for
+// several minutes, which reads as the page being broken. A minute of staleness
+// is the most this should carry.
 //
 // Safe to cache publicly: this response is identical for every visitor and
 // holds only names donors asked to have shown.
+//
 // Next rewrites Cache-Control on route handlers and drops s-maxage, so the CDN
 // directives go in the headers Vercel reads instead and leaves alone.
-const EDGE_CACHE = "public, s-maxage=120, stale-while-revalidate=900";
+const EDGE_CACHE = "public, s-maxage=45, stale-while-revalidate=120";
 const json = (body: unknown) =>
   NextResponse.json(body, {
     headers: {
