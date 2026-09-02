@@ -10,53 +10,96 @@ because the campaign page has a donor wall.
 
 ## 1. The sheet
 
-Create a Google Sheet. First row is headers, one donation per row after that:
+Use the **existing** offline-donations sheet — the one already feeding the main
+site's bar. Everything goes in one place; no second spreadsheet to keep in step.
 
-| Name | Amount | Notes |
-|------|--------|-------|
-| Berg Capital | 5000 | cheque, received 2 Sep |
-| | 1800 | wire, donor wishes to stay anonymous |
+Add two columns to it if they are not there already: **Campaign** and **Name**.
 
-- **Name** — exactly as it should appear on the wall. Leave it **blank** for an
-  anonymous gift: the money still counts towards the goal, no name is shown.
-- **Amount** — numbers only. No `$`, no commas.
-- **Notes** — for your own records. Ignored by the website.
+| Name | Amount | Campaign | Notes |
+|------|--------|----------|-------|
+| Berg Capital | 5000 | merchant-funding | cheque, received 2 Sep |
+| | 1800 | merchant-funding | wire, donor wishes to stay anonymous |
+| | 360 | | Venmo — ordinary donation |
 
-Only these two columns are read. Extra columns are ignored, so add whatever
-else is useful to you.
+- **Campaign** — put `merchant-funding` on rows for that campaign. Leave it
+  blank for everything else. Case and spacing do not matter.
+- **Name** — exactly as it should appear on the supporter wall. Leave it
+  **blank** for an anonymous gift: the money still counts, no name is shown.
+- **Amount** — `5000` or `$5,000`, either is read correctly.
+- **Notes** — yours. Ignored by the website.
+
+### Which bar does a row reach?
+
+| Row | Main $250k bar | Merchant funding bar & wall |
+|-----|----------------|------------------------------|
+| Campaign blank | yes | no |
+| Campaign = `merchant-funding` | yes | yes |
+
+A merchant funding gift counting on both is deliberate: it is exactly how a card
+donation through the campaign page already behaves. The same dollar shown in
+two places.
 
 ## 2. The script
 
-In the sheet: **Extensions → Apps Script**. Delete what is there, paste this,
-and change `SECRET` to a long random string of your own.
+Your existing script keeps running untouched — it sums every row, so the main
+bar picks up merchant funding gifts by itself.
+
+Add a **second** script for the campaign. In the sheet:
+**Extensions → Apps Script → the + beside "Files" → Script**, and paste this.
+Change `SECRET` to a long random string of your own.
+
+Columns are found by their header text, so the order does not matter and you can
+rearrange the sheet freely.
 
 ```javascript
-// Serves the campaign's offline donations to the website. Read-only.
-const SECRET = 'CHANGE-ME-to-a-long-random-string';
+// Serves the merchant funding campaign's offline donations. Read-only.
+// Lives alongside the existing script; it does not replace it.
+const MF_SECRET = 'CHANGE-ME-to-a-long-random-string';
+const MF_CAMPAIGN = 'merchant-funding';
 
 function doGet(e) {
-  const out = (obj) => ContentService
-    .createTextOutput(JSON.stringify(obj))
-    .setMimeType(ContentService.MimeType.JSON);
+  const out = function (obj) {
+    return ContentService
+      .createTextOutput(JSON.stringify(obj))
+      .setMimeType(ContentService.MimeType.JSON);
+  };
 
   // Without this, the URL alone would expose the donor list to anyone.
-  if (!e || !e.parameter || e.parameter.secret !== SECRET) {
+  if (!e || !e.parameter || e.parameter.secret !== MF_SECRET) {
     return out({ error: 'unauthorized' });
   }
 
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-  const rows = sheet.getDataRange().getValues().slice(1); // drop the header row
+  const values = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0]
+    .getDataRange().getValues();
+  if (values.length < 2) return out({ total: 0, donors: [] });
+
+  // Headers are matched by name, so columns can be in any order.
+  const headers = values[0].map(function (h) {
+    return String(h).trim().toLowerCase();
+  });
+  const col = function (name) { return headers.indexOf(name); };
+  const iName = col('name');
+  const iAmount = col('amount');
+  const iCampaign = col('campaign');
+
+  if (iAmount === -1 || iCampaign === -1) {
+    return out({ error: 'sheet needs Amount and Campaign column headers' });
+  }
 
   let total = 0;
   const donors = [];
 
-  rows.forEach(function (row) {
-    const name = String(row[0] == null ? '' : row[0]).trim();
+  values.slice(1).forEach(function (row) {
+    const campaign = String(row[iCampaign] || '').trim().toLowerCase();
+    if (campaign !== MF_CAMPAIGN) return;
+
     // Tolerates "$5,000" being typed in by hand.
-    const amount = parseFloat(String(row[1]).replace(/[^0-9.\-]/g, ''));
+    const amount = parseFloat(String(row[iAmount]).replace(/[^0-9.\-]/g, ''));
     if (!isFinite(amount) || amount <= 0) return;
 
     total += amount;
+
+    const name = iName === -1 ? '' : String(row[iName] || '').trim();
     if (name) donors.push({ name: name, amount: amount });
   });
 
@@ -66,6 +109,12 @@ function doGet(e) {
   return out({ total: total, donors: donors });
 }
 ```
+
+**Note:** a Google Sheet can only have one `doGet`. If your existing script
+already has one, this new file will clash. In that case give this one a
+different name — say `mfDonations(e)` — and call it from the existing `doGet`
+when `e.parameter.campaign === 'merchant-funding'`. Send me the current script
+and I will merge them properly.
 
 ## 3. Publish it
 
