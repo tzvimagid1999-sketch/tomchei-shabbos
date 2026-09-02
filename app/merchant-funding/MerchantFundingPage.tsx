@@ -545,7 +545,7 @@ export default function MerchantFundingPage() {
             ["Raised & Pledged", shownRaised === null ? (loadFailed ? "Unavailable" : "—") : money(shownRaised)],
             ["Our Impact So Far", raised === null ? "—" : percent(pct)],
           ].map(([label, value]) => (
-            <div key={label} className="rounded-[24px] px-8 py-10" style={{ backgroundColor: "#FFFFFF", border: "2px solid #E5E5E5" }}>
+            <div key={label} className="rounded-[24px] px-8 py-10 text-center" style={{ backgroundColor: "#FFFFFF", border: "2px solid #E5E5E5" }}>
               <p className="text-[clamp(0.8125rem,1.1vw,1rem)] font-bold uppercase tracking-[0.12em]" style={{ opacity: 0.7 }}>{label}</p>
               <p className="mf-display mt-4 text-[clamp(2.75rem,6vw,4.5rem)] tabular-nums" style={{ color: "#C8A75B" }}>{value}</p>
             </div>

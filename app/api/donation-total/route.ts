@@ -92,7 +92,13 @@ export async function GET(req: NextRequest) {
     // reaches USAePay directly.
     if (!debug && cardCache && Date.now() - cardCache.at < CARD_CACHE_MS) {
       const cachedOther = await fetchOtherDonationsTotal();
-      return json({ total: Math.round(cardCache.value + cachedOther.total) });
+      // The campaign sheet belongs in every path that returns a total, not just
+      // the uncached one — otherwise the bar changes value depending on whether
+      // the cache happens to be warm.
+      const cachedCampaign = await fetchOfflineDonations();
+      return json({
+        total: Math.round(cardCache.value + cachedOther.total + cachedCampaign.mainBarTotal),
+      });
     }
 
     // Paged back to the campaign's first day rather than taking a flat 500.
@@ -153,7 +159,11 @@ export async function GET(req: NextRequest) {
     if (!complete && cardCache) {
       console.error("Donation total: page limit hit before reaching campaign start");
       const cachedOther = await fetchOtherDonationsTotal();
-      return json({ total: Math.round(cardCache.value + cachedOther.total), stale: true });
+      const cachedCampaign = await fetchOfflineDonations();
+      return json({
+        total: Math.round(cardCache.value + cachedOther.total + cachedCampaign.mainBarTotal),
+        stale: true,
+      });
     }
 
     cardCache = { value: total, at: Date.now() };
@@ -167,7 +177,7 @@ export async function GET(req: NextRequest) {
     const campaignOffline = await fetchOfflineDonations();
     if (campaignOffline.error) console.error("Campaign offline sheet:", campaignOffline.error);
 
-    const combined = total + other.total + campaignOffline.total;
+    const combined = total + other.total + campaignOffline.mainBarTotal;
 
     if (debug) {
       return json({
@@ -175,7 +185,8 @@ export async function GET(req: NextRequest) {
         debug: {
           cardTotal: Math.round(total),
           otherPlatformsTotal: Math.round(other.total),
-          campaignOfflineTotal: Math.round(campaignOffline.total),
+          campaignOfflineTotal: Math.round(campaignOffline.mainBarTotal),
+          campaignOfflineGross: Math.round(campaignOffline.total),
           campaignOfflineError: campaignOffline.error ?? null,
           otherPlatformsError: other.error ?? null,
           otherPlatformsConfigured: Boolean(process.env.OTHER_DONATIONS_URL),

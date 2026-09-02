@@ -12,9 +12,28 @@
 // campaign page's figures.
 
 export type OfflineDonor = { name: string; amount: number };
-export type OfflineResult = { total: number; donors: OfflineDonor[]; error?: string };
+export type OfflineResult = {
+  total: number;
+  /** The part of `total` the main site's bar may add. See below. */
+  mainBarTotal: number;
+  donors: OfflineDonor[];
+  error?: string;
+};
 
-const EMPTY: OfflineResult = { total: 0, donors: [] };
+// Gifts in this sheet that the main site's bar ALREADY counts by another route,
+// and which would therefore be added twice if the sheet's total went in whole.
+//
+// Black Tie Funding's $5,000 came in through ADM, the telemarketer. The main
+// bar matches ADM donations by their source, so that $5,000 is already on it;
+// the sheet row exists so the gift reaches the CAMPAIGN bar and the supporter
+// wall, which ADM donations otherwise never touch.
+//
+// Matched on the name exactly as it appears on the wall, case-insensitively.
+// Keep this list short: a name here is silently worth nothing to the main bar,
+// which is the sort of thing that is easy to forget and hard to spot later.
+const ALREADY_ON_MAIN_BAR = ["black tie funding"];
+
+const EMPTY: OfflineResult = { total: 0, mainBarTotal: 0, donors: [] };
 
 let cache: { value: OfflineResult; at: number } | null = null;
 const CACHE_MS = 60_000;
@@ -63,7 +82,17 @@ export async function fetchOfflineDonations(): Promise<OfflineResult> {
           .filter((d) => d.name)
       : [];
 
-    const value: OfflineResult = { total, donors };
+    // Subtracted rather than filtered out of `total`, so the campaign bar and
+    // the wall still show the gift in full — only the main bar's share shrinks.
+    const alreadyCounted = donors
+      .filter((d) => ALREADY_ON_MAIN_BAR.includes(d.name.toLowerCase()))
+      .reduce((sum, d) => sum + d.amount, 0);
+
+    const value: OfflineResult = {
+      total,
+      mainBarTotal: Math.max(0, total - alreadyCounted),
+      donors,
+    };
     cache = { value, at: Date.now() };
     return value;
   } catch (err) {
