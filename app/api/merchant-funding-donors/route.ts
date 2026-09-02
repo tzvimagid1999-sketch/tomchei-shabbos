@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
 import { parseWallName, pledgeMultiplier } from "../../lib/donor-wall";
+import { fetchTransactionsSince, txnDate } from "../../lib/usaepay-transactions";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +15,7 @@ export const dynamic = "force-dynamic";
 // covered by the same opt-in: no tag, no name and no figure.
 const TAG = "[team:merchant-funding]";
 const MAX = 30;
+const CAMPAIGN_START = "2026-07-24";
 
 type Donor = { name: string; amount: number };
 
@@ -33,27 +34,15 @@ export async function GET() {
     const endpoint = process.env.USAEPAY_ENDPOINT || "https://usaepay.com/api/v2";
     if (!sourceKey || !pin) return json({ donors: [] });
 
-    const seed = crypto.randomBytes(16).toString("hex");
-    const hash = crypto.createHash("sha256").update(sourceKey + seed + pin).digest("hex");
-    const authHeader = "Basic " + Buffer.from(`${sourceKey}:s2/${seed}/${hash}`).toString("base64");
-
-    const res = await fetch(`${endpoint}/transactions?limit=500&type=sale`, {
-      headers: { Authorization: authHeader, "Content-Type": "application/json" },
-    });
-    const data = await res.json();
-    const txns = (data.transactions || data.data || []) as Array<{
-      result?: string;
-      result_code?: string;
-      trantype?: string;
-      description?: string;
-      amount?: string | number;
-    }>;
+    const { txns } = await fetchTransactionsSince(endpoint, sourceKey, pin, CAMPAIGN_START);
 
     const donors: Donor[] = [];
     const seen = new Set<string>();
-    // USAePay returns oldest-first, so walk backwards for newest-first.
-    for (let i = txns.length - 1; i >= 0 && donors.length < MAX; i--) {
+    // USAePay returns newest first, so walking forwards gives newest first —
+    // which is what the wall should show once there are more than MAX names.
+    for (let i = 0; i < txns.length && donors.length < MAX; i++) {
       const t = txns[i];
+      if (txnDate(t) < CAMPAIGN_START) continue;
       const approved = t.result_code === "A" || t.result === "Approved";
       const trantype = (t.trantype || "").toLowerCase();
       if (!approved || trantype.includes("void") || trantype.includes("refund")) continue;

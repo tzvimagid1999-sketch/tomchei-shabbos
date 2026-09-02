@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
 import { pledgeMultiplier } from "../../lib/donor-wall";
+import { fetchTransactionsSince, txnDate } from "../../lib/usaepay-transactions";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +15,10 @@ export const dynamic = "force-dynamic";
 // optimisation: polling USAePay once per visitor per few seconds got this site's
 // IP throttled mid-campaign and took live donations down for an hour.
 const TAG = "[team:merchant-funding]";
+
+// No campaign donation predates this. It bounds the paged fetch, and stops a
+// straddling final page from ever reaching a previous year's campaign.
+const CAMPAIGN_START = "2026-07-24";
 
 let cache: { value: number; at: number } | null = null;
 const CACHE_MS = 60_000;
@@ -31,31 +35,27 @@ export async function GET() {
     const endpoint = process.env.USAEPAY_ENDPOINT || "https://usaepay.com/api/v2";
     if (!sourceKey || !pin) return json({ total: 0 });
 
-    const seed = crypto.randomBytes(16).toString("hex");
-    const hash = crypto.createHash("sha256").update(sourceKey + seed + pin).digest("hex");
-    const authHeader = "Basic " + Buffer.from(`${sourceKey}:s2/${seed}/${hash}`).toString("base64");
-
-    const res = await fetch(`${endpoint}/transactions?limit=500&type=sale`, {
-      headers: { Authorization: authHeader, "Content-Type": "application/json" },
-    });
-    const data = await res.json();
-    const txns = (data.transactions || data.data || []) as Array<{
-      result?: string;
-      result_code?: string;
-      trantype?: string;
-      amount?: string | number;
-      description?: string;
-    }>;
+    const { txns, complete } = await fetchTransactionsSince(endpoint, sourceKey, pin, CAMPAIGN_START);
 
     const total = txns.reduce((sum, t) => {
       const approved = t.result_code === "A" || t.result === "Approved";
       const trantype = (t.trantype || "").toLowerCase();
       if (!approved || trantype.includes("void") || trantype.includes("refund")) return sum;
       if (!(t.description || "").toLowerCase().includes(TAG)) return sum;
+      // The final page straddles the cutoff and can carry older transactions.
+      if (txnDate(t) < CAMPAIGN_START) return sum;
       // A fixed-term pledge counts its whole commitment on its first charge;
       // the scheduled charges that follow it count 0, so nothing is doubled.
       return sum + (parseFloat(String(t.amount)) || 0) * pledgeMultiplier(t.description);
     }, 0);
+
+    // An incomplete crawl is missing the oldest donations, so it would under-
+    // report. Keep serving the last good figure rather than publishing a total
+    // that has quietly lost money.
+    if (!complete) {
+      console.error("Merchant funding total: page limit hit before reaching campaign start");
+      if (cache) return json({ total: cache.value, stale: true });
+    }
 
     cache = { value: Math.round(total), at: Date.now() };
     return json({ total: cache.value });

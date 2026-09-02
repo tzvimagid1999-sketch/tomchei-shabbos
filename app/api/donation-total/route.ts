@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { fetchTransactionsSince, txnDate } from "../../lib/usaepay-transactions";
+
+// How far back to read. It matches the campaign's first day: reading further
+// would start pulling in a PREVIOUS year's campaign, whose descriptions carry
+// the same "Rosh Hashanah Campaign" wording this total matches on.
+const FETCH_SINCE = "2026-07-24";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -88,35 +94,16 @@ export async function GET(req: NextRequest) {
       return json({ total: Math.round(cardCache.value + cachedOther.total) });
     }
 
-    const seed = crypto.randomBytes(16).toString("hex");
-    const hash = crypto.createHash("sha256").update(sourceKey + seed + pin).digest("hex");
-    const authHeader =
-      "Basic " + Buffer.from(`${sourceKey}:s2/${seed}/${hash}`).toString("base64");
-
-    // Fetch all transactions for one-time + recurring donations
-    const res = await fetch(`${endpoint}/transactions?limit=500&type=sale`, {
-      headers: { Authorization: authHeader },
-      cache: "no-store",
-    });
-
-    if (!res.ok) {
-      const rawText = await res.text();
-      if (debug) {
-        return json({ total: 0, debug: { httpStatus: res.status, raw: rawText.slice(0, 1500) } });
-      }
-      return json({ total: 0 });
-    }
-
-    const data = await res.json();
-    const transactions = (data.transactions || data.data || []) as Array<{
-      result_code?: string;
-      result?: string;
-      amount?: string | number;
-      trantype?: string;
-      description?: string;
-      source_name?: string;
-      created?: string;
-    }>;
+    // Paged back to the campaign's first day rather than taking a flat 500.
+    // USAePay returns newest first and caps a page at 500, which on this
+    // account is only about a month of activity — the campaign's earliest
+    // donations were about to start dropping out of this total.
+    const { txns: transactions, complete } = await fetchTransactionsSince(
+      endpoint,
+      sourceKey,
+      pin,
+      FETCH_SINCE
+    );
 
     // Only count donations explicitly tagged as Rosh Hashanah Campaign — otherwise
     // this sums the merchant account's entire donation history (mail, phone, the
@@ -141,14 +128,32 @@ export async function GET(req: NextRequest) {
         const reversed = trantype.includes("void") || trantype.includes("refund");
         if (!approved || reversed) return false;
 
+        // The paged fetch stops just past the campaign's first day, so its last
+        // page straddles the cutoff. Without a date guard a donation from a
+        // PREVIOUS year's Rosh Hashanah campaign — same description wording —
+        // would be counted into this year's total.
+        //
+        // Only a date we can actually read may exclude a donation. USAePay is
+        // not consistent about which field carries it, and treating a missing
+        // date as "too old" silently dropped $8,835 from this total.
+        const when = txnDate(t);
+        if (when && when < CAMPAIGN_START) return false;
+
         const tagged = (t.description || "").toLowerCase().includes("rosh hashanah campaign");
         if (tagged) return true;
 
         const source = (t.source_name || "").trim().toLowerCase();
-        const when = String(t.created || "").slice(0, 10);
         return source === ADM_SOURCE && when >= CAMPAIGN_START;
       })
       .reduce((sum, t) => sum + (parseFloat(String(t.amount)) || 0), 0);
+
+    // A crawl that stopped early is missing the oldest donations, so publishing
+    // it would show the bar going backwards. Serve the last good figure instead.
+    if (!complete && cardCache) {
+      console.error("Donation total: page limit hit before reaching campaign start");
+      const cachedOther = await fetchOtherDonationsTotal();
+      return json({ total: Math.round(cardCache.value + cachedOther.total), stale: true });
+    }
 
     cardCache = { value: total, at: Date.now() };
 
@@ -164,8 +169,8 @@ export async function GET(req: NextRequest) {
           otherPlatformsError: other.error ?? null,
           otherPlatformsConfigured: Boolean(process.env.OTHER_DONATIONS_URL),
           transactionCount: transactions.length,
+          pagedToCampaignStart: complete,
           sample: transactions.slice(0, 10),
-          rawKeys: Object.keys(data),
         },
       });
     }

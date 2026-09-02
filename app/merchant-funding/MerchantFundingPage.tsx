@@ -118,6 +118,10 @@ export default function MerchantFundingPage() {
   // Defaults to scrolling: if the strip can never be measured, a duplicated
   // name is a cosmetic annoyance, while a clipped list hides donors entirely.
   const [scrollNames, setScrollNames] = useState(true);
+  // Seconds for one copy to cross. Held at a constant pixels-per-second so the
+  // names move at the same speed on a phone as on a desktop — a fixed duration
+  // made a narrow screen crawl, because the same time covered far less distance.
+  const [namesSeconds, setNamesSeconds] = useState(20);
 
   // Polls once a minute — no faster. Polling harder than this once got the
   // site's IP throttled by USAePay and took live donations down for an hour.
@@ -181,7 +185,12 @@ export default function MerchantFundingPage() {
       // names off the edge with no way to see them.
       if (!strip || !oneCopy) return;
       // A few pixels of slack, so a list that only just fits does not scroll.
-      setScrollNames(oneCopy > strip + 8);
+      const overflows = oneCopy > strip + 8;
+      setScrollNames(overflows);
+      // The track always travels exactly one copy's width per cycle; when the
+      // list is short each copy is padded out to the width of the strip.
+      const travel = overflows ? oneCopy : strip;
+      setNamesSeconds(Math.max(8, Math.round(travel / 70)));
     };
     measure();
     // Web fonts land after first paint and change every name's width, so the
@@ -501,10 +510,10 @@ export default function MerchantFundingPage() {
           </p>
         )}
         {donors.length > 0 && (
-          <div ref={marqueeRef} className="mf-marquee -mx-5 mb-4 overflow-hidden py-4 sm:-mx-8">
+          <div ref={marqueeRef} className="mf-marquee -mx-5 mb-6 mt-10 overflow-hidden py-4 sm:-mx-8 sm:mt-12">
             <div
               className={`mf-marquee-track${scrollNames ? "" : " mf-marquee-pad"}`}
-              style={{ animationDuration: `${scrollNames ? Math.max(18, donors.length * 7) : 26}s` }}
+              style={{ animationDuration: `${namesSeconds}s` }}
             >
               {/* Two copies are what make the loop seamless: the track scrolls
                   exactly one copy's width and lands back where it started.
