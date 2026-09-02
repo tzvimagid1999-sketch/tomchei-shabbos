@@ -12,7 +12,7 @@ const money = (n: number) => `$${Math.round(n).toLocaleString()}`;
 export default async function ThankYouPage({
   searchParams,
 }: {
-  searchParams: Promise<{ name?: string; amount?: string; monthly?: string }>;
+  searchParams: Promise<{ name?: string; amount?: string; monthly?: string; months?: string }>;
 }) {
   const sp = await searchParams;
 
@@ -24,6 +24,12 @@ export default async function ThankYouPage({
   const parsed = Number(sp.amount);
   const amount = Number.isFinite(parsed) && parsed > 0 && parsed < 1_000_000 ? parsed : null;
   const monthly = sp.monthly === "1";
+
+  // A fixed-term pledge and an open-ended one are different promises, so the
+  // page must not tell a 6-month donor their gift repeats until they cancel.
+  const parsedMonths = Number(sp.months);
+  const months =
+    Number.isInteger(parsedMonths) && parsedMonths > 1 && parsedMonths <= 60 ? parsedMonths : null;
 
   return (
     <div
@@ -73,7 +79,14 @@ export default async function ThankYouPage({
                 Your {monthly ? "monthly gift" : "gift"} of{" "}
                 <strong style={{ opacity: 1 }}>{money(amount)}</strong>
                 {monthly && " a month"} went through
-                {monthly && ", and will repeat automatically until you tell us to stop"}.
+                {monthly && months
+                  ? `, and will repeat each month for ${months} months — ${money(
+                      amount * months
+                    )} in total — then stop automatically`
+                  : monthly
+                  ? ", and will repeat automatically until you tell us to stop"
+                  : ""}
+                .
               </>
             ) : (
               <>Your gift went through.</>

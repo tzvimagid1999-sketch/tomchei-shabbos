@@ -116,3 +116,56 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
       url("/rosh-hashanah-campaign-hero.jpeg");
   }
 }
+
+
+/* The hero opens as one sequence: each line rises in turn, and the gold rule
+   grows out from the centre when its turn comes. The rule wipes rather than
+   rises so the two effects read as one movement, not two competing ones.
+
+   Everything animates from a hidden state to the page's real resting state, so
+   if the animation cannot run — old browser, reduced motion, CSS half-loaded —
+   the hero simply reads as it always does. Nothing here can leave the headline
+   blank. */
+@keyframes mf-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes mf-wipe { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.mf .mf-h1,
+.mf .mf-h2,
+.mf .mf-h3,
+.mf .mf-h5,
+.mf .mf-h6 { animation: mf-rise .62s cubic-bezier(.22,.61,.36,1) backwards; }
+
+.mf .mf-h1 { animation-delay: .05s; }
+.mf .mf-h2 { animation-delay: .17s; }
+.mf .mf-h3 { animation-delay: .29s; }
+.mf .mf-h5 { animation-delay: .55s; }
+.mf .mf-h6 { animation-delay: .67s; }
+
+/* The rule is wider and thicker than a hairline on purpose: at its old
+   112x2px there was not enough of it moving for the wipe to register. */
+.mf .mf-h4 {
+  width: min(22rem, 70vw);
+  height: 4px;
+  transform-origin: center;
+  animation: mf-wipe 1.1s .43s cubic-bezier(.22,.61,.36,1) backwards;
+}
+
+/* The campaign bar as a gold ribbon: a warm band with a slow sheen travelling
+   along it, rather than a flat fill. */
+@keyframes mf-sheen { from { background-position: 0% 0; } to { background-position: 200% 0; } }
+.mf .mf-ribbon {
+  background-image: linear-gradient(100deg, #A08243 0%, #C8A75B 28%, #F0DCA8 44%, #C8A75B 60%, #A08243 100%);
+  background-size: 200% 100%;
+  animation: mf-sheen 6s linear infinite;
+  transition: width 1.4s cubic-bezier(.22,.61,.36,1);
+  box-shadow: 0 1px 6px rgba(160, 130, 67, .45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mf .mf-h1, .mf .mf-h2, .mf .mf-h3, .mf .mf-h4, .mf .mf-h5, .mf .mf-h6 {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+  .mf .mf-ribbon { animation: none; transition: none; }
+}

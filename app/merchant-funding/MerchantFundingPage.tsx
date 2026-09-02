@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Script from "next/script";
+import CampaignBar from "./CampaignBar";
+
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -15,6 +17,10 @@ import Script from "next/script";
 // page total its own donations while they still count on the main $250k bar.
 const SUB_CAMPAIGN = "team:merchant-funding";
 const GOAL = 50000;
+
+// Same set as the main donate page, so a pledge means the same thing wherever
+// it is made. The recurring route already accepts numPayments.
+const SPLIT_MONTH_OPTIONS = [3, 6, 12, 18, 24, 36];
 
 type Donor = { name: string; amount: number };
 
@@ -44,7 +50,13 @@ const money = (n: number) => `$${Math.round(n).toLocaleString()}`;
 const percent = (pct: number) => `${Math.round(pct)}%`;
 
 // Counts up once the figure scrolls into view; skipped under reduced motion.
-function useCountUp(target: number | null, run: boolean) {
+//
+// The failsafe matters: animation frames stop in a backgrounded tab, so without
+// it a count that starts while the tab is hidden can sit on its opening value
+// indefinitely. On the hero that meant the page could read "0+ Florida families
+// served every week", which is worse than no animation at all. If the run has
+// not finished by the time it should have, the real figure is written in.
+function useCountUp(target: number | null, run: boolean, duration = 900, delay = 0) {
   const [n, setN] = useState(0);
   useEffect(() => {
     if (target === null || !run) return;
@@ -52,16 +64,24 @@ function useCountUp(target: number | null, run: boolean) {
       setN(target);
       return;
     }
-    const start = performance.now();
     let raf = 0;
-    const tick = (t: number) => {
-      const p = Math.min(1, (t - start) / 900);
-      setN(Math.round(target * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) raf = requestAnimationFrame(tick);
+    let started = 0;
+    const begin = window.setTimeout(() => {
+      started = performance.now();
+      const tick = (t: number) => {
+        const p = Math.min(1, (t - started) / duration);
+        setN(Math.round(target * (1 - Math.pow(1 - p, 3))));
+        if (p < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    }, delay);
+    const failsafe = window.setTimeout(() => setN(target), delay + duration + 1200);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(begin);
+      clearTimeout(failsafe);
     };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, run]);
+  }, [target, run, duration, delay]);
   return target === null ? null : n;
 }
 
@@ -79,6 +99,8 @@ export default function MerchantFundingPage() {
   // first let its response land after the demo list and wipe it.
   const [demo, setDemo] = useState<boolean | null>(null);
   const [monthly, setMonthly] = useState(false);
+  // null = ongoing until cancelled, matching the main donate page.
+  const [splitMonths, setSplitMonths] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -115,8 +137,10 @@ export default function MerchantFundingPage() {
   );
 
   useEffect(() => {
-    setDemo(new URLSearchParams(window.location.search).get("demo") === "1");
+    const sp = new URLSearchParams(window.location.search);
+    setDemo(sp.get("demo") === "1");
   }, []);
+
 
   useEffect(() => {
     refresh();
@@ -251,6 +275,7 @@ export default function MerchantFundingPage() {
           campaign: "rosh-hashanah",
           subCampaign: SUB_CAMPAIGN,
           ...(monthly ? { name: `${firstName} ${lastName}` } : { firstName, lastName }),
+          ...(monthly && splitMonths ? { numPayments: splitMonths } : {}),
           // Both routes put the dedication in the USAePay description and the
           // receipt; an "in honor of" email address also sends the honouree a note.
           ...(honoreeType && honoreeName ? { honoreeType, honoreeName } : {}),
@@ -268,6 +293,7 @@ export default function MerchantFundingPage() {
       // page they end on is a stable URL the organisation can point at.
       const q = new URLSearchParams({ name: firstName, amount: chosenAmount });
       if (monthly) q.set("monthly", "1");
+      if (monthly && splitMonths) q.set("months", String(splitMonths));
       window.location.assign(`/merchant-funding/thank-you?${q.toString()}`);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
@@ -367,7 +393,7 @@ export default function MerchantFundingPage() {
                 not to a mailing list. Kept small and above the statement so it
                 reads as context rather than as a claim competing with it. */}
             <p
-              className="mb-5 max-w-[54rem] text-[clamp(0.75rem,1.2vw,0.9375rem)] font-bold uppercase tracking-[0.18em]"
+              className="mf-h1 mb-5 max-w-[54rem] text-[clamp(0.75rem,1.2vw,0.9375rem)] font-bold uppercase tracking-[0.18em]"
               style={{ color: goldAccent, textWrap: "balance" }}
             >
               An Exclusive Campaign for Merchant Funding Industry Leaders
@@ -382,13 +408,14 @@ export default function MerchantFundingPage() {
                 letterSpacing: "0.01em",
               }}
             >
-              YOM TOV<br />DELIVERED
+              <span className="mf-h2 block">YOM TOV</span>
+              <span className="mf-h3 block">DELIVERED</span>
             </h1>
 
-            <span className="my-9 block h-0.5 w-28" style={{ backgroundColor: goldAccent }} />
+            <span className="mf-h4 my-9 block h-0.5 w-28" style={{ backgroundColor: goldAccent }} />
 
             <p
-              className="text-[clamp(1rem,2.4vw,1.75rem)] font-bold uppercase tracking-[0.16em]"
+              className="mf-h5 text-[clamp(1rem,2.4vw,1.75rem)] font-bold uppercase tracking-[0.16em]"
               style={{ color: "#2D2D2D" }}
             >
               Powered by <span style={{ color: goldAccent }}>merchant funding</span>
@@ -396,8 +423,11 @@ export default function MerchantFundingPage() {
 
             {/* Bold and at least 20px, so it counts as large text against the
                 washed artwork behind it. */}
-            <p className="mt-7 text-[clamp(1.25rem,2.2vw,1.875rem)] font-bold" style={{ color: "#2D2D2D" }}>
-              <strong style={{ color: goldAccent, fontWeight: 700 }}>350+</strong> Florida families served every week.
+            <p className="mf-h6 mt-7 text-[clamp(1.25rem,2.2vw,1.875rem)] font-bold" style={{ color: "#2D2D2D" }}>
+              <strong className="tabular-nums" style={{ color: goldAccent, fontWeight: 700 }}>
+                350+
+              </strong>{" "}
+              Florida families served every week.
             </p>
           </div>
 
@@ -471,18 +501,9 @@ export default function MerchantFundingPage() {
           ))}
         </div>
 
-        {/* Fill capped at 100% so the bar can never overrun. */}
-        <div className="mf-reveal mt-10 overflow-hidden rounded-[100px]" style={{ backgroundColor: "#E5E5E5" }}>
-          <div
-            className="h-7 rounded-[100px]"
-            style={{ width: inView ? `${pct}%` : "0%", backgroundImage: "linear-gradient(to right, #1AABAB, #3DC4C4)", transition: "width 1.1s cubic-bezier(.22,.61,.36,1)" }}
-            role="progressbar"
-            aria-valuenow={Math.round(pct)}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label={`${Math.round(pct)} percent of the ${money(GOAL)} goal raised`}
-          />
-        </div>
+
+
+        <CampaignBar pct={pct} goal={GOAL} raised={raised} run={inView} />
 
       </section>
 
@@ -492,7 +513,9 @@ export default function MerchantFundingPage() {
 
           <div className="mt-9 flex gap-3">
             {[
-              { label: "One-time", on: !monthly, set: () => setMonthly(false) },
+              // Clearing the term on the way out keeps a stale pledge length
+              // from riding along if the donor switches back to monthly later.
+              { label: "One-time", on: !monthly, set: () => { setMonthly(false); setSplitMonths(null); } },
               { label: "Monthly", on: monthly, set: () => setMonthly(true) },
             ].map((o) => (
               <button key={o.label} type="button" onClick={o.set} aria-pressed={o.on}
@@ -503,7 +526,28 @@ export default function MerchantFundingPage() {
             ))}
           </div>
           {monthly && (
-            <p className="mt-3 text-[14px]" style={{ opacity: 0.65 }}>Charged monthly until you cancel.</p>
+            <>
+              <p className="mt-3 text-[14px]" style={{ opacity: 0.65 }}>
+                {splitMonths
+                  ? `Charged every month for ${splitMonths} months, then it stops automatically — ${money(
+                      (parseFloat(amount) || 0) * splitMonths
+                    )} in total.`
+                  : "Charged monthly until you cancel."}
+              </p>
+
+              <Legend>Split Over</Legend>
+              <select
+                value={splitMonths ?? ""}
+                onChange={(e) => setSplitMonths(e.target.value ? Number(e.target.value) : null)}
+                className="h-14 w-full rounded-[16px] px-5 text-[16px] focus:outline-none"
+                style={{ backgroundColor: "#FFFFFF", border: "1px solid rgba(45,45,45,0.12)", color: "#2D2D2D" }}
+              >
+                <option value="">Ongoing (until cancelled)</option>
+                {SPLIT_MONTH_OPTIONS.map((m) => (
+                  <option key={m} value={m}>{m} months</option>
+                ))}
+              </select>
+            </>
           )}
 
           <Legend>Amount</Legend>
@@ -605,6 +649,7 @@ export default function MerchantFundingPage() {
           </a>
         </div>
       </footer>
+
     </div>
   );
 }
