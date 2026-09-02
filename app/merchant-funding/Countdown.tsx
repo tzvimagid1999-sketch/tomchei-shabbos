@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 // Started Wednesday 2 September 2026 at 5:06pm Eastern, running 36 hours.
 export const CAMPAIGN_ENDS_AT = "2026-09-04T05:06:00-04:00";
 
-const GOLD = "#A08243";
+const INK = "#2D2D2D";
 
 type Left = { hours: number; minutes: number; seconds: number; done: boolean };
 
@@ -54,7 +54,7 @@ export default function Countdown() {
     return (
       <p
         className="mt-9 text-[clamp(1rem,2vw,1.375rem)] font-bold uppercase tracking-[0.14em]"
-        style={{ color: GOLD }}
+        style={{ color: INK }}
       >
         This campaign has closed — donations are still welcome
       </p>
@@ -87,7 +87,7 @@ export default function Countdown() {
             <div className="text-center">
               <div
                 className="mf-display tabular-nums text-[clamp(2.5rem,7vw,4.5rem)] leading-none"
-                style={{ color: GOLD }}
+                style={{ color: INK }}
               >
                 {pad(value)}
               </div>
@@ -101,7 +101,7 @@ export default function Countdown() {
             {i < cells.length - 1 && (
               <span
                 className="mf-display leading-none text-[clamp(2.5rem,7vw,4.5rem)]"
-                style={{ color: GOLD, opacity: 0.35 }}
+                style={{ color: INK, opacity: 0.3 }}
               >
                 :
               </span>
