@@ -111,6 +111,14 @@ export default function MerchantFundingPage() {
   const statsRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
 
+  // The ticker only scrolls when one copy of the list is wider than the strip.
+  // A short list is centred and left still, so nobody sees their name twice.
+  const marqueeRef = useRef<HTMLDivElement>(null);
+  const namesGroupRef = useRef<HTMLDivElement>(null);
+  // Defaults to scrolling: if the strip can never be measured, a duplicated
+  // name is a cosmetic annoyance, while a clipped list hides donors entirely.
+  const [scrollNames, setScrollNames] = useState(true);
+
   // Polls once a minute — no faster. Polling harder than this once got the
   // site's IP throttled by USAePay and took live donations down for an hour.
   const refreshDonors = useCallback(
@@ -160,6 +168,28 @@ export default function MerchantFundingPage() {
     const id = setInterval(refreshDonors, 60_000);
     return () => clearInterval(id);
   }, [demo, refreshDonors]);
+
+  // Re-measured whenever the list changes or the window resizes, so the ticker
+  // starts scrolling as soon as enough names arrive to need it.
+  useEffect(() => {
+    const measure = () => {
+      const strip = marqueeRef.current?.clientWidth ?? 0;
+      const oneCopy = namesGroupRef.current?.scrollWidth ?? 0;
+      // A zero-width reading means the strip has not been laid out yet. Leaving
+      // the decision alone beats acting on it: scrolling a list that fits only
+      // shows a name twice, but not scrolling one that overflows would clip
+      // names off the edge with no way to see them.
+      if (!strip || !oneCopy) return;
+      // A few pixels of slack, so a list that only just fits does not scroll.
+      setScrollNames(oneCopy > strip + 8);
+    };
+    measure();
+    // Web fonts land after first paint and change every name's width, so the
+    // first measurement can be wrong by enough to flip the decision.
+    document.fonts?.ready.then(measure).catch(() => {});
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [donors]);
 
   // Always open at the top. Browsers restore the previous scroll position on a
   // revisit, which on a phone dropped returning visitors straight into the
@@ -471,13 +501,20 @@ export default function MerchantFundingPage() {
           </p>
         )}
         {donors.length > 0 && (
-          <div className="mf-marquee -mx-5 mb-4 overflow-hidden py-3.5 sm:-mx-8">
-            <div className="mf-marquee-track" style={{ animationDuration: `${Math.max(18, donors.length * 7)}s` }}>
-              {[0, 1].map((copy) => (
-                <div key={copy} className="mf-marquee-group" aria-hidden={copy === 1}>
+          <div ref={marqueeRef} className="mf-marquee -mx-5 mb-4 overflow-hidden py-4 sm:-mx-8">
+            <div
+              className={`mf-marquee-track${scrollNames ? "" : " mf-marquee-still"}`}
+              style={scrollNames ? { animationDuration: `${Math.max(18, donors.length * 7)}s` } : undefined}
+            >
+              {/* The second copy is what makes the loop seamless: the track
+                  scrolls exactly one copy's width and lands back where it
+                  started. It is only rendered when a single copy is wider than
+                  the screen — otherwise both copies sit in view at once and a
+                  donor sees their own name twice. */}
+              {(scrollNames ? [0, 1] : [0]).map((copy) => (
+                <div key={copy} ref={copy === 0 ? namesGroupRef : undefined} className="mf-marquee-group" aria-hidden={copy === 1}>
                   {donors.map((d, i) => (
                     <span key={`${copy}-${i}`} className="mf-marquee-item text-[clamp(1rem,1.4vw,1.25rem)] leading-[1.4]">
-                      <span className="mf-marquee-dot" style={{ backgroundColor: "#1AABAB" }} />
                       <strong style={{ color: "#8B6F3A" }}>{d.name}</strong>
                       {d.amount > 0 && <span style={{ opacity: 0.65 }}>{" · "}{money(d.amount)}</span>}
                     </span>

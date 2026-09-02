@@ -70,11 +70,30 @@ h1, h2, h3 { font-family: var(--font-playfair), Georgia, serif; }
    The track holds two identical copies of the list and scrolls exactly one
    copy's width, so the loop is seamless. Duration is set per-render from the
    donor count, keeping speed constant as names are added. */
-.mf .mf-marquee { position: relative; }
+/* The strip sits between a gold rule above and below, running the full width
+   of the screen. No side borders: the names still run off both edges. */
+.mf .mf-marquee {
+  position: relative;
+  border-top: 2px solid #C8A75B;
+  border-bottom: 2px solid #C8A75B;
+}
 .mf .mf-marquee-track { display: flex; width: max-content; animation: mf-marquee-scroll linear infinite; }
 .mf .mf-marquee-group { display: flex; }
-.mf .mf-marquee-item { display: inline-flex; align-items: center; gap: .6rem; padding: 0 1.6rem; white-space: nowrap; }
-.mf .mf-marquee-dot { width: .5rem; height: .5rem; border-radius: 9999px; flex: none; }
+
+/* Each name is separated from the next by a thin gold bar. The divider is drawn
+   on the left of every item, so the run reads as one continuous list. */
+.mf .mf-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 1.6rem;
+  white-space: nowrap;
+  border-left: 1px solid rgba(200, 167, 91, .55);
+}
+
+/* A short list does not scroll, so it is centred and its leading divider — which
+   would otherwise hang at the start of the row — is dropped. */
+.mf .mf-marquee-track.mf-marquee-still { animation: none; width: 100%; justify-content: center; }
+.mf .mf-marquee-track.mf-marquee-still .mf-marquee-item:first-child { border-left: 0; }
 @keyframes mf-marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* Let people stop it to read a name. */
