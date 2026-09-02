@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import { pledgeMultiplier } from "../../lib/donor-wall";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +52,9 @@ export async function GET() {
       const trantype = (t.trantype || "").toLowerCase();
       if (!approved || trantype.includes("void") || trantype.includes("refund")) return sum;
       if (!(t.description || "").toLowerCase().includes(TAG)) return sum;
-      return sum + (parseFloat(String(t.amount)) || 0);
+      // A fixed-term pledge counts its whole commitment on its first charge;
+      // the scheduled charges that follow it count 0, so nothing is doubled.
+      return sum + (parseFloat(String(t.amount)) || 0) * pledgeMultiplier(t.description);
     }, 0);
 
     cache = { value: Math.round(total), at: Date.now() };

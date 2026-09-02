@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { sendMonthlyConfirmation } from "../../../lib/donation-email";
 import { sendHonoreeNotification } from "../../../lib/mailer";
-import { wallTag } from "../../../lib/donor-wall";
+import { wallTag, pledgeTag, PLEDGED_TAG } from "../../../lib/donor-wall";
 
 // Sets up a MONTHLY recurring donation. Per USAePay support, this is a 3-step
 // flow (NOT a single "create customer with embedded payment method" call):
@@ -118,7 +118,10 @@ export async function POST(req: NextRequest) {
         customerid: `${firstName} ${lastName}`.trim() || undefined,
         // Donor name leads the description so it appears in MerchPay's Sales by
         // Date report, which shows Description but not the billing name.
-        description: `${firstName} ${lastName} - ` + campaignTag + (totalPayments
+        // A fixed-term pledge counts its whole commitment on the campaign bar
+        // from today, so the first charge carries [pledge:N] and the schedule
+        // below is marked so its charges are not counted a second time.
+        description: `${firstName} ${lastName} - ` + campaignTag + pledgeTag(totalPayments) + (totalPayments
           ? `Pledge payment 1 of ${totalPayments} to Tomchei Shabbos of Florida`
           : "Monthly donation to Tomchei Shabbos of Florida (first payment)") + dedication,
         billing_address: billing,
@@ -163,8 +166,11 @@ export async function POST(req: NextRequest) {
             enabled: true,
             // Name leads here too, so every future auto-charge from this
             // schedule carries the donor's name into the reports as well.
+            // Only a fixed-term pledge is marked [pledged]: its full value was
+            // already counted on the first charge. An open-ended monthly gift
+            // carries no marker, so every charge counts as it arrives.
             description: `${firstName} ${lastName} - ` + campaignTag + (totalPayments
-              ? `Pledge (${totalPayments} monthly payments) to Tomchei Shabbos of Florida`
+              ? PLEDGED_TAG + `Pledge (${totalPayments} monthly payments) to Tomchei Shabbos of Florida`
               : "Monthly donation to Tomchei Shabbos of Florida"),
             numleft: scheduleNumLeft,
           }),

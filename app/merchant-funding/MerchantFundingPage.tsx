@@ -528,7 +528,9 @@ export default function MerchantFundingPage() {
         <div className="mf-reveal grid gap-4 sm:grid-cols-3">
           {[
             ["Our Goal", money(GOAL)],
-            ["What We Raised", shownRaised === null ? (loadFailed ? "Unavailable" : "—") : money(shownRaised)],
+            // "& Pledged" because a fixed-term pledge is credited in full the
+            // day it is made, before most of it has actually been collected.
+            ["Raised & Pledged", shownRaised === null ? (loadFailed ? "Unavailable" : "—") : money(shownRaised)],
             ["Our Impact So Far", raised === null ? "—" : percent(pct)],
           ].map(([label, value]) => (
             <div key={label} className="rounded-[24px] px-8 py-10" style={{ backgroundColor: "#FFFFFF", border: "2px solid #E5E5E5" }}>

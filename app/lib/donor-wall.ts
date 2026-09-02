@@ -37,3 +37,38 @@ export function parseWallName(description: unknown): string | null {
   const name = m?.[1]?.trim();
   return name ? name : null;
 }
+
+// Fixed-term pledges count their whole commitment on the campaign bar the day
+// they are made, not one month at a time. That needs two markers, because the
+// money arrives across many transactions:
+//
+//   [pledge:N]  on the first charge — count this transaction N times over.
+//   [pledged]   on the schedule that makes the remaining charges — already
+//               counted by the tag above, so skip these entirely.
+//
+// Open-ended monthly donations carry neither marker: each of their charges is
+// real money in, counted once, as it always was.
+const MAX_PLEDGE_MONTHS = 60;
+
+/** Marks the first charge of a fixed-term pledge, e.g. "[pledge:6] ". */
+export function pledgeTag(months: unknown): string {
+  const n = Number(months);
+  if (!Number.isInteger(n) || n < 2 || n > MAX_PLEDGE_MONTHS) return "";
+  return `[pledge:${n}] `;
+}
+
+/** Marks charges made by a fixed-term pledge's schedule, so they are not counted twice. */
+export const PLEDGED_TAG = "[pledged] ";
+
+/**
+ * How many times this transaction's amount should count towards the campaign.
+ * 0 means "do not count" — a scheduled charge whose pledge was already counted
+ * in full when it was made.
+ */
+export function pledgeMultiplier(description: unknown): number {
+  if (typeof description !== "string") return 1;
+  if (description.toLowerCase().includes(PLEDGED_TAG.toLowerCase())) return 0;
+  const m = description.match(/\[pledge:(\d{1,2})\]/);
+  const n = m ? Number(m[1]) : 0;
+  return n >= 2 && n <= MAX_PLEDGE_MONTHS ? n : 1;
+}

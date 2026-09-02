@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import { parseWallName } from "../../lib/donor-wall";
+import { parseWallName, pledgeMultiplier } from "../../lib/donor-wall";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +58,11 @@ export async function GET() {
       const trantype = (t.trantype || "").toLowerCase();
       if (!approved || trantype.includes("void") || trantype.includes("refund")) continue;
       if (!(t.description || "").toLowerCase().includes(TAG)) continue;
+      // Skip the scheduled charges of a fixed-term pledge: the pledge was shown
+      // in full on its first charge, so counting these would show the donor a
+      // second time with a smaller figure than the bar credits them.
+      const multiplier = pledgeMultiplier(t.description);
+      if (multiplier === 0) continue;
 
       const name = parseWallName(t.description);
       if (!name) continue;
@@ -65,7 +70,8 @@ export async function GET() {
       const key = name.toLowerCase();
       if (seen.has(key)) continue;
       seen.add(key);
-      donors.push({ name, amount: Math.round(parseFloat(String(t.amount)) || 0) });
+      // A pledge shows its full commitment, matching what the bar credits.
+      donors.push({ name, amount: Math.round((parseFloat(String(t.amount)) || 0) * multiplier) });
     }
 
     cache = { value: donors, at: Date.now() };
