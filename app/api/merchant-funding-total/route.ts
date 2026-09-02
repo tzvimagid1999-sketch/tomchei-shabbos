@@ -23,8 +23,20 @@ const CAMPAIGN_START = "2026-07-24";
 let cache: { value: number; at: number } | null = null;
 const CACHE_MS = 60_000;
 
+// Cached at the edge as well as in memory — see the note in the donors route.
+// The total is the same number for every visitor, so serving it from the edge
+// costs nothing in accuracy and saves each one a crawl of the transaction feed.
+// A minute of staleness on a progress bar is not noticeable; ten seconds of
+// blank space is.
+const EDGE_CACHE = "public, s-maxage=60, stale-while-revalidate=600";
 const json = (body: unknown) =>
-  NextResponse.json(body, { headers: { "Cache-Control": "no-store" } });
+  NextResponse.json(body, {
+    headers: {
+      "Cache-Control": EDGE_CACHE,
+      "CDN-Cache-Control": EDGE_CACHE,
+      "Vercel-CDN-Cache-Control": EDGE_CACHE,
+    },
+  });
 
 export async function GET() {
   try {
