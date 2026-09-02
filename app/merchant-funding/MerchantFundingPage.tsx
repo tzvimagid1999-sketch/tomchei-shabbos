@@ -365,6 +365,16 @@ export default function MerchantFundingPage() {
           struggle — 78% drops white to 3.9:1 and 74% to 3.6:1. */}
               <section className="mf-words-bg">
           <div className="mx-auto flex max-w-[68rem] flex-col items-center px-5 py-20 text-center sm:px-8 sm:py-28">
+            {/* Sets the frame before the ask: this page went to a short list,
+                not to a mailing list. Kept small and above the statement so it
+                reads as context rather than as a claim competing with it. */}
+            <p
+              className="mb-5 max-w-[54rem] text-[clamp(0.75rem,1.2vw,0.9375rem)] font-bold uppercase tracking-[0.18em]"
+              style={{ color: goldAccent, textWrap: "balance" }}
+            >
+              An Exclusive Campaign for the Merchant Funding Industry Leaders
+            </p>
+
             <h1
               className="text-[clamp(3.25rem,10vw,9rem)]"
               style={{
