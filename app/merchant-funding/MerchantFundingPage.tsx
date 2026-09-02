@@ -372,7 +372,7 @@ export default function MerchantFundingPage() {
               className="mb-5 max-w-[54rem] text-[clamp(0.75rem,1.2vw,0.9375rem)] font-bold uppercase tracking-[0.18em]"
               style={{ color: goldAccent, textWrap: "balance" }}
             >
-              An Exclusive Campaign for the Merchant Funding Industry Leaders
+              An Exclusive Campaign for Merchant Funding Industry Leaders
             </p>
 
             <h1
