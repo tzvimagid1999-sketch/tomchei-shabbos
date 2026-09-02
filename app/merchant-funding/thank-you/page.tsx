@@ -83,7 +83,7 @@ export default async function ThankYouPage({
           </p>
 
           <p className="mx-auto mt-6 max-w-[34rem] text-[17px] leading-[1.65]" style={{ opacity: 0.8 }}>
-            This week a family in South Florida will have food on their table for Shabbos
+            This year a family will have food on their table for Rosh Hashanah and Succos
             because of you.
           </p>
 

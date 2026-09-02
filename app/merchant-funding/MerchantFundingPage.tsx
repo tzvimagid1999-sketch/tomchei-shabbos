@@ -446,7 +446,7 @@ export default function MerchantFundingPage() {
               {[0, 1].map((copy) => (
                 <div key={copy} className="mf-marquee-group" aria-hidden={copy === 1}>
                   {donors.map((d, i) => (
-                    <span key={`${copy}-${i}`} className="mf-marquee-item text-[15px] leading-[1.4]">
+                    <span key={`${copy}-${i}`} className="mf-marquee-item text-[clamp(1rem,1.4vw,1.25rem)] leading-[1.4]">
                       <span className="mf-marquee-dot" style={{ backgroundColor: "#1AABAB" }} />
                       <strong style={{ color: "#8B6F3A" }}>{d.name}</strong>
                       {d.amount > 0 && <span style={{ opacity: 0.65 }}>{" · "}{money(d.amount)}</span>}
@@ -460,13 +460,13 @@ export default function MerchantFundingPage() {
 
         <div className="mf-reveal grid gap-4 sm:grid-cols-3">
           {[
-            ["Goal", money(GOAL)],
-            ["Raised", shownRaised === null ? (loadFailed ? "Unavailable" : "—") : money(shownRaised)],
+            ["Our Goal", money(GOAL)],
+            ["What We Raised", shownRaised === null ? (loadFailed ? "Unavailable" : "—") : money(shownRaised)],
             ["Our Impact So Far", raised === null ? "—" : percent(pct)],
           ].map(([label, value]) => (
-            <div key={label} className="rounded-[24px] px-7 py-8" style={{ backgroundColor: "#FFFFFF", border: "2px solid #E5E5E5" }}>
-              <p className="text-[12px] uppercase tracking-[0.1em]" style={{ opacity: 0.7 }}>{label}</p>
-              <p className="mf-display mt-3 text-[clamp(2.2rem,5vw,3.5rem)] tabular-nums" style={{ color: "#C8A75B" }}>{value}</p>
+            <div key={label} className="rounded-[24px] px-8 py-10" style={{ backgroundColor: "#FFFFFF", border: "2px solid #E5E5E5" }}>
+              <p className="text-[clamp(0.8125rem,1.1vw,1rem)] font-bold uppercase tracking-[0.12em]" style={{ opacity: 0.7 }}>{label}</p>
+              <p className="mf-display mt-4 text-[clamp(2.75rem,6vw,4.5rem)] tabular-nums" style={{ color: "#C8A75B" }}>{value}</p>
             </div>
           ))}
         </div>
@@ -474,7 +474,7 @@ export default function MerchantFundingPage() {
         {/* Fill capped at 100% so the bar can never overrun. */}
         <div className="mf-reveal mt-10 overflow-hidden rounded-[100px]" style={{ backgroundColor: "#E5E5E5" }}>
           <div
-            className="h-5 rounded-[100px]"
+            className="h-7 rounded-[100px]"
             style={{ width: inView ? `${pct}%` : "0%", backgroundImage: "linear-gradient(to right, #1AABAB, #3DC4C4)", transition: "width 1.1s cubic-bezier(.22,.61,.36,1)" }}
             role="progressbar"
             aria-valuenow={Math.round(pct)}
@@ -488,7 +488,7 @@ export default function MerchantFundingPage() {
 
       <section id="give" className="scroll-mt-6 px-5 pb-20 pt-14 sm:px-8 sm:pt-20">
         <div className="mf-reveal mx-auto max-w-[720px] rounded-[32px] px-6 py-10 sm:px-12 sm:py-12" style={{ backgroundColor: "#FFFFFF" }}>
-          <h2 className="mf-display text-center text-[clamp(1.9rem,4vw,2.8rem)]">Help provide Shabbos for a family</h2>
+          <h2 className="mf-display text-center text-[clamp(2.1rem,4.6vw,3.25rem)]">Help provide Shabbos for a family</h2>
 
           <div className="mt-9 flex gap-3">
             {[
