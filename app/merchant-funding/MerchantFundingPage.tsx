@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Script from "next/script";
 import CampaignBar from "./CampaignBar";
+import Countdown from "./Countdown";
 
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -468,6 +469,8 @@ export default function MerchantFundingPage() {
               </strong>{" "}
               Florida families served every week.
             </p>
+
+            <Countdown />
           </div>
 
           {/* Both actions go to the donation form; the second lands there with
