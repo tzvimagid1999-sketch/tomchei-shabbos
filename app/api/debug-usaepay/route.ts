@@ -72,6 +72,48 @@ export async function GET(req: Request) {
   }
   const txns = (data.transactions || data.data || []) as Array<Record<string, unknown>>;
 
+  // Read-only audit: every monthly sign-up the WEBSITE took, and whether a
+  // recurring schedule actually exists for it. A sign-up with no schedule was
+  // charged once and will never be charged again.
+  if (sp.get("audit")) {
+    const isSignup = (d: string) => {
+      const s = d.toLowerCase();
+      return s.includes("monthly donation to tomchei") || s.includes("pledge payment 1 of");
+    };
+    const wanted = txns.filter(
+      (t) =>
+        isSignup(String(t.description ?? "")) &&
+        (t.result === "Approved" || t.result_code === "A") &&
+        !String(t.trantype ?? "").toLowerCase().includes("void")
+    );
+
+    const out = [];
+    for (const t of wanted.slice(0, 25)) {
+      const ck = String((t as Record<string, unknown>).custkey ?? "");
+      let schedules: number | string = "no custkey";
+      if (ck) {
+        try {
+          const r = await fetch(`${endpoint}/customers/${ck}/billing_schedules`, {
+            headers: { Authorization: auth(), "Content-Type": "application/json" },
+          });
+          const j = JSON.parse(await r.text());
+          const list = j.data ?? j.billing_schedules ?? [];
+          schedules = Array.isArray(list) ? list.length : `? ${r.status}`;
+        } catch {
+          schedules = "error";
+        }
+      }
+      out.push({
+        when: t.created ?? t.datetime,
+        amount: t.amount,
+        who: (t as Record<string, unknown>).customerid,
+        custkey: ck,
+        schedules,
+      });
+    }
+    return NextResponse.json({ signupsFound: wanted.length, checked: out.length, signups: out });
+  }
+
   if (sp.get("raw")) {
     const needle = (sp.get("raw") || "").toLowerCase();
     const first = txns.find((t) => String(t.description ?? "").toLowerCase().includes(needle));

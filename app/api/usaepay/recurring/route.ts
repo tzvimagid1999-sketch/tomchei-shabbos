@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { sendMonthlyConfirmation } from "../../../lib/donation-email";
+import { sendMonthlyConfirmation, sendScheduleFailureAlert } from "../../../lib/donation-email";
 import { sendHonoreeNotification } from "../../../lib/mailer";
 import { wallTag, pledgeTag, PLEDGED_TAG } from "../../../lib/donor-wall";
 
@@ -200,9 +200,24 @@ export async function POST(req: NextRequest) {
         cardLast4: cardNumber ? cardNumber.slice(-4) : undefined,
         honoreeType: honoreeType || undefined,
         honoreeName: honoreeName || undefined,
+        scheduleCreated: skipSchedule ? undefined : scheduleOk,
       });
     } catch (emailErr: unknown) {
       console.error("Confirmation email threw:", emailErr instanceof Error ? emailErr.message : emailErr);
+    }
+
+    // The donor has been charged for month one and no schedule exists, so every
+    // later payment they were told about will silently never happen. Tell the
+    // office while the donation is fresh enough to fix by hand.
+    if (!skipSchedule && !scheduleOk) {
+      await sendScheduleFailureAlert({
+        name: name || "",
+        email: email || "",
+        amount: numericAmount,
+        months: totalPayments,
+        custkey: String(custkey),
+        reason: JSON.stringify(scheduleDebug).slice(0, 400),
+      });
     }
 
     if (honoreeType === "honor" && honoreeEmail && honoreeName) {
