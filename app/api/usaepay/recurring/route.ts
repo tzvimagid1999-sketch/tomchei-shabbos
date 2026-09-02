@@ -53,6 +53,37 @@ export async function POST(req: NextRequest) {
     const subTag = subCampaign ? `[${subCampaign}] ` : "";
     const campaignTag = subTag + wallTag(displayName) + (campaign === "rosh-hashanah" ? "Rosh Hashanah Campaign " : "");
 
+    // A billing schedule's description is capped at 120 characters and USAePay
+    // rejects the whole schedule if it is longer:
+    //   {"error":"The field 'description' is longer than 120","errorcode":51}
+    //
+    // That is exactly what broke monthly giving from the campaign page while
+    // the main site kept working: the campaign page adds [team:...] and
+    // [wall:...] tags, which pushed its descriptions to ~139 characters. The
+    // donor was charged once and no schedule was ever created.
+    //
+    // So the description is assembled by priority rather than concatenated and
+    // hoped for. The tags that decide whether money is counted come first; the
+    // parts that only aid readability are dropped if they do not fit.
+    const SCHEDULE_DESCRIPTION_LIMIT = 120;
+    const fitScheduleDescription = (
+      essential: string[],
+      optional: string[]
+    ): string => {
+      const core = essential.join("");
+      // Essentials alone should never approach the cap, but never emit an
+      // over-length description even if a tag grows unexpectedly.
+      if (core.length >= SCHEDULE_DESCRIPTION_LIMIT) {
+        return core.slice(0, SCHEDULE_DESCRIPTION_LIMIT).trim();
+      }
+      // Optionals are listed most valuable first and added while they fit.
+      let out = core;
+      for (const part of optional) {
+        if (part && out.length + part.length <= SCHEDULE_DESCRIPTION_LIMIT) out += part;
+      }
+      return out.trim();
+    };
+
     const auth = () => {
       const seed = crypto.randomBytes(16).toString("hex");
       const hash = crypto.createHash("sha256").update(sourceKey + seed + pin).digest("hex");
@@ -166,12 +197,23 @@ export async function POST(req: NextRequest) {
             enabled: true,
             // Name leads here too, so every future auto-charge from this
             // schedule carries the donor's name into the reports as well.
-            // Only a fixed-term pledge is marked [pledged]: its full value was
-            // already counted on the first charge. An open-ended monthly gift
-            // carries no marker, so every charge counts as it arrives.
-            description: `${firstName} ${lastName} - ` + campaignTag + (totalPayments
-              ? PLEDGED_TAG + `Pledge (${totalPayments} monthly payments) to Tomchei Shabbos of Florida`
-              : "Monthly donation to Tomchei Shabbos of Florida"),
+            // Essentials are the tags that decide how money is counted:
+            // [team:...] for the campaign bar, "Rosh Hashanah Campaign" for the
+            // main bar, and [pledged] to stop a fixed-term pledge — already
+            // counted in full on its first charge — being counted again here.
+            // The donor's name and the prose are readability only.
+            description: fitScheduleDescription(
+              [
+                subTag,
+                campaign === "rosh-hashanah" ? "Rosh Hashanah Campaign " : "",
+                totalPayments ? PLEDGED_TAG : "",
+              ],
+              [
+                wallTag(displayName),
+                `${firstName} ${lastName} `,
+                totalPayments ? `(${totalPayments} monthly payments)` : "Monthly donation",
+              ]
+            ),
             numleft: scheduleNumLeft,
           }),
         });
