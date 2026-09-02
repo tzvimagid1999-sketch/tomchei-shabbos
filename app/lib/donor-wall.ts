@@ -30,6 +30,32 @@ export function wallTag(displayName: unknown): string {
   return clean ? `[wall:${clean}] ` : "";
 }
 
+/**
+ * Formats a donor's company as its own tag, e.g. "[co:Black Tie Funding] ".
+ *
+ * Kept separate from the wall name so the page can show a person AND the firm
+ * they came from. Written only alongside a wall name — a company tag on an
+ * anonymous gift would identify the donor by the back door.
+ */
+export function companyTag(company: unknown): string {
+  if (typeof company !== "string") return "";
+  const clean = company
+    .replace(/[[\]]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, MAX_LEN)
+    .trim();
+  return clean ? `[co:${clean}] ` : "";
+}
+
+/** Reads back a company written by companyTag. */
+export function parseCompanyName(description: unknown): string | null {
+  if (typeof description !== "string") return null;
+  const m = description.match(/\[co:([^\]]{1,40})\]/);
+  const name = m?.[1]?.trim();
+  return name ? name : null;
+}
+
 /** Reads back a name written by wallTag. Returns null for anonymous donations. */
 export function parseWallName(description: unknown): string | null {
   if (typeof description !== "string") return null;

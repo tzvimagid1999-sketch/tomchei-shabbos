@@ -23,7 +23,7 @@ const GOAL = 50000;
 // it is made. The recurring route already accepts numPayments.
 const SPLIT_MONTH_OPTIONS = [3, 6, 12, 18, 24, 36];
 
-type Donor = { name: string; amount: number };
+type Donor = { name: string; company?: string; amount: number };
 
 // Sample supporters for ?demo=1, so the ticker can be shown to the campaign
 // team before any real donor has opted in. Invented names, never real donors —
@@ -290,7 +290,9 @@ export default function MerchantFundingPage() {
     const company = val("company");
     // Businesses are the audience here, so a company name is what goes on the
     // wall when there is one. Sent only if the donor ticked the box.
-    const displayName = anonymous ? "" : company || `${firstName} ${lastName}`.trim();
+    // The person and their firm are sent separately, so the supporters list can
+    // show both. The ticker still leads with the company when there is one.
+    const displayName = anonymous ? "" : `${firstName} ${lastName}`.trim();
 
     if (!chosenAmount || Number(chosenAmount) < 1) return setError("Enter an amount to give.");
     if (!firstName || !lastName || !email || !street || !city || !state || !zip)
@@ -527,7 +529,10 @@ export default function MerchantFundingPage() {
                 <div key={copy} ref={copy === 0 ? namesGroupRef : undefined} className="mf-marquee-group" aria-hidden={copy === 1}>
                   {donors.map((d, i) => (
                     <span key={`${copy}-${i}`} className="mf-marquee-item text-[clamp(1rem,1.4vw,1.25rem)] leading-[1.4]">
-                      <strong style={{ color: "#8B6F3A" }}>{d.name}</strong>
+                      {/* The firm leads on the ticker where there is one —
+                          it is what this audience recognises at a glance. The
+                          full listing below carries both. */}
+                      <strong style={{ color: "#8B6F3A" }}>{d.company || d.name}</strong>
                       {d.amount > 0 && <span style={{ opacity: 0.65 }}>{" · "}{money(d.amount)}</span>}
                     </span>
                   ))}
@@ -555,6 +560,48 @@ export default function MerchantFundingPage() {
 
 
         <CampaignBar pct={pct} goal={GOAL} raised={raised} run={inView} />
+
+        {/* The named roll, under the milestones. The ticker above is for
+            glancing; this is what a supporter actually looks themselves up in,
+            and the only place both the person and their firm appear together.
+            Same opt-in as the ticker: no name tag, no entry. */}
+        {donors.length > 0 && (
+          <div className="mf-reveal mt-16">
+            <h2 className="mf-display text-center text-[clamp(1.75rem,3.4vw,2.5rem)]">
+              Our Generous Donors
+            </h2>
+            <span className="mx-auto mt-5 block h-0.5 w-24" style={{ backgroundColor: "#C8A75B" }} />
+
+            <ul className="mx-auto mt-10 grid max-w-[62rem] gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+              {donors.map((d, i) => (
+                <li
+                  key={`${d.name}-${i}`}
+                  className="flex items-baseline justify-between gap-4 pb-4"
+                  style={{ borderBottom: "1px solid rgba(45,45,45,0.10)" }}
+                >
+                  <span>
+                    <span className="block text-[clamp(1rem,1.3vw,1.125rem)] font-bold" style={{ color: "#2D2D2D" }}>
+                      {d.name}
+                    </span>
+                    {d.company && (
+                      <span className="mt-0.5 block text-[clamp(0.875rem,1.1vw,0.9375rem)]" style={{ opacity: 0.6 }}>
+                        {d.company}
+                      </span>
+                    )}
+                  </span>
+                  {d.amount > 0 && (
+                    <span
+                      className="mf-display flex-none tabular-nums text-[clamp(1rem,1.4vw,1.25rem)]"
+                      style={{ color: "#C8A75B" }}
+                    >
+                      {money(d.amount)}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
       </section>
 

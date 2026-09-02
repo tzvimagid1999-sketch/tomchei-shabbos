@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { sendMail, sendHonoreeNotification, escapeHtml } from "../../lib/mailer";
-import { wallTag } from "../../lib/donor-wall";
+import { wallTag, companyTag } from "../../lib/donor-wall";
 
 // Charges a donation through the USAePay gateway using a payment token
 // (payment_key) that was generated in the donor's browser by pay.js.
@@ -102,6 +102,9 @@ export async function POST(req: NextRequest) {
           (subCampaign ? `[${subCampaign}] ` : "") +
           // Present only when the donor asked to be named publicly.
           wallTag(displayName) +
+          // Only alongside a name: a company on an anonymous gift identifies
+          // the donor by the back door.
+          (displayName ? companyTag(company) : "") +
           (campaign === "rosh-hashanah"
             ? "Rosh Hashanah Campaign donation to Tomchei Shabbos of Florida"
             : "Donation to Tomchei Shabbos of Florida") +

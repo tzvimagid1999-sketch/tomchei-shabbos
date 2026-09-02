@@ -11,7 +11,7 @@
 // this returns nothing rather than letting a spreadsheet outage take down the
 // campaign page's figures.
 
-export type OfflineDonor = { name: string; amount: number };
+export type OfflineDonor = { name: string; company?: string; amount: number };
 export type OfflineResult = {
   total: number;
   /** The part of `total` the main site's bar may add. See below. */
@@ -72,12 +72,21 @@ export async function fetchOfflineDonations(): Promise<OfflineResult> {
     const donors: OfflineDonor[] = Array.isArray(parsed.donors)
       ? (parsed.donors as unknown[])
           .map((d) => {
-            const row = d as { name?: unknown; amount?: unknown };
+            const row = d as { name?: unknown; amount?: unknown; company?: unknown };
             // Square brackets are stripped for the same reason as on the card
             // path: they delimit tags elsewhere and have no business in a name.
             const name = String(row?.name ?? "").replace(/[[\]]/g, "").replace(/\s+/g, " ").trim().slice(0, 40);
             const amount = parseFloat(String(row?.amount));
-            return { name, amount: Number.isFinite(amount) && amount > 0 ? amount : 0 };
+            const company = String(row?.company ?? "")
+              .replace(/[[\]]/g, "")
+              .replace(/\s+/g, " ")
+              .trim()
+              .slice(0, 40);
+            return {
+              name,
+              ...(company && company.toLowerCase() !== name.toLowerCase() ? { company } : {}),
+              amount: Number.isFinite(amount) && amount > 0 ? amount : 0,
+            };
           })
           .filter((d) => d.name)
       : [];

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { sendMonthlyConfirmation, sendScheduleFailureAlert } from "../../../lib/donation-email";
 import { sendHonoreeNotification } from "../../../lib/mailer";
-import { wallTag, pledgeTag, PLEDGED_TAG } from "../../../lib/donor-wall";
+import { wallTag, companyTag, pledgeTag, PLEDGED_TAG } from "../../../lib/donor-wall";
 
 // Sets up a MONTHLY recurring donation. Per USAePay support, this is a 3-step
 // flow (NOT a single "create customer with embedded payment method" call):
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     // subCampaign tags the donation for a campaign page's own total; the Rosh
     // Hashanah wording the main bar counts is unchanged.
     const subTag = subCampaign ? `[${subCampaign}] ` : "";
-    const campaignTag = subTag + wallTag(displayName) + (campaign === "rosh-hashanah" ? "Rosh Hashanah Campaign " : "");
+    const campaignTag = subTag + wallTag(displayName) + (displayName ? companyTag(company) : "") + (campaign === "rosh-hashanah" ? "Rosh Hashanah Campaign " : "");
 
     // A billing schedule's description is capped at 120 characters and USAePay
     // rejects the whole schedule if it is longer:
@@ -210,6 +210,7 @@ export async function POST(req: NextRequest) {
               ],
               [
                 wallTag(displayName),
+                displayName ? companyTag(company) : "",
                 `${firstName} ${lastName} `,
                 totalPayments ? `(${totalPayments} monthly payments)` : "Monthly donation",
               ]

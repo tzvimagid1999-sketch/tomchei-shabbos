@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { parseWallName, pledgeMultiplier } from "../../lib/donor-wall";
+import { parseWallName, parseCompanyName, pledgeMultiplier } from "../../lib/donor-wall";
 import { fetchTransactionsSince, txnDate, isAfterLaunch } from "../../lib/usaepay-transactions";
 import { fetchOfflineDonations } from "../../lib/merchant-funding-offline";
 
@@ -18,7 +18,7 @@ const TAG = "[team:merchant-funding]";
 const MAX = 30;
 const CAMPAIGN_START = "2026-07-24";
 
-type Donor = { name: string; amount: number };
+type Donor = { name: string; company?: string; amount: number };
 
 // Reading the names costs a full crawl of the transaction feed — about 14
 // seconds — so it is cached hard. But a donor who has just given refreshes the
@@ -93,7 +93,12 @@ export async function GET() {
       if (seen.has(key)) continue;
       seen.add(key);
       // A pledge shows its full commitment, matching what the bar credits.
-      donors.push({ name, amount: Math.round((parseFloat(String(t.amount)) || 0) * multiplier) });
+      const company = parseCompanyName(t.description);
+      donors.push({
+        name,
+        ...(company && company.toLowerCase() !== key ? { company } : {}),
+        amount: Math.round((parseFloat(String(t.amount)) || 0) * multiplier),
+      });
     }
 
     // Cheques, wires and phone pledges from the campaign's sheet, shown on the
