@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { pledgeMultiplier } from "../../lib/donor-wall";
-import { fetchTransactionsSince, txnDate, customerHasSchedule } from "../../lib/usaepay-transactions";
+import { fetchTransactionsSince, txnDate, customerHasSchedule, isAfterLaunch } from "../../lib/usaepay-transactions";
+import { fetchOfflineDonations } from "../../lib/merchant-funding-offline";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +58,8 @@ export async function GET() {
       if (!(t.description || "").toLowerCase().includes(TAG)) continue;
       // The final page straddles the cutoff and can carry older transactions.
       if (txnDate(t) < CAMPAIGN_START) continue;
+      // Staff test charges made while the page was being built.
+      if (!isAfterLaunch(t)) continue;
 
       const amount = parseFloat(String(t.amount)) || 0;
       // A fixed-term pledge counts its whole commitment on its first charge;
@@ -84,7 +87,12 @@ export async function GET() {
       if (cache) return json({ total: cache.value, stale: true });
     }
 
-    cache = { value: Math.round(total), at: Date.now() };
+    // Cheques, wires and phone pledges recorded in the campaign's sheet. Added
+    // after the crawl so a sheet outage can never zero the card total.
+    const offline = await fetchOfflineDonations();
+    if (offline.error) console.error("Campaign offline sheet:", offline.error);
+
+    cache = { value: Math.round(total + offline.total), at: Date.now() };
     return json({ total: cache.value });
   } catch (err) {
     const cause = (err as { cause?: unknown })?.cause;

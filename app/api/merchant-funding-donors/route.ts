@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { parseWallName, pledgeMultiplier } from "../../lib/donor-wall";
-import { fetchTransactionsSince, txnDate } from "../../lib/usaepay-transactions";
+import { fetchTransactionsSince, txnDate, isAfterLaunch } from "../../lib/usaepay-transactions";
+import { fetchOfflineDonations } from "../../lib/merchant-funding-offline";
 
 export const dynamic = "force-dynamic";
 
@@ -73,6 +74,8 @@ export async function GET() {
     for (let i = 0; i < txns.length && donors.length < MAX; i++) {
       const t = txns[i];
       if (txnDate(t) < CAMPAIGN_START) continue;
+      // Staff test donations made while the page was being built.
+      if (!isAfterLaunch(t)) continue;
       const approved = t.result_code === "A" || t.result === "Approved";
       const trantype = (t.trantype || "").toLowerCase();
       if (!approved || trantype.includes("void") || trantype.includes("refund")) continue;
@@ -93,8 +96,23 @@ export async function GET() {
       donors.push({ name, amount: Math.round((parseFloat(String(t.amount)) || 0) * multiplier) });
     }
 
-    cache = { value: donors, at: Date.now() };
-    return json({ donors });
+    // Cheques, wires and phone pledges from the campaign's sheet, shown on the
+    // wall beside the card donations. Listed first: these are the largest gifts
+    // and are entered by hand, so they are the ones staff most expect to see.
+    const offline = await fetchOfflineDonations();
+    if (offline.error) console.error("Campaign offline sheet:", offline.error);
+    const combined = [
+      ...offline.donors.filter((d) => {
+        const key = d.name.toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      }),
+      ...donors,
+    ].slice(0, MAX);
+
+    cache = { value: combined, at: Date.now() };
+    return json({ donors: combined });
   } catch (err) {
     console.error(
       "Failed to fetch merchant funding donors:",

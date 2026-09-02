@@ -32,6 +32,29 @@ const MAX_PAGES = 12;
 export const txnDate = (t: UsaepayTxn): string =>
   String(t.created ?? t.datetime ?? t.date ?? "").slice(0, 10);
 
+/** Full "YYYY-MM-DD HH:MM:SS" stamp, in USAePay's own (Pacific) clock. */
+export const txnStamp = (t: UsaepayTxn): string =>
+  String(t.created ?? t.datetime ?? t.date ?? "");
+
+// Everything charged through the campaign page before this moment was a test
+// donation made while the page was being built, so the campaign starts from
+// zero rather than opening with $30 of staff testing on the bar and a wall of
+// invented supporter names.
+//
+// Stamped in USAePay's clock, which is Pacific — three hours behind Florida.
+//
+// This hides those charges from the CAMPAIGN page only. The money was really
+// taken and still sits on the main site's bar; reversing it means voiding or
+// refunding the transactions in MerchPay.
+export const CAMPAIGN_LIVE_FROM = "2026-09-02 19:50:00";
+
+/** True for a real campaign donation, false for the pre-launch test charges. */
+export const isAfterLaunch = (t: UsaepayTxn): boolean => {
+  const stamp = txnStamp(t);
+  // An unreadable stamp is treated as real: never hide a donation on a guess.
+  return !stamp || stamp >= CAMPAIGN_LIVE_FROM;
+};
+
 // Whether a customer has any recurring schedule at all.
 //
 // A fixed-term pledge is credited in full on the day it is made, which is only

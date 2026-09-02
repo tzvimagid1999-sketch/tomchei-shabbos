@@ -34,7 +34,18 @@ export default function CampaignBar({
       <div className="overflow-hidden rounded-[100px]" style={{ backgroundColor: "#E5E5E5" }}>
         <div
           className="mf-ribbon h-7 rounded-[100px]"
-          style={{ width: run ? `${pct}%` : "0%" }}
+          style={{
+            width: run ? `${pct}%` : "0%",
+            // Early in a campaign the true fill is a fraction of a pixel — $30
+            // against a $50,000 goal is 0.06% — and with rounded ends it draws
+            // as nothing, which reads as a broken bar rather than an early one.
+            // A floor the height of the bar keeps it a clean rounded nub.
+            //
+            // Only the drawing is floored. The percentage shown to the reader
+            // and the value announced to screen readers stay the real ones, so
+            // this never overstates the figure, only makes a small one visible.
+            minWidth: run && raised !== null && raised > 0 ? "1.75rem" : undefined,
+          }}
           role="progressbar"
           aria-valuenow={Math.round(pct)}
           aria-valuemin={0}
