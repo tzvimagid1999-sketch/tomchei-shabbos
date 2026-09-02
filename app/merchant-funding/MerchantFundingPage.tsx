@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Script from "next/script";
-import Confetti from "./Confetti";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -79,9 +78,6 @@ export default function MerchantFundingPage() {
   // means "not yet known", which holds the donors fetch back — starting it
   // first let its response land after the demo list and wipe it.
   const [demo, setDemo] = useState<boolean | null>(null);
-  // ?celebrate=1 forces the goal-reached state, so the celebration can be seen
-  // without waiting for the campaign to actually finish.
-  const [forceCelebrate, setForceCelebrate] = useState(false);
   const [monthly, setMonthly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -119,9 +115,7 @@ export default function MerchantFundingPage() {
   );
 
   useEffect(() => {
-    const q = new URLSearchParams(window.location.search);
-    setDemo(q.get("demo") === "1");
-    setForceCelebrate(q.get("celebrate") === "1");
+    setDemo(new URLSearchParams(window.location.search).get("demo") === "1");
   }, []);
 
   useEffect(() => {
@@ -213,11 +207,6 @@ export default function MerchantFundingPage() {
   // 3.4:1 over the cream ground, 3.0:1 over the artwork's darkest patch.
   const goldAccent = "#A08243";
 
-  // The goal is reached once the live total says so. Until the figure has
-  // loaded, raised is null and nothing celebrates — better a late celebration
-  // than one that fires on a page that has not read the total yet.
-  const goalReached = forceCelebrate || (raised !== null && raised >= GOAL);
-
   const chosenAmount = amount;
   const pct = raised === null ? 0 : Math.min(100, (raised / GOAL) * 100);
 
@@ -297,8 +286,6 @@ export default function MerchantFundingPage() {
       }}
     >
       <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
-
-      <Confetti run={goalReached} />
 
       <header
         className="relative flex w-full items-center justify-between gap-5 px-5 py-5 sm:px-8"
@@ -469,19 +456,6 @@ export default function MerchantFundingPage() {
               ))}
             </div>
           </div>
-        )}
-
-        {/* Said in words as well as confetti: anyone with reduced motion on,
-            or reading later, still learns the goal was met. */}
-        {goalReached && (
-          <p
-            role="status"
-            className="mb-4 rounded-[16px] px-6 py-4 text-center text-[clamp(1rem,1.8vw,1.25rem)] font-bold"
-            style={{ backgroundColor: "#0a6e78", color: "#FFFFFF" }}
-          >
-            We did it — {money(GOAL)} raised.{" "}
-            <span style={{ color: "#F5A020" }}>Thank you.</span>
-          </p>
         )}
 
         <div className="mf-reveal grid gap-4 sm:grid-cols-3">
