@@ -30,6 +30,29 @@ export function wallTag(displayName: unknown): string {
   return clean ? `[wall:${clean}] ` : "";
 }
 
+// Test donations that reached the live campaign and could not be voided in
+// MerchPay, so they have to be hidden here instead.
+//
+// Matched on name AND amount, deliberately. Matching the name alone would mean
+// a genuine later donation from the same firm silently disappearing — and
+// "Berg capital" is an entirely plausible real supporter of this campaign. The
+// pair is specific enough to catch the test and nothing else.
+//
+// The charge itself is real money that was taken, so it still counts on the
+// main site's bar. This only removes it from the campaign page.
+const EXCLUDED_TEST_DONATIONS: { name: string; amount: number }[] = [
+  { name: "berg capital", amount: 18 },
+];
+
+/** True for a live test donation that should not appear on the campaign page. */
+export function isExcludedTestDonation(description: unknown, amount: number): boolean {
+  const name = parseWallName(description)?.toLowerCase();
+  if (!name) return false;
+  return EXCLUDED_TEST_DONATIONS.some(
+    (e) => e.name === name && Math.round(amount) === e.amount
+  );
+}
+
 /**
  * Formats a donor's company as its own tag, e.g. "[co:Black Tie Funding] ".
  *

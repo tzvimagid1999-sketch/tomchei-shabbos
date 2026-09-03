@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { parseWallName, parseCompanyName, pledgeMultiplier } from "../../lib/donor-wall";
+import {
+  parseWallName,
+  parseCompanyName,
+  pledgeMultiplier,
+  isExcludedTestDonation,
+} from "../../lib/donor-wall";
 import { fetchTransactionsSince, txnDate, isAfterLaunch } from "../../lib/usaepay-transactions";
 import { fetchOfflineDonations } from "../../lib/merchant-funding-offline";
 
@@ -85,6 +90,12 @@ export async function GET() {
       // second time with a smaller figure than the bar credits them.
       const multiplier = pledgeMultiplier(t.description);
       if (multiplier === 0) continue;
+
+      // A test donation that reached the live page and could not be voided.
+      // Matched on the figure the page actually shows, which for a pledge is
+      // the whole commitment rather than the single charge behind it.
+      const shown = Math.round((parseFloat(String(t.amount)) || 0) * multiplier);
+      if (isExcludedTestDonation(t.description, shown)) continue;
 
       const name = parseWallName(t.description);
       if (!name) continue;

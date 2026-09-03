@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { pledgeMultiplier } from "../../lib/donor-wall";
+import { pledgeMultiplier, isExcludedTestDonation } from "../../lib/donor-wall";
 import { fetchTransactionsSince, txnDate, customerHasSchedule, isAfterLaunch } from "../../lib/usaepay-transactions";
 import { fetchOfflineDonations } from "../../lib/merchant-funding-offline";
 
@@ -75,6 +75,11 @@ export async function GET() {
         const custkey = String((t as { custkey?: string }).custkey ?? "");
         if (!(await customerHasSchedule(endpoint, sourceKey, pin, custkey))) multiplier = 1;
       }
+
+      // A test donation that reached the live page and could not be voided.
+      // Checked against the credited figure, which for a pledge is the whole
+      // commitment rather than the single charge behind it.
+      if (isExcludedTestDonation(t.description, Math.round(amount * multiplier))) continue;
 
       total += amount * multiplier;
     }
