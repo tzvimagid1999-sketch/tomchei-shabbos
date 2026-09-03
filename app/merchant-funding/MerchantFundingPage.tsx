@@ -546,15 +546,31 @@ export default function MerchantFundingPage() {
 
         <div className="mf-reveal grid gap-4 sm:grid-cols-3">
           {[
-            ["Our Goal", money(GOAL)],
+            // The goal is a constant, not fetched, so it never has a loading
+            // state — it is correct on the very first paint.
+            ["Our Goal", money(GOAL), false],
             // "& Pledged" because a fixed-term pledge is credited in full the
             // day it is made, before most of it has actually been collected.
-            ["Raised & Pledged", shownRaised === null ? (loadFailed ? "Unavailable" : "—") : money(shownRaised)],
-            ["Our Impact So Far", raised === null ? "—" : percent(pct)],
-          ].map(([label, value]) => (
-            <div key={label} className="rounded-[24px] px-8 py-10 text-center" style={{ backgroundColor: "#FFFFFF", border: "2px solid #E5E5E5" }}>
+            [
+              "Raised & Pledged",
+              shownRaised === null ? (loadFailed ? "Unavailable" : "Calculating…") : money(shownRaised),
+              shownRaised === null && !loadFailed,
+            ],
+            ["Our Impact So Far", raised === null ? "Calculating…" : percent(pct), raised === null],
+          ].map(([label, value, calculating]) => (
+            <div key={label as string} className="rounded-[24px] px-8 py-10 text-center" style={{ backgroundColor: "#FFFFFF", border: "2px solid #E5E5E5" }}>
               <p className="text-[clamp(0.8125rem,1.1vw,1rem)] font-bold uppercase tracking-[0.12em]" style={{ opacity: 0.7 }}>{label}</p>
-              <p className="mf-display mt-4 text-[clamp(2.75rem,6vw,4.5rem)] tabular-nums" style={{ color: "#C8A75B" }}>{value}</p>
+              {/* Matches the main donate page: smaller and italic while the
+                  figure loads, so a passing "Calculating…" never reads like
+                  the campaign's real headline number. */}
+              <p
+                className={`mf-display mt-4 tabular-nums ${
+                  calculating ? "text-[clamp(1.125rem,2.2vw,1.5rem)] italic" : "text-[clamp(2.75rem,6vw,4.5rem)]"
+                }`}
+                style={{ color: "#C8A75B" }}
+              >
+                {value}
+              </p>
             </div>
           ))}
         </div>
