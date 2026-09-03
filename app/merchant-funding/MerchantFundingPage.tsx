@@ -494,7 +494,7 @@ export default function MerchantFundingPage() {
               className="flex items-center justify-center px-4 py-5 text-center text-[clamp(0.9375rem,1.5vw,1.25rem)] font-bold"
               style={{ backgroundColor: "#0a6e78", color: "#FFFFFF" }}
             >
-              Give monthly
+              Donate Monthly
             </a>
           </div>
         </section>
