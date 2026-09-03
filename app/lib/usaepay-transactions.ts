@@ -41,12 +41,19 @@ export const txnStamp = (t: UsaepayTxn): string =>
 // zero rather than opening with $30 of staff testing on the bar and a wall of
 // invented supporter names.
 //
-// Stamped in USAePay's clock, which is Pacific — three hours behind Florida.
+// Stamped in USAePay's clock, which is PACIFIC — three hours behind Florida.
+// Getting that wrong hides real donations: this was first set to 19:50, taken
+// from a shell whose timezone override silently did not apply, so the value was
+// UTC. On USAePay's clock that sat hours in the future and every genuine
+// donation was discarded as a test. Set from Pacific, and only Pacific.
+//
+// The last staff test was stamped 12:23 Pacific, so 12:30 clears them all and
+// admits everything after.
 //
 // This hides those charges from the CAMPAIGN page only. The money was really
 // taken and still sits on the main site's bar; reversing it means voiding or
 // refunding the transactions in MerchPay.
-export const CAMPAIGN_LIVE_FROM = "2026-09-02 19:50:00";
+export const CAMPAIGN_LIVE_FROM = "2026-09-02 12:30:00";
 
 /** True for a real campaign donation, false for the pre-launch test charges. */
 export const isAfterLaunch = (t: UsaepayTxn): boolean => {
