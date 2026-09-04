@@ -88,14 +88,17 @@ function useCountUp(target: number | null, run: boolean, duration = 900, delay =
   return target === null ? null : n;
 }
 
-export default function MerchantFundingPage() {
+export default function MerchantFundingPage({ initialDonors = [] }: { initialDonors?: Donor[] }) {
   const [raised, setRaised] = useState<number | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
   const [amount, setAmount] = useState("");
   const [honoreeType, setHonoreeType] = useState<"" | "honor" | "memory">("");
   // Ticking this suppresses the donor's entry entirely — no name, no amount.
   const [anonymous, setAnonymous] = useState(false);
-  const [donors, setDonors] = useState<Donor[]>([]);
+  // Seeded from the server's own render, so the ticker and the supporter list
+  // are already correct in the very first HTML rather than starting empty and
+  // popping in once the browser's own fetch resolves.
+  const [donors, setDonors] = useState<Donor[]>(initialDonors);
   // Resolved after mount rather than during render: reading the URL while
   // rendering would disagree with the server's HTML and break hydration. null
   // means "not yet known", which holds the donors fetch back — starting it
@@ -171,9 +174,16 @@ export default function MerchantFundingPage() {
       setDonors(DEMO_DONORS);
       return;
     }
-    refreshDonors();
+    // The server render already supplied the current list — an immediate
+    // refetch here would just repeat that same request. Only fetch right away
+    // if it genuinely came back empty (no donors yet, or the server-side call
+    // failed); either way the poll below keeps it current from here on.
+    if (initialDonors.length === 0) refreshDonors();
     const id = setInterval(refreshDonors, 60_000);
     return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- initialDonors is
+    // only ever meant to seed the very first run of this effect, not to
+    // re-trigger it on every later donors update.
   }, [demo, refreshDonors]);
 
   // Re-measured whenever the list changes or the window resizes, so the ticker
