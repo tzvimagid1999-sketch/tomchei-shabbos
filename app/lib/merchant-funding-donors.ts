@@ -80,21 +80,32 @@ export async function getMerchantFundingDonors(): Promise<{ donors: Donor[]; sta
       // The money still counted towards the total; it just has no place here.
       if (!wallName && !anonId) continue;
 
-      // A named donor is deduped by name, so their repeat monthly charges
-      // collapse into one row. An anonymous donor cannot be deduped by the
-      // word "Anonymous" — every anonymous stranger would collapse into the
-      // same row — so the id carried in [anon:...] stands in for a name here,
-      // grouping one anonymous donor's own repeat charges without ever
-      // grouping two different anonymous donors together.
-      const key = wallName ? wallName.toLowerCase() : `anon:${anonId}`;
+      // A named donor is deduped by name AND company together, not name alone.
+      // The same person can give once personally and again through their
+      // firm — real, separate gifts that both belong on the wall — and name
+      // alone would silently keep only whichever one was crawled first. A
+      // monthly donor's repeat charges still collapse to one row: every charge
+      // from the same schedule carries the identical name and company each
+      // time, so they still share one key.
+      //
+      // An anonymous donor cannot be deduped by the word "Anonymous" — every
+      // anonymous stranger would collapse into the same row — so the id
+      // carried in [anon:...] stands in for a name here, grouping one
+      // anonymous donor's own repeat charges without ever grouping two
+      // different anonymous donors together.
+      const company = wallName ? parseCompanyName(t.description) : null;
+      const key = wallName
+        ? `${wallName.toLowerCase()}|${(company || "").toLowerCase()}`
+        : `anon:${anonId}`;
       if (seen.has(key)) continue;
       seen.add(key);
 
       // A pledge shows its full commitment, matching what the bar credits.
-      const company = wallName ? parseCompanyName(t.description) : null;
       donors.push({
         name: wallName ?? "Anonymous",
-        ...(company && company.toLowerCase() !== key ? { company } : {}),
+        // Guards against a donor typing their own name again into the company
+        // field — shown only when it actually adds information.
+        ...(company && wallName && company.toLowerCase() !== wallName.toLowerCase() ? { company } : {}),
         amount: Math.round((parseFloat(String(t.amount)) || 0) * multiplier),
       });
     }
@@ -106,7 +117,10 @@ export async function getMerchantFundingDonors(): Promise<{ donors: Donor[]; sta
     if (offline.error) console.error("Campaign offline sheet:", offline.error);
     const combined = [
       ...offline.donors.filter((d) => {
-        const key = d.name.toLowerCase();
+        // Same key shape as the card donors above (name + company together),
+        // so a sheet row for someone who also gave by card is only skipped
+        // when both the name and the company genuinely match.
+        const key = `${d.name.toLowerCase()}|${(d.company || "").toLowerCase()}`;
         if (seen.has(key)) return false;
         seen.add(key);
         return true;
