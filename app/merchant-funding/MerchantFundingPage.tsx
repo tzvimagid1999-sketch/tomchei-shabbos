@@ -327,6 +327,9 @@ export default function MerchantFundingPage() {
           email, phone, street, city, state, zip,
           ...(company ? { company } : {}),
           ...(displayName ? { displayName } : {}),
+          // Sent explicitly rather than inferred from a blank displayName, so
+          // "anonymous" is never confused with "no name typed in".
+          ...(anonymous ? { anonymous: true } : {}),
         }),
       });
       const data = await res.json();

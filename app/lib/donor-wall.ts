@@ -8,6 +8,16 @@
 // A name is written ONLY when the donor ticked the box asking for it. No tag
 // means the gift stays anonymous, so a donation can never be attributed by
 // accident.
+//
+// An anonymous gift still gets a tag of its own, [anon:xxxxxxxx] — a random id
+// carrying no identifying information at all, never the word "Anonymous"
+// itself. Its only job is to let a monthly anonymous donor's repeat charges be
+// recognised as one supporter on the wall, the same way a named donor's are
+// grouped by their [wall:...] name. A one-time gift could skip this and still
+// display correctly, but a monthly one cannot: without some shared marker,
+// each month's charge would show as a separate anonymous stranger.
+
+import crypto from "crypto";
 
 const MAX_LEN = 40;
 
@@ -77,6 +87,25 @@ export function parseCompanyName(description: unknown): string | null {
   const m = description.match(/\[co:([^\]]{1,40})\]/);
   const name = m?.[1]?.trim();
   return name ? name : null;
+}
+
+/** A fresh id for one anonymous gift. Generate once per donation and reuse it
+ *  in every description that gift produces (the first charge and, for a
+ *  monthly gift, the schedule that makes the later ones). */
+export function newAnonId(): string {
+  return crypto.randomBytes(4).toString("hex");
+}
+
+/** Formats an anonymous-gift marker, e.g. "[anon:a1b2c3d4] ". */
+export function anonTag(id: string): string {
+  return `[anon:${id}] `;
+}
+
+/** Reads back an id written by anonTag, or null if this description has none. */
+export function parseAnonId(description: unknown): string | null {
+  if (typeof description !== "string") return null;
+  const m = description.match(/\[anon:([a-f0-9]{1,16})\]/);
+  return m?.[1] ?? null;
 }
 
 /** Reads back a name written by wallTag. Returns null for anonymous donations. */

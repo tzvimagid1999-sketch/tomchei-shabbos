@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
   parseWallName,
   parseCompanyName,
+  parseAnonId,
   pledgeMultiplier,
   isExcludedTestDonation,
 } from "../../lib/donor-wall";
@@ -97,16 +98,27 @@ export async function GET() {
       const shown = Math.round((parseFloat(String(t.amount)) || 0) * multiplier);
       if (isExcludedTestDonation(t.description, shown)) continue;
 
-      const name = parseWallName(t.description);
-      if (!name) continue;
-      // A monthly donor charges every month; show them once.
-      const key = name.toLowerCase();
+      const wallName = parseWallName(t.description);
+      const anonId = wallName ? null : parseAnonId(t.description);
+      // Neither tag: the donor never opted to be shown, one way or the other.
+      // The money still counted towards the total above; it just has no place
+      // on this list.
+      if (!wallName && !anonId) continue;
+
+      // A named donor is deduped by name, so their repeat monthly charges
+      // collapse into one row. An anonymous donor cannot be deduped by the
+      // word "Anonymous" — every anonymous stranger would collapse into the
+      // same row — so the id carried in [anon:...] stands in for a name here,
+      // grouping one anonymous donor's own repeat charges without ever
+      // grouping two different anonymous donors together.
+      const key = wallName ? wallName.toLowerCase() : `anon:${anonId}`;
       if (seen.has(key)) continue;
       seen.add(key);
+
       // A pledge shows its full commitment, matching what the bar credits.
-      const company = parseCompanyName(t.description);
+      const company = wallName ? parseCompanyName(t.description) : null;
       donors.push({
-        name,
+        name: wallName ?? "Anonymous",
         ...(company && company.toLowerCase() !== key ? { company } : {}),
         amount: Math.round((parseFloat(String(t.amount)) || 0) * multiplier),
       });

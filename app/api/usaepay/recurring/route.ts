@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { sendMonthlyConfirmation, sendScheduleFailureAlert } from "../../../lib/donation-email";
 import { sendHonoreeNotification } from "../../../lib/mailer";
-import { wallTag, companyTag, pledgeTag, PLEDGED_TAG } from "../../../lib/donor-wall";
+import { wallTag, companyTag, anonTag, newAnonId, pledgeTag, PLEDGED_TAG } from "../../../lib/donor-wall";
 
 // Sets up a MONTHLY recurring donation. Per USAePay support, this is a 3-step
 // flow (NOT a single "create customer with embedded payment method" call):
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign, subCampaign, company, displayName } = await req.json();
+    const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign, subCampaign, company, displayName, anonymous } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -51,7 +51,17 @@ export async function POST(req: NextRequest) {
     // subCampaign tags the donation for a campaign page's own total; the Rosh
     // Hashanah wording the main bar counts is unchanged.
     const subTag = subCampaign ? `[${subCampaign}] ` : "";
-    const campaignTag = subTag + wallTag(displayName) + (displayName ? companyTag(company) : "") + (campaign === "rosh-hashanah" ? "Rosh Hashanah Campaign " : "");
+    // Generated once and folded into campaignTag, which both the first charge
+    // and the schedule below reuse verbatim — so a monthly anonymous donor's
+    // every future charge carries the same id and is recognised as one
+    // supporter on the wall, the way a named donor's charges already are.
+    const anonId = anonymous ? newAnonId() : null;
+    const campaignTag =
+      subTag +
+      wallTag(displayName) +
+      (displayName ? companyTag(company) : "") +
+      (anonId ? anonTag(anonId) : "") +
+      (campaign === "rosh-hashanah" ? "Rosh Hashanah Campaign " : "");
 
     // A billing schedule's description is capped at 120 characters and USAePay
     // rejects the whole schedule if it is longer:
@@ -207,6 +217,11 @@ export async function POST(req: NextRequest) {
                 subTag,
                 campaign === "rosh-hashanah" ? "Rosh Hashanah Campaign " : "",
                 totalPayments ? PLEDGED_TAG : "",
+                // Essential, not optional: dropping this for length would mean
+                // every later charge from an anonymous monthly donor has no
+                // marker at all, and silently falls out of the wall entirely
+                // even though the money still counts on the bar.
+                anonId ? anonTag(anonId) : "",
               ],
               [
                 wallTag(displayName),

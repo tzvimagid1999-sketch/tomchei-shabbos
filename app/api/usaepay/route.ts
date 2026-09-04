@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { sendMail, sendHonoreeNotification, escapeHtml } from "../../lib/mailer";
-import { wallTag, companyTag } from "../../lib/donor-wall";
+import { wallTag, companyTag, anonTag, newAnonId } from "../../lib/donor-wall";
 
 // Charges a donation through the USAePay gateway using a payment token
 // (payment_key) that was generated in the donor's browser by pay.js.
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, firstName, lastName, name, email, phone, street, city, state, zip, campaign, subCampaign, company, displayName, honoreeType, honoreeName, honoreeEmail } = await req.json();
+    const { amount, paymentKey, firstName, lastName, name, email, phone, street, city, state, zip, campaign, subCampaign, company, displayName, anonymous, honoreeType, honoreeName, honoreeEmail } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -105,6 +105,9 @@ export async function POST(req: NextRequest) {
           // Only alongside a name: a company on an anonymous gift identifies
           // the donor by the back door.
           (displayName ? companyTag(company) : "") +
+          // Marks an anonymous gift so it can still be listed, as "Anonymous",
+          // without ever writing anything that could identify who gave it.
+          (anonymous ? anonTag(newAnonId()) : "") +
           (campaign === "rosh-hashanah"
             ? "Rosh Hashanah Campaign donation to Tomchei Shabbos of Florida"
             : "Donation to Tomchei Shabbos of Florida") +
