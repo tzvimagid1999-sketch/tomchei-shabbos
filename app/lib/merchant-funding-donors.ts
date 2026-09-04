@@ -80,27 +80,21 @@ export async function getMerchantFundingDonors(): Promise<{ donors: Donor[]; sta
       // The money still counted towards the total; it just has no place here.
       if (!wallName && !anonId) continue;
 
-      // A named donor is deduped by name AND company together, not name alone.
-      // The same person can give once personally and again through their
-      // firm — real, separate gifts that both belong on the wall — and name
-      // alone would silently keep only whichever one was crawled first. A
-      // monthly donor's repeat charges still collapse to one row: every charge
-      // from the same schedule carries the identical name and company each
-      // time, so they still share one key.
-      //
-      // An anonymous donor cannot be deduped by the word "Anonymous" — every
-      // anonymous stranger would collapse into the same row — so the id
-      // carried in [anon:...] stands in for a name here, grouping one
-      // anonymous donor's own repeat charges without ever grouping two
-      // different anonymous donors together.
+      // Every qualifying transaction gets its own row — two gifts from the
+      // same person are two gifts, shown twice, not merged into one. The only
+      // thing that ever collapses to a single row is a fixed-term PLEDGE's own
+      // later instalments, which were already excluded above (multiplier===0):
+      // that is one commitment credited once in full, not several gifts.
       const company = wallName ? parseCompanyName(t.description) : null;
       const key = wallName
         ? `${wallName.toLowerCase()}|${(company || "").toLowerCase()}`
         : `anon:${anonId}`;
-      if (seen.has(key)) continue;
+      // Recorded, not enforced: kept only so the offline sheet below can tell
+      // a row apart from a card donor of the same name and company, and skip
+      // logging the same real-world gift twice — not to limit how many times
+      // one person may appear here.
       seen.add(key);
 
-      // A pledge shows its full commitment, matching what the bar credits.
       donors.push({
         name: wallName ?? "Anonymous",
         // Guards against a donor typing their own name again into the company
