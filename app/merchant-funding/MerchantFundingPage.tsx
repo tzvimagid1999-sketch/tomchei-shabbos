@@ -88,8 +88,17 @@ function useCountUp(target: number | null, run: boolean, duration = 900, delay =
   return target === null ? null : n;
 }
 
-export default function MerchantFundingPage({ initialDonors = [] }: { initialDonors?: Donor[] }) {
-  const [raised, setRaised] = useState<number | null>(null);
+export default function MerchantFundingPage({
+  initialDonors = [],
+  initialRaised = null,
+}: {
+  initialDonors?: Donor[];
+  initialRaised?: number | null;
+}) {
+  // Seeded from the server's own render, so Our Goal, Raised & Pledged and Our
+  // Impact So Far show real figures in the very first HTML instead of
+  // "Calculating..." for as long as the client's own fetch takes.
+  const [raised, setRaised] = useState<number | null>(initialRaised);
   const [loadFailed, setLoadFailed] = useState(false);
   const [amount, setAmount] = useState("");
   const [honoreeType, setHonoreeType] = useState<"" | "honor" | "memory">("");
@@ -161,9 +170,14 @@ export default function MerchantFundingPage({ initialDonors = [] }: { initialDon
 
 
   useEffect(() => {
-    refresh();
+    // The server's own render already supplied the current figure; only
+    // refetch immediately if that came back null (the server-side call
+    // itself failed). Either way the poll below keeps it current from here.
+    if (initialRaised === null) refresh();
     const id = setInterval(refresh, 60_000);
     return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- initialRaised is
+    // only ever meant to seed the very first run of this effect.
   }, [refresh]);
 
   // In demo mode the sample list stands in for the real one, and the donors

@@ -1,5 +1,6 @@
 import MerchantFundingPage from "./MerchantFundingPage";
 import { getMerchantFundingDonors } from "../lib/merchant-funding-donors";
+import { getMerchantFundingTotal } from "../lib/merchant-funding-total";
 
 export const metadata = {
   title: "Merchant Funding Community Campaign | Tomchei Shabbos of Florida",
@@ -14,12 +15,16 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-  // Fetched here rather than left to the client, so the ticker and the
-  // supporter list are already in the very first HTML a visitor receives.
-  // Previously they only appeared once the browser's own fetch resolved after
-  // the page had loaded — a gap that was most visible on a slow mobile
-  // connection, where the page could sit with no names at all until someone
-  // manually refreshed.
-  const { donors } = await getMerchantFundingDonors();
-  return <MerchantFundingPage initialDonors={donors} />;
+  // Fetched here rather than left to the client, so the ticker, the supporter
+  // list, and the Goal/Raised/Impact figures are already in the very first
+  // HTML a visitor receives. Previously all of this only appeared once the
+  // browser's own fetch resolved after the page had loaded — the donor names
+  // could sit empty on a slow mobile connection until someone manually
+  // refreshed, and the three stat boxes showed "Calculating..." for as long
+  // as that fetch took.
+  const [{ donors }, { total }] = await Promise.all([
+    getMerchantFundingDonors(),
+    getMerchantFundingTotal(),
+  ]);
+  return <MerchantFundingPage initialDonors={donors} initialRaised={total} />;
 }
