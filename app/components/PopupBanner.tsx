@@ -5,6 +5,26 @@ import Image from "next/image";
 import { X } from "lucide-react";
 import { usePathname } from "next/navigation";
 
+// Shown once per browser, not on every new tab — but an explicit page
+// refresh always shows it again, since a visitor hitting reload is asking to
+// see the page fresh, and that is generally expected to include this.
+const SEEN_KEY = "tsf-popup-seen";
+
+// The Navigation Timing API tells a real reload (F5, the reload button) apart
+// from an ordinary navigation (typing the URL, opening a new tab, following a
+// link) — the one distinction localStorage alone cannot make, since both look
+// identical to it.
+function isPageReload(): boolean {
+  try {
+    const [entry] = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
+    return entry?.type === "reload";
+  } catch {
+    // Unavailable in this browser: fall back to "not a reload", so the once-
+    // per-browser behaviour still works even without the reload override.
+    return false;
+  }
+}
+
 export default function PopupBanner() {
   const [visible, setVisible] = useState(false);
   // The merchant funding campaign is its own standalone landing page; a
@@ -13,7 +33,25 @@ export default function PopupBanner() {
 
   useEffect(() => {
     if (suppressed) return;
-    const id = setTimeout(() => setVisible(true), 3000);
+
+    let alreadySeen = false;
+    try {
+      alreadySeen = localStorage.getItem(SEEN_KEY) === "1";
+    } catch {
+      // Private browsing or storage blocked: treat as never seen, matching
+      // the old always-show behaviour rather than silently going quiet.
+    }
+    if (alreadySeen && !isPageReload()) return;
+
+    const id = setTimeout(() => {
+      setVisible(true);
+      try {
+        localStorage.setItem(SEEN_KEY, "1");
+      } catch {
+        // If storage cannot be written, it just shows again next time too —
+        // the safe direction to fail in for a promotional popup.
+      }
+    }, 3000);
     return () => clearTimeout(id);
   }, [suppressed]);
 
