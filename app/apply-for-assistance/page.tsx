@@ -30,12 +30,19 @@ const initialForm = {
   additionalInfo: "",
 };
 
+// Rosh Hashanah applications closed 2026-09-08. Shabbos assistance is a
+// year-round request, not tied to the Yom Tov calendar, so it stays open —
+// only the two options that include Yom Tov are shut off.
+const YOM_TOV_CLOSED = true;
+const isYomTovOption = (opt: string) => opt !== "Shabbos assistance only";
+
 export default function ApplyForAssistancePage() {
   const [form, setForm] = useState(initialForm);
   const [childAges, setChildAges] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [showClosedNotice, setShowClosedNotice] = useState(false);
 
   const inputClass =
     "w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#1AABAB] transition font-medium text-gray-700 bg-white";
@@ -56,6 +63,13 @@ export default function ApplyForAssistancePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Defense in depth: the radio's own onChange already refuses to select a
+    // Yom Tov option, so this should be unreachable — but a submission must
+    // never depend solely on a click handler having run correctly.
+    if (YOM_TOV_CLOSED && isYomTovOption(form.assistanceType)) {
+      setShowClosedNotice(true);
+      return;
+    }
     setLoading(true);
     setError("");
     try {
@@ -233,9 +247,34 @@ export default function ApplyForAssistancePage() {
             <label className={labelClass}>Assistance Type Requested *</label>
             <div className="space-y-2 mt-1">
               {["Yom Tov assistance only", "Shabbos assistance only", "Shabbos and Yom Tov assistance"].map((opt) => (
-                <label key={opt} className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <input type="radio" name="assistanceType" value={opt} checked={form.assistanceType === opt} onChange={handleChange} required />
+                <label
+                  key={opt}
+                  className={`flex items-center gap-2 text-sm font-medium ${
+                    YOM_TOV_CLOSED && isYomTovOption(opt) ? "text-gray-400" : "text-gray-700"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="assistanceType"
+                    value={opt}
+                    checked={form.assistanceType === opt}
+                    onChange={(e) => {
+                      // Refuses the selection itself rather than only checking
+                      // at submit time, so the applicant sees the notice at
+                      // the moment they try to pick a closed option, not
+                      // after filling in the rest of the form.
+                      if (YOM_TOV_CLOSED && isYomTovOption(opt)) {
+                        setShowClosedNotice(true);
+                        return;
+                      }
+                      handleChange(e);
+                    }}
+                    required
+                  />
                   {opt}
+                  {YOM_TOV_CLOSED && isYomTovOption(opt) && (
+                    <span className="text-xs font-normal text-gray-400">(closed)</span>
+                  )}
                 </label>
               ))}
             </div>
@@ -289,6 +328,29 @@ export default function ApplyForAssistancePage() {
           </button>
         </form>
       </div>
+
+      {showClosedNotice && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowClosedNotice(false)}
+          />
+          <div className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center">
+            <h2 className="font-playfair text-2xl font-bold text-[#1AABAB] mb-3">
+              Applications Closed
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Rosh Hashanah applications are closed. Shabbos assistance applications are still open.
+            </p>
+            <button
+              onClick={() => setShowClosedNotice(false)}
+              className="w-full bg-[#1AABAB] text-white py-3 rounded-lg font-semibold hover:bg-[#158888] transition"
+            >
+              Okay
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
