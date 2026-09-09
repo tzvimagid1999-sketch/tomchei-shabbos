@@ -1,17 +1,14 @@
 import RoshHashanahPage from "./RoshHashanahPage";
-import { getMainDonationTotal } from "../lib/main-donation-total";
 
-// Always re-render on request: the donation total is live data, not something
-// to bake into the build.
-export const dynamic = "force-dynamic";
-
-export default async function Page() {
-  // Fetched here rather than left entirely to the client, so the goal/raised/
-  // percent figures are already in the very first HTML a visitor receives.
-  // Previously they only appeared once the browser's own fetch resolved after
-  // the page had loaded, showing "Calculating..." for as long as that took.
-  // Cheap to call even when the bar is switched off — it is cache-backed, and
-  // the client component itself decides whether to render the section at all.
-  const { total } = await getMainDonationTotal();
-  return <RoshHashanahPage initialTotal={total} />;
+// REVERTED 2026-09-09: this page used to await getMainDonationTotal() here so
+// the figure was already in the first HTML instead of showing
+// "Calculating...". That fetch is a paged USAePay crawl that can take up to
+// ~15s on a cold cache, and awaiting it here meant the ENTIRE page — donate
+// button included — did not render at all until it finished. That is a far
+// worse trade than a brief "Calculating..." on the number: it can block a
+// donor from reaching the payment form entirely. The total goes back to being
+// fetched client-side, same as before that change, so navigating here is
+// instant regardless of the cache state.
+export default function Page() {
+  return <RoshHashanahPage initialTotal={null} />;
 }

@@ -58,12 +58,12 @@ function ThankYouScreen({ name, amount, email, monthly, onClose }: { name: strin
   );
 }
 
-export default function RoshHashanah({ initialTotal }: { initialTotal: number }) {
-  // Seeded from the server's own render, so the bar shows the real figure in
-  // the very first HTML instead of starting at 0 and showing "Calculating..."
-  // for as long as the client's own fetch takes.
-  const [totalDonated, setTotalDonated] = useState(initialTotal);
-  const [loading, setLoading] = useState(false);
+export default function RoshHashanah({ initialTotal }: { initialTotal: number | null }) {
+  // initialTotal is always null now (see page.tsx) — kept nullable rather than
+  // deleted so a future Suspense-streamed version of the server fetch can
+  // reuse this without another round of prop-plumbing.
+  const [totalDonated, setTotalDonated] = useState(initialTotal ?? 0);
+  const [loading, setLoading] = useState(initialTotal === null);
   const [checkoutAmount, setCheckoutAmount] = useState("");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
@@ -114,11 +114,14 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number })
       setLoading(false);
     };
 
-    // The server's own render already supplied the real figure, so there is
-    // no need to refetch it immediately here — only the periodic poll that
-    // keeps it current afterwards.
+    // initialTotal is always null now, so this always fetches on mount — the
+    // page itself has already rendered and is fully usable while this runs.
+    if (initialTotal === null) fetchTotal();
+    else setLoading(false);
     const interval = setInterval(fetchTotal, 60000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- initialTotal only
+    // seeds the very first run of this effect.
   }, []);
 
   // pay.js is often already cached from a previous page, so it can finish

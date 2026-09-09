@@ -1,6 +1,4 @@
 import MerchantFundingPage from "./MerchantFundingPage";
-import { getMerchantFundingDonors } from "../lib/merchant-funding-donors";
-import { getMerchantFundingTotal } from "../lib/merchant-funding-total";
 
 export const metadata = {
   title: "Merchant Funding Community Campaign | Tomchei Shabbos of Florida",
@@ -10,21 +8,13 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-// Always re-render on request: the donor list is live data, not something to
-// bake into the build.
-export const dynamic = "force-dynamic";
-
-export default async function Page() {
-  // Fetched here rather than left to the client, so the ticker, the supporter
-  // list, and the Goal/Raised/Impact figures are already in the very first
-  // HTML a visitor receives. Previously all of this only appeared once the
-  // browser's own fetch resolved after the page had loaded — the donor names
-  // could sit empty on a slow mobile connection until someone manually
-  // refreshed, and the three stat boxes showed "Calculating..." for as long
-  // as that fetch took.
-  const [{ donors }, { total }] = await Promise.all([
-    getMerchantFundingDonors(),
-    getMerchantFundingTotal(),
-  ]);
-  return <MerchantFundingPage initialDonors={donors} initialRaised={total} />;
+// REVERTED 2026-09-09: this page used to await the donor list and total here
+// (Promise.all of two paged USAePay crawls) so both were already in the first
+// HTML instead of appearing after a client fetch. Those crawls can take up to
+// ~15-20s on a cold cache, and awaiting them here meant the ENTIRE page — the
+// donation form included — did not render at all until both finished. Same
+// bug as the one just found on /RoshHashanah, same fix: both go back to being
+// fetched client-side, so this page is never blocked on USAePay to render.
+export default function Page() {
+  return <MerchantFundingPage />;
 }
