@@ -53,13 +53,9 @@ export default function Navbar() {
                 {l.label}
               </Link>
             ))}
-            <Link href="/Tishrei"
-              className="whitespace-nowrap px-2.5 lg:px-3.5 py-2 rounded-lg text-sm font-semibold text-[#0F9FAE] hover:bg-orange-100 transition-all flex items-center gap-1.5">
-              Tishrei Campaign
-            </Link>
             <Link href={DONATE_HREF}
               className="ml-1.5 whitespace-nowrap bg-[#F5A020] text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-[#D48810] transition-all tracking-wide active:translate-y-[2px]">
-              Donate Now
+              Tishrei Campaign
             </Link>
           </div>
 
@@ -81,15 +77,10 @@ export default function Navbar() {
               {l.label}
             </Link>
           ))}
-          <Link href="/Tishrei"
-            className="block px-4 py-2.5 rounded-lg font-semibold text-sm text-[#0F9FAE] hover:bg-orange-100 mt-2"
-            onClick={() => setOpen(false)}>
-            Tishrei Campaign
-          </Link>
           <Link href={DONATE_HREF}
             className="block bg-[#F5A020] text-white text-center px-4 py-2.5 rounded-lg font-bold text-sm mt-2 tracking-wide"
             onClick={() => setOpen(false)}>
-            Donate Now
+            Tishrei Campaign
           </Link>
         </div>
       )}
