@@ -12,7 +12,7 @@ function json(body: unknown, init?: ResponseInit) {
   return res;
 }
 
-// The /RoshHashanah page's own server render calls getMainDonationTotal()
+// The /Tishrei page's own server render calls getMainDonationTotal()
 // directly, so the first paint already has the real figure. This route is
 // for the client-side polling that keeps it current after that, plus the
 // ?debug=1 view used to diagnose the total — same underlying function, same

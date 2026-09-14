@@ -71,7 +71,7 @@ export default function PopupBanner() {
           <Image src="/rosh-hashanah-popup-v2.jpg" alt="Delivery Status: Pending — Awaiting Your Generosity, Yom Tov Campaign" fill className="object-cover object-center" priority />
 
           {/* Clickable "Click To Give" hotspot, positioned over the button in the graphic */}
-          <Link href="/RoshHashanah" onClick={close}
+          <Link href="/Tishrei" onClick={close}
             aria-label="Click to give"
             className="absolute rounded-none cursor-pointer transition-all duration-150 hover:ring-2 hover:ring-inset hover:ring-[#0F6B6B] active:scale-[0.97]"
             style={{ left: "70.75%", top: "76.36%", width: "25.42%", height: "10.91%" }} />

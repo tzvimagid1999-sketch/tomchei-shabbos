@@ -8,7 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const pages: { path: string; priority: number }[] = [
     { path: "/", priority: 1.0 },
-    { path: "/RoshHashanah", priority: 0.9 },
+    { path: "/Tishrei", priority: 0.9 },
     { path: "/about", priority: 0.8 },
     { path: "/apply-for-assistance", priority: 0.8 },
     { path: "/volunteer", priority: 0.7 },
@@ -25,7 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return pages.map(({ path, priority }) => ({
     url: `${SITE_URL}${path}`,
     lastModified: now,
-    changeFrequency: path === "/RoshHashanah" ? "daily" : "monthly",
+    changeFrequency: path === "/Tishrei" ? "daily" : "monthly",
     priority,
   }));
 }

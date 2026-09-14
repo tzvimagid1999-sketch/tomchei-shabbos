@@ -13,7 +13,7 @@ export const metadata = {
 // HTML instead of appearing after a client fetch. Those crawls can take up to
 // ~15-20s on a cold cache, and awaiting them here meant the ENTIRE page — the
 // donation form included — did not render at all until both finished. Same
-// bug as the one just found on /RoshHashanah, same fix: both go back to being
+// bug as the one just found on /Tishrei, same fix: both go back to being
 // fetched client-side, so this page is never blocked on USAePay to render.
 export default function Page() {
   return <MerchantFundingPage />;
