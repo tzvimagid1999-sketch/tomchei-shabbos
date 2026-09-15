@@ -34,8 +34,14 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Buttons — bottom-right; smaller and side-by-side on mobile, original size on sm+ */}
-        <div className="relative z-10 flex justify-end gap-2 sm:gap-4 px-8 sm:px-16 pb-14">
+        {/* Buttons — bottom-right; smaller and side-by-side on mobile, original
+            size on sm+. flex-wrap is required: three nowrap buttons anchored
+            with justify-end and no wrapping overflowed past the LEFT edge of
+            narrow phones and got clipped there — invisible, with nothing to
+            scroll to reach it. Wrapping lets a tight screen drop "Contact" (or
+            more) onto a second row, still bottom/right-anchored, instead of
+            losing a button off-screen. */}
+        <div className="relative z-10 flex flex-wrap justify-end gap-2 sm:gap-4 px-4 sm:px-16 pb-14">
           <Link href={DONATE_HREF}
             className="bg-[#F5A020] text-white px-4 py-2 sm:px-10 sm:py-5 rounded-lg sm:rounded-xl font-black text-[11px] sm:text-base uppercase tracking-widest hover:bg-[#D48810] transition-all duration-150 shadow-lg whitespace-nowrap">
             Make a Donation
