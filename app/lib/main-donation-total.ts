@@ -1,6 +1,6 @@
 // Total raised for the main site's Rosh Hashanah campaign bar.
 //
-// Extracted from the API route so the /Tishrei page's own SERVER render
+// Extracted from the API route so the /tishrei page's own SERVER render
 // can call it directly and ship the real figure in the very first HTML,
 // instead of every visitor's browser fetching it after the page has already
 // loaded — the gap that showed "Calculating..." for as long as the fetch

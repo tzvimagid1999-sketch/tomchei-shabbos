@@ -13,7 +13,7 @@
 export const CAMPAIGN_MODE = true;
 
 /** Where the campaign sends donors while CAMPAIGN_MODE is on. */
-export const CAMPAIGN_PATH = "/Tishrei";
+export const CAMPAIGN_PATH = "/tishrei";
 
 /** The normal donate page, used whenever CAMPAIGN_MODE is off. */
 export const REGULAR_DONATE_PATH = "/donate#payment";

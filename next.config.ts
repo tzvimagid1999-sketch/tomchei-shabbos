@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
         permanent: false, // temporary — the donate page comes back after the campaign
       },
       {
-        // The campaign page moved from /RoshHashanah to /Tishrei on 2026-09-14.
+        // The campaign page moved from /RoshHashanah to /tishrei on 2026-09-14.
         // Anyone with the old link (already sent out, bookmarked, indexed)
         // still lands on the campaign rather than a 404.
         source: "/RoshHashanah",
