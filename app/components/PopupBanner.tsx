@@ -8,31 +8,19 @@ import { usePathname } from "next/navigation";
 // Shown once per browser, not on every new tab — but an explicit page
 // refresh always shows it again, since a visitor hitting reload is asking to
 // see the page fresh, and that is generally expected to include this.
-const SEEN_KEY = "tsf-popup-seen";
-
-// The Navigation Timing API tells a real reload (F5, the reload button) apart
-// from an ordinary navigation (typing the URL, opening a new tab, following a
-// link) — the one distinction localStorage alone cannot make, since both look
-// identical to it.
-function isPageReload(): boolean {
-  try {
-    const [entry] = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
-    if (entry?.type === "reload") return true;
-  } catch {
-    // Fall through to the older API below.
-  }
-  try {
-    // The modern API above is not consistently populated by every mobile
-    // browser for every kind of reload (pull-to-refresh in particular has a
-    // history of not behaving like a normal reload internally). This older,
-    // deprecated API is a second, independent way engines report the same
-    // thing, so a browser that gets one wrong may still get the other right.
-    // eslint-disable-next-line deprecation/deprecation
-    return (performance as unknown as { navigation?: { type: number } }).navigation?.type === 1;
-  } catch {
-    return false;
-  }
-}
+//
+// The first attempt at this detected "was this a reload" via the Navigation
+// Timing API. That turned out to be unreliable on mobile: pull-to-refresh in
+// particular has a documented history of not behaving like a normal reload
+// internally, so the popup stopped reappearing on refresh on phones.
+//
+// This uses sessionStorage instead, which needs no browser-reported "reload"
+// signal at all — it relies only on the one guarantee every browser gives
+// consistently: sessionStorage survives a refresh of the SAME tab, and resets
+// the moment a genuinely new tab or window opens. That distinction is exactly
+// "was this tab reloaded" vs "is this a new visit", with nothing to detect.
+const SEEN_KEY = "tsf-popup-seen"; // localStorage: seen at least once, ever, on this browser
+const TAB_LOADED_KEY = "tsf-popup-tab-loaded"; // sessionStorage: this exact tab has loaded the site before
 
 export default function PopupBanner() {
   const [visible, setVisible] = useState(false);
@@ -44,13 +32,19 @@ export default function PopupBanner() {
     if (suppressed) return;
 
     let alreadySeen = false;
+    let sameTabReload = false;
     try {
       alreadySeen = localStorage.getItem(SEEN_KEY) === "1";
+      // Set immediately, not inside the timeout below: it must be written the
+      // moment this tab first loads the page, so that IF this exact tab is
+      // later reloaded, sessionStorage has survived to prove it.
+      sameTabReload = sessionStorage.getItem(TAB_LOADED_KEY) === "1";
+      sessionStorage.setItem(TAB_LOADED_KEY, "1");
     } catch {
       // Private browsing or storage blocked: treat as never seen, matching
       // the old always-show behaviour rather than silently going quiet.
     }
-    if (alreadySeen && !isPageReload()) return;
+    if (alreadySeen && !sameTabReload) return;
 
     const id = setTimeout(() => {
       setVisible(true);
