@@ -17,10 +17,19 @@ const SEEN_KEY = "tsf-popup-seen";
 function isPageReload(): boolean {
   try {
     const [entry] = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
-    return entry?.type === "reload";
+    if (entry?.type === "reload") return true;
   } catch {
-    // Unavailable in this browser: fall back to "not a reload", so the once-
-    // per-browser behaviour still works even without the reload override.
+    // Fall through to the older API below.
+  }
+  try {
+    // The modern API above is not consistently populated by every mobile
+    // browser for every kind of reload (pull-to-refresh in particular has a
+    // history of not behaving like a normal reload internally). This older,
+    // deprecated API is a second, independent way engines report the same
+    // thing, so a browser that gets one wrong may still get the other right.
+    // eslint-disable-next-line deprecation/deprecation
+    return (performance as unknown as { navigation?: { type: number } }).navigation?.type === 1;
+  } catch {
     return false;
   }
 }
