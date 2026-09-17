@@ -249,10 +249,10 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number | 
 
   const tiers = [
     { value: 125, label: "$125", title: "Shabbos for a family" },
-    { value: 250, label: "$250", title: "Rosh Hashanah for a family" },
+    { value: 150, label: "$150", title: "Meat and Chicken for a Family for Sukkos" },
     { value: 600, label: "$600", title: "Succos for a family" },
     { value: 1250, label: "$1,250", title: "Shabbos for 10 families" },
-    { value: 2500, label: "$2,500", title: "Rosh Hashanah for 10 families" },
+    { value: 1500, label: "$1,500", title: "Meat and Chicken for 10 Families for Sukkos" },
     { value: 6000, label: "$6,000", title: "Succos for 10 families" },
   ];
 
