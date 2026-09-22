@@ -77,24 +77,40 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number | 
   const cardRef = useRef<any>(null);
   const publicKey = process.env.NEXT_PUBLIC_USAEPAY_PUBLIC_KEY;
 
-  // Stretch goals: the campaign starts at $100k. The moment that's reached the
-  // target climbs to $125k, then $150k, and so on in $25k steps. The next tier
-  // is deliberately NOT revealed until the current one is actually hit.
+  // The goal displayed is always the fixed $250k target — it never changes to
+  // a bigger number. What grows instead is the BAR's own scale: once $250k is
+  // passed, the bar's right edge represents a bigger figure (in $25k steps),
+  // so there is room for the fill to keep moving right past a marker line
+  // drawn at the $250k point, and the percent stat can read past 100%.
   const BASE_GOAL = 250000;
   const STRETCH_STEP = 25000;
-  const goal =
+  const barScale =
     totalDonated < BASE_GOAL
       ? BASE_GOAL
       : Math.floor(totalDonated / STRETCH_STEP) * STRETCH_STEP + STRETCH_STEP;
   const baseGoalReached = totalDonated >= BASE_GOAL;
-  const goalLabel = `$${Math.round(goal / 1000)}k`;
+  const goalLabel = `$${Math.round(BASE_GOAL / 1000)}k`;
+  // The bonus-goal marker's own label — tracks barScale, so it reads $275k
+  // until that is passed, then $300k, then $325k, and so on automatically.
+  const barScaleLabel = `$${Math.round(barScale / 1000)}k`;
   // Show the exact amount raised ($1,001) rather than rounding to $1k. Longer
   // numbers get a smaller size so "$150,000" still fits the 3-column layout on
   // a narrow phone.
   const raisedLabel = `$${Math.round(totalDonated).toLocaleString()}`;
   const raisedSizeClass =
     raisedLabel.length > 7 ? "text-lg sm:text-2xl" : "text-2xl sm:text-3xl";
-  const progressPercent = Math.min((totalDonated / goal) * 100, 100);
+  // Uncapped and always against the fixed BASE_GOAL, so this can read past
+  // 100% (110%, 133%, ...) once the campaign exceeds its original target —
+  // that overshoot is the whole point of a bonus goal.
+  const donatedPercent = (totalDonated / BASE_GOAL) * 100;
+  // Separate from the percent above: this is where the BAR's fill actually
+  // sits along its own (growing) scale, always capped at 100% of that scale
+  // since the fill can never physically exceed the bar's width.
+  const barFillPercent = Math.min((totalDonated / barScale) * 100, 100);
+  // Where the $250k marker line sits along the bar's current scale — at
+  // baseline this is 100% (the line sits at the bar's own right edge, so it
+  // is not drawn until the scale has actually grown past it).
+  const markerLinePercent = (BASE_GOAL / barScale) * 100;
 
   useEffect(() => {
     // Bar disabled: make no calls to USAePay at all while connectivity is blocked.
@@ -297,9 +313,9 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number | 
             style={{ background: 'rgba(255, 255, 255, 0.95)', boxShadow: "0 0 16px 4px rgba(0,0,0,0.15)" }}>
             <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
               <div className="text-center">
-                <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">
-                  {!loading && baseGoalReached ? "Bonus Goal" : "Goal"}
-                </p>
+                {/* Fixed at $250k always — this number never changes, unlike
+                    the old design where it jumped to the next stretch tier. */}
+                <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Goal</p>
                 <p className={`font-bold text-[#C8A75B] ${loading ? "text-sm sm:text-base italic" : "text-2xl sm:text-3xl"}`}>{loading ? "Calculating…" : goalLabel}</p>
               </div>
               <div className="text-center">
@@ -310,20 +326,62 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number | 
               </div>
               <div className="text-center">
                 <p className="text-xs sm:text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-1 sm:mb-2">Progress</p>
-                <p className={`font-bold text-[#C8A75B] ${loading ? "text-sm sm:text-base italic" : "text-2xl sm:text-3xl"}`}>{loading ? "Calculating…" : `${Math.round(progressPercent)}%`}</p>
+                {/* Uncapped: always the real percentage of the fixed $250k
+                    goal, so this reads past 100% (110%, 133%, ...) once the
+                    campaign exceeds its original target — that overshoot is
+                    the point of a bonus goal, not something to hide. */}
+                <p className={`font-bold text-[#C8A75B] ${loading ? "text-sm sm:text-base italic" : "text-2xl sm:text-3xl"}`}>
+                  {loading ? "Calculating…" : `${Math.round(donatedPercent)}%`}
+                </p>
               </div>
             </div>
-            {/* Only revealed once the previous goal is actually met — before that
-                the campaign shows a single target with no hint of a stretch goal. */}
-            {!loading && baseGoalReached && (
-              <p className="text-center text-xs sm:text-sm font-bold text-[#1AABAB] mb-3">
-                🎉 We passed ${Math.round((goal - STRETCH_STEP) / 1000)}k! Bonus Goal: {goalLabel}
-              </p>
-            )}
             <div className="relative w-full h-6 bg-[#F8F4EC] rounded-full overflow-hidden" style={{ boxShadow: "0 0 10px 3px rgba(0,0,0,0.18)" }}>
-              <div className={`absolute top-0 left-0 h-full bg-gradient-to-r from-[#1AABAB] to-[#3DC4C4] rounded-full transition-all duration-500 ${loading ? "animate-pulse" : ""}`}
-                style={{ width: loading ? "0%" : `${progressPercent}%` }} />
+              {loading ? (
+                <div className="absolute top-0 left-0 h-full rounded-full transition-all duration-500 animate-pulse bg-gradient-to-r from-[#1AABAB] to-[#3DC4C4]" style={{ width: "0%" }} />
+              ) : (
+                <>
+                  {/* One continuous gradient spanning the FULL track — teal at
+                      the start, warming into gold by the far end — rather than
+                      two separately-coloured segments stitched together at a
+                      seam. It is painted across the whole bar every time, not
+                      just the filled portion, so the colour at any given point
+                      never shifts as the fill grows; the cover div below is
+                      what makes it read as "filling in". */}
+                  <div
+                    className="absolute inset-0 rounded-full"
+                    style={{ background: "linear-gradient(to right, #1AABAB, #3DC4C4 35%, #C8A75B 75%, #F5A020 100%)" }}
+                  />
+                  {/* Masks the unfilled portion of the track in the empty
+                      track colour, anchored to the right — this is what
+                      creates the "filling in" effect over the fixed gradient
+                      above, instead of a stretching/restretching gradient. */}
+                  <div
+                    className="absolute top-0 right-0 h-full bg-[#F8F4EC] transition-all duration-500"
+                    style={{ width: `${100 - barFillPercent}%` }}
+                  />
+                </>
+              )}
+              {/* The $250k marker line and its label — only drawn once the
+                  bar's scale has actually grown past that point; at baseline
+                  the line would sit exactly on the bar's own right edge. */}
+              {!loading && baseGoalReached && (
+                <div
+                  className="absolute top-0 h-full w-[2px] bg-white/90"
+                  style={{ left: `calc(${markerLinePercent}% - 1px)` }}
+                  aria-hidden="true"
+                />
+              )}
             </div>
+            {!loading && baseGoalReached && (
+              <div className="relative h-4">
+                <p
+                  className="absolute top-0.5 -translate-x-1/2 text-[10px] sm:text-xs font-bold uppercase tracking-wide whitespace-nowrap text-[#2D2D2D]"
+                  style={{ left: `${markerLinePercent}%` }}
+                >
+                  Bonus Goal: {barScaleLabel}
+                </p>
+              </div>
+            )}
           </div>
         </div>
         )}
