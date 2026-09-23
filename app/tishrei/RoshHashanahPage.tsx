@@ -422,6 +422,17 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number | 
           <h2 className="text-4xl font-bold text-[#2D2D2D] mb-3">Complete Your Donation</h2>
           <p className="text-[#2D2D2D] text-lg mb-8 font-light">Secure payment • All information is encrypted</p>
 
+          {/* PREVIEW-ONLY: credit card maintenance notice */}
+          <div className="mb-6 bg-[#FFF7E6] border-2 border-[#F5A020] rounded-xl px-5 py-4 text-center">
+            <p className="font-bold text-[#2D2D2D]">Credit card processing is temporarily under maintenance.</p>
+            <p className="text-sm text-[#5A5A5A] mt-1">We&apos;re working to get it fixed as soon as possible. In the meantime, you can still give using the methods below.</p>
+            <button type="button"
+              onClick={() => document.getElementById("other-ways-section")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              className="mt-3 inline-block bg-[#F5A020] hover:bg-[#E09010] text-white text-sm font-bold py-2 px-5 rounded-lg transition-colors">
+              See Other Ways to Give
+            </button>
+          </div>
+
           <div className="bg-white rounded-2xl border-2 border-[#C8A75B] shadow-lg p-10">
             <div className="space-y-6">
               {/* One-Time / Monthly toggle */}
@@ -539,7 +550,7 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number | 
               </p>
             </div>
 
-            <div className="mt-8">
+            <div id="other-ways-section" className="mt-8 scroll-mt-24">
               <OtherWaysToGive />
             </div>
           </div>
