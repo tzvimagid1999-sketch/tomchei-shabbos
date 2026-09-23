@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { sendMail, sendHonoreeNotification, escapeHtml } from "../../lib/mailer";
 import { wallTag, companyTag, anonTag, newAnonId } from "../../lib/donor-wall";
+import { verifyTurnstile } from "../../lib/turnstile";
 
 // Charges a donation through the USAePay gateway using a payment token
 // (payment_key) that was generated in the donor's browser by pay.js.
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, firstName, lastName, name, email, phone, street, city, state, zip, campaign, subCampaign, company, displayName, anonymous, honoreeType, honoreeName, honoreeEmail } = await req.json();
+    const { amount, paymentKey, firstName, lastName, name, email, phone, street, city, state, zip, campaign, subCampaign, company, displayName, anonymous, honoreeType, honoreeName, honoreeEmail, turnstileToken } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -27,6 +28,11 @@ export async function POST(req: NextRequest) {
     }
     if (!paymentKey) {
       return NextResponse.json({ error: "Missing card details." }, { status: 400 });
+    }
+
+    const humanVerified = await verifyTurnstile(turnstileToken, req.headers.get("x-forwarded-for") || undefined);
+    if (!humanVerified) {
+      return NextResponse.json({ error: "Verification failed. Please refresh the page and try again." }, { status: 400 });
     }
 
     // The Donate page sends a single `name` field; the Rosh Hashanah page sends

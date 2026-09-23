@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { sendMonthlyConfirmation, sendScheduleFailureAlert } from "../../../lib/donation-email";
 import { sendHonoreeNotification } from "../../../lib/mailer";
 import { wallTag, companyTag, anonTag, newAnonId, pledgeTag, PLEDGED_TAG } from "../../../lib/donor-wall";
+import { verifyTurnstile } from "../../../lib/turnstile";
 
 // Sets up a MONTHLY recurring donation. Per USAePay support, this is a 3-step
 // flow (NOT a single "create customer with embedded payment method" call):
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign, subCampaign, company, displayName, anonymous } = await req.json();
+    const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign, subCampaign, company, displayName, anonymous, turnstileToken } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -32,6 +33,11 @@ export async function POST(req: NextRequest) {
     }
     if (!paymentKey) {
       return NextResponse.json({ error: "Missing card details." }, { status: 400 });
+    }
+
+    const humanVerified = await verifyTurnstile(turnstileToken, req.headers.get("x-forwarded-for") || undefined);
+    if (!humanVerified) {
+      return NextResponse.json({ error: "Verification failed. Please refresh the page and try again." }, { status: 400 });
     }
     // For a capped pledge (e.g. "$100k over 12 months"), Step 2 below already
     // charges payment #1 — the schedule only needs to cover the remaining ones.

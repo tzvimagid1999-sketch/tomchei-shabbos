@@ -68,6 +68,7 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number | 
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [thankYou, setThankYou] = useState<{ name: string; amount: string; email: string; monthly?: boolean } | null>(null);
   const [checkoutFrequency, setCheckoutFrequency] = useState<"once" | "monthly">("once");
   const [splitMonths, setSplitMonths] = useState<number | null>(null); // null = ongoing until cancelled
@@ -143,6 +144,17 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number | 
   // pay.js is often already cached from a previous page, so it can finish
   // loading before the Script component's onLoad listener attaches — poll
   // for window.usaepay directly instead of relying on onLoad alone.
+  // Cloudflare Turnstile calls this by name (data-callback) once the widget's
+  // challenge completes, handing back the token the charge routes verify.
+  useEffect(() => {
+    (window as any).onTurnstileSuccess = (token: string) => setTurnstileToken(token);
+    (window as any).onTurnstileExpired = () => setTurnstileToken("");
+    return () => {
+      delete (window as any).onTurnstileSuccess;
+      delete (window as any).onTurnstileExpired;
+    };
+  }, []);
+
   useEffect(() => {
     if (scriptReady) return;
     if ((window as any).usaepay) {
@@ -204,6 +216,11 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number | 
       return;
     }
 
+    if (!turnstileToken) {
+      alert("Please complete the verification check above before donating.");
+      return;
+    }
+
     setCheckoutLoading(true);
 
     try {
@@ -218,6 +235,7 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number | 
         body: JSON.stringify({
           amount: parseFloat(checkoutAmount),
           paymentKey,
+          turnstileToken,
           ...(isMonthly
             ? { name: `${firstName} ${lastName}`, campaign: "rosh-hashanah", ...(splitMonths ? { numPayments: splitMonths } : {}) }
             : { firstName, lastName, campaign: "rosh-hashanah" }),
@@ -260,6 +278,10 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number | 
       console.error(err);
     } finally {
       setCheckoutLoading(false);
+      // A Turnstile token is single-use — reset the widget so the donor gets
+      // a fresh one for a retry, rather than a stale token failing silently.
+      (window as any).turnstile?.reset();
+      setTurnstileToken("");
     }
   };
 
@@ -280,6 +302,7 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number | 
     <main className="min-h-screen pt-20 pb-16 bg-white">
       <div className="relative z-10">
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
+        <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
 
         {/* Hero — two banners, swapped at the sm breakpoint (640px), because one
             image can't serve both shapes: the wide 1920x300 desktop banner renders
@@ -534,7 +557,16 @@ export default function RoshHashanah({ initialTotal }: { initialTotal: number | 
                 <div id="card-field" className="border-2 border-[#E5E5E5] rounded-lg p-4 bg-white focus-within:ring-2 focus-within:ring-[#C8A75B]"></div>
               </div>
 
-              <button onClick={handleCheckoutPayment} disabled={checkoutLoading} className="w-full bg-[#C8A75B] hover:bg-[#B8975B] text-white py-4 rounded-lg font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 mt-8">
+              <div className="flex justify-center mt-6">
+                <div
+                  className="cf-turnstile"
+                  data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                  data-callback="onTurnstileSuccess"
+                  data-expired-callback="onTurnstileExpired"
+                />
+              </div>
+
+              <button onClick={handleCheckoutPayment} disabled={checkoutLoading || !turnstileToken} className="w-full bg-[#C8A75B] hover:bg-[#B8975B] text-white py-4 rounded-lg font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 mt-8">
                 {checkoutLoading
                   ? "Processing..."
                   : checkoutFrequency === "monthly"
