@@ -25,9 +25,13 @@ export type UsaepayTxn = {
 };
 
 const PAGE = 500;
-// 12 pages is 6,000 transactions — years of history on this account. It exists
-// only so a bad cutoff cannot turn into an unbounded crawl of the API.
-const MAX_PAGES = 12;
+// Raised from 12 (6,000 txns) on 2026-09-23: the campaign runs from July 24,
+// and by two months in the account's total transaction volume (not just
+// campaign donations) had grown enough that 12 pages no longer reached back
+// that far, so the crawl was silently marked incomplete and the bar served a
+// stale, too-low cached total. 60 pages (30,000 txns) still exists only so a
+// bad cutoff can't turn into an unbounded crawl of the API.
+const MAX_PAGES = 60;
 
 export const txnDate = (t: UsaepayTxn): string =>
   String(t.created ?? t.datetime ?? t.date ?? "").slice(0, 10);
