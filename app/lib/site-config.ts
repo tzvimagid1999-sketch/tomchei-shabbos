@@ -10,7 +10,7 @@
 //   That's the only edit needed — every button and the redirect switch back
 //   to the regular donate page automatically.
 // ─────────────────────────────────────────────────────────────────────────────
-export const CAMPAIGN_MODE = true;
+export const CAMPAIGN_MODE = false;
 
 /** Where the campaign sends donors while CAMPAIGN_MODE is on. */
 export const CAMPAIGN_PATH = "/tishrei";

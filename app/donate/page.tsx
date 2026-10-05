@@ -109,6 +109,7 @@ export default function DonatePage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [scriptReady, setScriptReady] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   const clientRef = useRef<InstanceType<NonNullable<Window["usaepay"]>["Client"]> | null>(null);
   const cardRef = useRef<USAePayCard | null>(null);
@@ -119,6 +120,17 @@ export default function DonatePage() {
 
   const inputClass =
     "w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1AABAB] focus:border-transparent bg-white text-[#2D2D2D]";
+
+  // Cloudflare Turnstile calls this by name (data-callback) once the widget's
+  // challenge completes, handing back the token the charge routes verify.
+  useEffect(() => {
+    (window as unknown as Record<string, unknown>).onTurnstileSuccess = (token: string) => setTurnstileToken(token);
+    (window as unknown as Record<string, unknown>).onTurnstileExpired = () => setTurnstileToken("");
+    return () => {
+      delete (window as unknown as Record<string, unknown>).onTurnstileSuccess;
+      delete (window as unknown as Record<string, unknown>).onTurnstileExpired;
+    };
+  }, []);
 
   // pay.js is often already cached from a previous page, so it can finish
   // loading before the Script component's onLoad listener attaches — poll
@@ -170,6 +182,10 @@ export default function DonatePage() {
       setError("The payment form is still loading. Please try again in a moment.");
       return;
     }
+    if (!turnstileToken) {
+      setError("Please complete the verification check above before donating.");
+      return;
+    }
     setLoading(true);
     setError("");
 
@@ -201,6 +217,7 @@ export default function DonatePage() {
         body: JSON.stringify({
           amount: donationAmount,
           paymentKey, name, email, phone, street, city, state, zip,
+          turnstileToken,
           ...(frequency === "monthly" && splitMonths ? { numPayments: splitMonths } : {}),
           ...(honoreeType && honoreeName ? { honoreeType, honoreeName } : {}),
           ...(honoreeType === "honor" && honoreeEmail ? { honoreeEmail } : {}),
@@ -216,6 +233,10 @@ export default function DonatePage() {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     }
     setLoading(false);
+    // A Turnstile token is single-use — reset the widget so a retry gets a
+    // fresh one, rather than a stale token failing silently.
+    (window as unknown as { turnstile?: { reset: () => void } }).turnstile?.reset();
+    setTurnstileToken("");
   };
 
   if (success) {
@@ -239,6 +260,7 @@ export default function DonatePage() {
     <main className="min-h-screen pb-16 bg-white">
       <div className="relative z-10">
         <Script src="https://www.usaepay.com/js/v2/pay.js" onLoad={() => setScriptReady(true)} />
+        <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
 
         {/* Hero */}
         <section className="relative min-h-[300px] flex items-center justify-center text-center overflow-hidden">
@@ -404,8 +426,17 @@ export default function DonatePage() {
 
               {error && <p className="text-red-500 text-sm">{error}</p>}
 
+              <div className="flex justify-center">
+                <div
+                  className="cf-turnstile"
+                  data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                  data-callback="onTurnstileSuccess"
+                  data-expired-callback="onTurnstileExpired"
+                />
+              </div>
+
               <button type="submit"
-                disabled={loading || !name || !email || !street || !city || state.length < 2 || zip.length < 5 || donationAmount < 1 || !scriptReady}
+                disabled={loading || !name || !email || !street || !city || state.length < 2 || zip.length < 5 || donationAmount < 1 || !scriptReady || !turnstileToken}
                 className="w-full bg-[#F5A020] hover:bg-[#D48810] text-white py-4 rounded-lg font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 mt-8 flex items-center justify-center gap-2">
                 <Lock className="w-4 h-4" />
                 {loading

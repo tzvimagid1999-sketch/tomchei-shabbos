@@ -4,7 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { DONATE_HREF } from "../lib/site-config";
+import { DONATE_HREF, CAMPAIGN_MODE, CAMPAIGN_PATH } from "../lib/site-config";
+
+const DONATE_LABEL = CAMPAIGN_MODE ? "Tishrei Campaign" : "Donate Now";
 
 const links = [
   { href: "/",          label: "Home" },
@@ -53,9 +55,23 @@ export default function Navbar() {
                 {l.label}
               </Link>
             ))}
+            {/* The Tishrei page stays up after the campaign ends, so once
+                CAMPAIGN_MODE is off (and it's no longer the main CTA below)
+                it still needs its own link — placed beside Donate Now rather
+                than disappearing entirely. */}
+            {!CAMPAIGN_MODE && (
+              <Link href={CAMPAIGN_PATH}
+                className={`ml-1.5 whitespace-nowrap px-2.5 lg:px-3.5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  pathname === CAMPAIGN_PATH
+                    ? "bg-[#1AABAB]/10 text-[#1AABAB]"
+                    : "text-[#1AABAB] hover:bg-[#1AABAB]/5 hover:text-[#1AABAB]"
+                }`}>
+                Tishrei Campaign
+              </Link>
+            )}
             <Link href={DONATE_HREF}
               className="ml-1.5 whitespace-nowrap bg-[#F5A020] text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-[#D48810] transition-all tracking-wide active:translate-y-[2px]">
-              Tishrei Campaign
+              {DONATE_LABEL}
             </Link>
           </div>
 
@@ -77,10 +93,19 @@ export default function Navbar() {
               {l.label}
             </Link>
           ))}
+          {!CAMPAIGN_MODE && (
+            <Link href={CAMPAIGN_PATH}
+              className={`block px-4 py-2.5 rounded-lg font-semibold text-sm ${
+                pathname === CAMPAIGN_PATH ? "bg-[#1AABAB]/10 text-[#1AABAB]" : "text-[#1AABAB] hover:bg-[#1AABAB]/5"
+              }`}
+              onClick={() => setOpen(false)}>
+              Tishrei Campaign
+            </Link>
+          )}
           <Link href={DONATE_HREF}
             className="block bg-[#F5A020] text-white text-center px-4 py-2.5 rounded-lg font-bold text-sm mt-2 tracking-wide"
             onClick={() => setOpen(false)}>
-            Tishrei Campaign
+            {DONATE_LABEL}
           </Link>
         </div>
       )}
