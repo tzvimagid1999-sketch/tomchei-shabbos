@@ -18,7 +18,7 @@ export default function AboutPage() {
           src="/about-header.jpg"
           alt="Tomchei Shabbos volunteers"
           fill
-          className="object-cover object-bottom"
+          className="object-cover"
           priority
           sizes="100vw"
         />

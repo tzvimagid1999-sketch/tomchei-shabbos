@@ -31,7 +31,7 @@ export default function BlogPage() {
           src="/blog-header.jpg"
           alt="Tomchei Shabbos community"
           fill
-          className="object-cover object-center"
+          className="object-cover"
           priority
           sizes="100vw"
         />

@@ -12,9 +12,9 @@ const highlights = [
 ];
 
 const ways = [
-  { title: "Deliver",   desc: "Bring boxes right to families' doors.", time: "~2 hrs · Thursday evenings", color: "#1AABAB", tintBg: "#DDF0F0", img: "/about-header.jpg" },
+  { title: "Deliver",   desc: "Bring boxes right to families' doors.", time: "~2 hrs · Thursday evenings", color: "#1AABAB", tintBg: "#DDF0F0", img: "/photos/volunteer-deliver.jpg" },
   { title: "Pack",      desc: "Sort and box food with the crew.",      time: "~1.5 hrs · Wednesdays",     color: "#F5A020", tintBg: "#FDF0DC", img: "/photos/boys-filling-boxes.jpg" },
-  { title: "Fundraise", desc: "Rally support within your own circle.", time: "Flexible, on your time",    color: "#DC4C41", tintBg: "#FBE7E5", img: "/photos/photo-10.jpg" },
+  { title: "Fundraise", desc: "Rally support within your own circle.", time: "Flexible, on your time",    color: "#DC4C41", tintBg: "#FBE7E5", img: "/photos/volunteer-fundraise.jpg" },
 ];
 
 export default function VolunteerPage() {

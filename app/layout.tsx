@@ -3,7 +3,6 @@ import { Nunito, Playfair_Display, Caveat, Manrope, Josefin_Sans, Figtree, Jost,
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import PopupBanner from "./components/PopupBanner";
 
 // Merchant funding campaign page only: Lora headings over DM Sans, with Frank
 // Ruhl Libre for the Hebrew greeting — no other face loaded here has Hebrew
@@ -50,7 +49,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="scroll-smooth">
       <body className={`${nunito.variable} ${playfair.variable} ${caveat.variable} ${manrope.variable} ${josefin.variable} ${figtree.variable} ${jost.variable} ${ptSerif.variable} ${lora.variable} ${dmSans.variable} ${frankRuhl.variable} ${anton.variable} ${fraunces.variable} font-sans`}>
         <Navbar />
-        <PopupBanner />
         {children}
         <Footer />
       </body>

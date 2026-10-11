@@ -265,7 +265,7 @@ export default function DonatePage() {
         {/* Hero */}
         <section className="relative min-h-[300px] flex items-center justify-center text-center overflow-hidden">
           <Image src="/donate-header.jpg" alt="Tomchei Shabbos volunteers with food"
-            fill className="object-cover object-center" priority sizes="100vw" />
+            fill className="object-cover" style={{ objectPosition: "center 30%" }} priority sizes="100vw" />
           <div className="absolute inset-0 bg-[#1AABAB]/25" />
           <div className="relative z-10 max-w-4xl mx-auto px-6">
             <h1 className="font-playfair text-5xl sm:text-6xl lg:text-7xl font-bold text-white mt-4 mb-5 leading-[1.08]">Donate Today</h1>
