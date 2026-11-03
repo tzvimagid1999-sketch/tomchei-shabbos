@@ -1,5 +1,5 @@
 /** Destination for every "Donate Now" link across the site. */
-export const DONATE_HREF = "/donate#payment";
+export const DONATE_HREF = "/donate";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PROGRESS BAR
