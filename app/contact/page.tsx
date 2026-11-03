@@ -5,6 +5,7 @@ import { CONTACT_EMAIL, MAILING } from "../lib/contact-info";
 import ContactForm from "./ContactForm";
 
 export const metadata = {
+  alternates: { canonical: "/contact" },
   title: "Contact Us | Tomchei Shabbos of Florida",
   description:
     "Get in touch with Tomchei Shabbos of Florida, or find our mailing address for donations sent by check.",

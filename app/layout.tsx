@@ -33,7 +33,9 @@ export const metadata: Metadata = {
   title: "Tomchei Shabbos Florida – Helping Every Family Celebrate Shabbos",
   description:
     "Tomchei Shabbos Florida provides food packages to families in need so everyone can have a beautiful Shabbos. Donate or volunteer today!",
-  alternates: { canonical: "/" },
+  // No site-wide canonical here: a canonical set on the layout is inherited by
+  // every page, which told Google each page was a copy of the homepage. Each
+  // page sets its own.
   openGraph: {
     title: "Tomchei Shabbos Florida – Helping Every Family Celebrate Shabbos",
     description:
@@ -41,6 +43,40 @@ export const metadata: Metadata = {
     url: "https://tomcheishabbosflorida.org",
     siteName: "Tomchei Shabbos of Florida",
     type: "website",
+    locale: "en_US",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Tomchei Shabbos volunteers packing food for families" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tomchei Shabbos Florida – Helping Every Family Celebrate Shabbos",
+    description:
+      "Tomchei Shabbos Florida provides food packages to families in need so everyone can have a beautiful Shabbos.",
+    images: ["/og-image.jpg"],
+  },
+};
+
+// Tells Google who the organization is (name, logo, address, nonprofit status),
+// which feeds the knowledge panel and rich results.
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "NonprofitOrganization",
+  name: "Tomchei Shabbos of Florida",
+  url: "https://tomcheishabbosflorida.org",
+  logo: "https://tomcheishabbosflorida.org/logo-transparent.png",
+  image: "https://tomcheishabbosflorida.org/og-image.jpg",
+  description:
+    "Tomchei Shabbos of Florida provides weekly Shabbos and Yom Tov food packages to families in need across South Florida, with dignity and discretion.",
+  email: "info@tomcheishabbosflorida.org",
+  taxID: "83-2155012",
+  nonprofitStatus: "Nonprofit501c3",
+  areaServed: "South Florida",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "194 NE 186th Terrace",
+    addressLocality: "North Miami Beach",
+    addressRegion: "FL",
+    postalCode: "33179",
+    addressCountry: "US",
   },
 };
 
@@ -48,6 +84,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${nunito.variable} ${playfair.variable} ${caveat.variable} ${manrope.variable} ${josefin.variable} ${figtree.variable} ${jost.variable} ${ptSerif.variable} ${lora.variable} ${dmSans.variable} ${frankRuhl.variable} ${anton.variable} ${fraunces.variable} font-sans`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
         <Navbar />
         {children}
         <Footer />

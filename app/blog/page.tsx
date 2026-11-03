@@ -4,6 +4,7 @@ import { Calendar, Clock, ArrowLeft } from "lucide-react";
 import { DONATE_HREF } from "../lib/site-config";
 
 export const metadata = {
+  alternates: { canonical: "/blog" },
   title: "News & Stories | Tomchei Shabbos of Florida",
   description:
     "Stories and updates from Tomchei Shabbos of Florida — how our community comes together each week to help local families celebrate Shabbos.",

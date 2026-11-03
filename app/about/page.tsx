@@ -3,6 +3,7 @@ import Image from "next/image";
 import { DONATE_HREF } from "../lib/site-config";
 
 export const metadata = {
+  alternates: { canonical: "/about" },
   title: "About Us | Tomchei Shabbos of Florida",
   description:
     "How Tomchei Shabbos of Florida began, and how our volunteers deliver Shabbos food packages to families across South Florida each week with dignity and discretion.",

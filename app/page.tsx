@@ -4,6 +4,8 @@ import StatsSection from "./components/StatsSection";
 import FadeInOnScroll from "./components/FadeInOnScroll";
 import { DONATE_HREF } from "./lib/site-config";
 
+export const metadata = { alternates: { canonical: "/" } };
+
 export default function Home() {
   return (
     <main className="pt-20">
