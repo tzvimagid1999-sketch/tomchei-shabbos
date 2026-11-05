@@ -41,15 +41,15 @@ export default function TermsPage() {
 
       <h2>Text message program</h2>
       <p>
-        <strong>Program:</strong> Tomchei Shabbos of Florida text messages. If you provide your phone number and agree to
-        receive texts, we may send you messages such as confirmations, scheduling and delivery updates, volunteer
-        coordination, and occasional updates about our work.
+        <strong>Program:</strong> Tomchei Shabbos of Florida text messages. If you provide your phone number, we may send
+        you messages such as confirmations, scheduling and delivery updates, volunteer coordination, and occasional
+        updates about our work.
       </p>
       <ul>
         <li>
-          <strong>Consent:</strong> by providing your phone number and checking the consent box on our forms, you agree
-          to receive these text messages. Consent is not a condition of making a donation, volunteering, or applying for
-          assistance.
+          <strong>Consent:</strong> by providing your phone number and checking the consent box on our donation,
+          volunteer, assistance application or contact forms, you agree to receive these text messages. Consent is not
+          a condition of making a donation, volunteering, or applying for assistance.
         </li>
         <li>
           <strong>Message frequency</strong> varies. <strong>Message and data rates may apply.</strong>

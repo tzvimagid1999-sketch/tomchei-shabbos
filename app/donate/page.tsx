@@ -5,6 +5,7 @@ import Script from "next/script";
 import { Lock, CheckCircle } from "lucide-react";
 import confetti from "canvas-confetti";
 import OtherWaysToGive from "../components/OtherWaysToGive";
+import SmsConsent from "../components/SmsConsent";
 
 // pay.js (loaded from USAePay) attaches a global `usaepay` object.
 declare global {
@@ -110,6 +111,8 @@ export default function DonatePage() {
   const [success, setSuccess] = useState(false);
   const [scriptReady, setScriptReady] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
+  // Unchecked by default: text-message consent must be a deliberate tap.
+  const [smsConsent, setSmsConsent] = useState(false);
 
   const clientRef = useRef<InstanceType<NonNullable<Window["usaepay"]>["Client"]> | null>(null);
   const cardRef = useRef<USAePayCard | null>(null);
@@ -218,6 +221,7 @@ export default function DonatePage() {
           amount: donationAmount,
           paymentKey, name, email, phone, street, city, state, zip,
           turnstileToken,
+          smsConsent: phone.trim() ? smsConsent : false,
           ...(frequency === "monthly" && splitMonths ? { numPayments: splitMonths } : {}),
           ...(honoreeType && honoreeName ? { honoreeType, honoreeName } : {}),
           ...(honoreeType === "honor" && honoreeEmail ? { honoreeEmail } : {}),
@@ -433,6 +437,10 @@ export default function DonatePage() {
                   data-callback="onTurnstileSuccess"
                   data-expired-callback="onTurnstileExpired"
                 />
+              </div>
+
+              <div className="mt-6">
+                <SmsConsent checked={smsConsent} onChange={setSmsConsent} />
               </div>
 
               <button type="submit"

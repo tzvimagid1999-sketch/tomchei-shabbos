@@ -64,9 +64,10 @@ export default function PrivacyPolicyPage() {
 
       <h2>Text messages (SMS)</h2>
       <p>
-        If you give us your phone number and agree to receive texts, we may send you text messages from Tomchei Shabbos
-        of Florida, such as confirmations, scheduling and delivery updates, and occasional updates about our work.
-        Message and data rates may apply, and message frequency varies.
+        If you give us your phone number and check the consent box on our donation, volunteer, assistance application or
+        contact forms, you agree to receive text messages from Tomchei Shabbos of Florida, such as confirmations,
+        scheduling and delivery updates, and occasional updates about our work. Message and data rates may apply, and
+        message frequency varies.
       </p>
       <ul>
         <li>
