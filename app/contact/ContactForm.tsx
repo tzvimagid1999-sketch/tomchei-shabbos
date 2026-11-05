@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import SmsConsent from "../components/SmsConsent";
 
 export default function ContactForm() {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
-  const [form, setForm] = useState({ name: "", email: "", message: "", website: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "", website: "" });
+  // Starts unchecked on purpose: text-message consent has to be a deliberate tap.
+  const [smsConsent, setSmsConsent] = useState(false);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm({ ...form, [k]: e.target.value });
@@ -25,7 +28,7 @@ export default function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, smsConsent: form.phone.trim() ? smsConsent : false }),
       });
       const data = await res.json();
       if (!data.success) throw new Error(data.error || "Your message couldn't be sent.");
@@ -56,6 +59,19 @@ export default function ContactForm() {
       <div className="grid sm:grid-cols-2 gap-4 mb-4">
         <input className={field} placeholder="Name" value={form.name} onChange={set("name")} aria-label="Name" />
         <input className={field} type="email" placeholder="Email Address" value={form.email} onChange={set("email")} aria-label="Email address" />
+      </div>
+
+      <input
+        className={`${field} mb-3`}
+        type="tel"
+        placeholder="Phone Number (optional)"
+        value={form.phone}
+        onChange={set("phone")}
+        aria-label="Phone number (optional)"
+        autoComplete="tel"
+      />
+      <div className="mb-4">
+        <SmsConsent checked={smsConsent} onChange={setSmsConsent} />
       </div>
 
       <textarea

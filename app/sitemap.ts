@@ -12,6 +12,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/apply-for-assistance", priority: 0.8 },
     { path: "/volunteer", priority: 0.7 },
     { path: "/blog", priority: 0.6 },
+    { path: "/privacy-policy", priority: 0.3 },
+    { path: "/terms-and-conditions", priority: 0.3 },
   ];
 
   return pages.map(({ path, priority }) => ({

@@ -8,6 +8,9 @@
 // while the mail bounces, which the organisation has accepted knowingly.
 export const CONTACT_EMAIL = "info@tomcheishabbosflorida.org";
 
+// Shown on the Contact page.
+export const CONTACT_PHONE = { display: "(754) 247-6673", tel: "+17542476673" };
+
 export const MAILING = {
   payableTo: "Tomchei Shabbos of Florida",
   street: "194 NE 186th Terrace",

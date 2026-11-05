@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DONATE_HREF } from "../lib/site-config";
-import { CONTACT_EMAIL, MAILING } from "../lib/contact-info";
+import { CONTACT_EMAIL, CONTACT_PHONE, MAILING } from "../lib/contact-info";
 import ContactForm from "./ContactForm";
 
 export const metadata = {
@@ -49,7 +49,7 @@ export default function ContactPage() {
 
           <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-12 lg:gap-16">
 
-            {/* Details column. No phone number — the org does not want one posted. */}
+            {/* Details column. */}
             <div>
               <Label>Email</Label>
               <a
@@ -58,6 +58,16 @@ export default function ContactPage() {
               >
                 {CONTACT_EMAIL}
               </a>
+
+              <div className="mt-10">
+                <Label>Phone</Label>
+                <a
+                  href={`tel:${CONTACT_PHONE.tel}`}
+                  className="text-[17px] text-[#0a6e78] underline decoration-[#0a6e78]/30 underline-offset-4 hover:decoration-[#0a6e78]"
+                >
+                  {CONTACT_PHONE.display}
+                </a>
+              </div>
 
               {/* The reason this page exists: a donor could not find anywhere to
                   mail a check, because the address only appeared inside receipts

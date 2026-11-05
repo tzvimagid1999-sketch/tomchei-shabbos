@@ -21,6 +21,8 @@ export default function Footer() {
             { href: "/volunteer",      label: "Volunteer" },
             { href: "/blog",           label: "Blog" },
             { href: "/contact",        label: "Contact" },
+            { href: "/privacy-policy", label: "Privacy" },
+            { href: "/terms-and-conditions", label: "Terms" },
             // "Cancel Monthly" removed from the footer — monthly donors get a
             // direct link to /manage-donation in their confirmation email, so
             // the page stays reachable without advertising cancellation to
