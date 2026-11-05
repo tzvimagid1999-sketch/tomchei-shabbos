@@ -3,7 +3,6 @@ import crypto from "crypto";
 import { sendMail, sendHonoreeNotification, escapeHtml } from "../../lib/mailer";
 import { wallTag, companyTag, anonTag, newAnonId } from "../../lib/donor-wall";
 import { verifyTurnstile } from "../../lib/turnstile";
-import { notifySmsOptIn } from "../../lib/sms-optin";
 
 // Charges a donation through the USAePay gateway using a payment token
 // (payment_key) that was generated in the donor's browser by pay.js.
@@ -21,7 +20,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, firstName, lastName, name, email, phone, street, city, state, zip, campaign, subCampaign, company, displayName, anonymous, honoreeType, honoreeName, honoreeEmail, turnstileToken, smsConsent } = await req.json();
+    const { amount, paymentKey, firstName, lastName, name, email, phone, street, city, state, zip, campaign, subCampaign, company, displayName, anonymous, honoreeType, honoreeName, honoreeEmail, turnstileToken } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -168,14 +167,6 @@ export async function POST(req: NextRequest) {
           honoreeName,
           donorName: [resolvedFirst, resolvedLast].filter(Boolean).join(" ") || "A donor",
           amount: numericAmount,
-        });
-      }
-
-      if (smsConsent === true && phone) {
-        await notifySmsOptIn({
-          name: [resolvedFirst, resolvedLast].filter(Boolean).join(" "),
-          phone: String(phone),
-          source: "Donation form (one-time)",
         });
       }
 

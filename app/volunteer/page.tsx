@@ -4,7 +4,7 @@ import { Send, CheckCircle, Check } from "lucide-react";
 import Image from "next/image";
 import confetti from "canvas-confetti";
 import FadeInOnScroll from "../components/FadeInOnScroll";
-import SmsConsent from "../components/SmsConsent";
+import SmsNotice from "../components/SmsNotice";
 
 const highlights = [
   { title: "Be the Difference", desc: "One hour can change someone's week.",            accent: false },
@@ -23,8 +23,6 @@ export default function VolunteerPage() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", message: "" });
   const [interests, setInterests] = useState<string[]>([]);
-  // Unchecked by default: text-message consent must be a deliberate tap.
-  const [smsConsent, setSmsConsent] = useState(false);
   const [interestError, setInterestError] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -64,7 +62,7 @@ export default function VolunteerPage() {
       const res = await fetch("/api/volunteer-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, interests, smsConsent }),
+        body: JSON.stringify({ ...form, interests }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || "Something went wrong. Please try again.");
@@ -204,7 +202,7 @@ export default function VolunteerPage() {
 
               {submitError && <p className="text-red-500 text-sm">{submitError}</p>}
 
-              <SmsConsent checked={smsConsent} onChange={setSmsConsent} />
+              <SmsNotice />
 
               <button type="submit" disabled={loading}
                 className="w-full bg-[#F5A020] text-white py-4 rounded-lg font-semibold text-sm hover:bg-[#D48810] transition flex items-center justify-center gap-2 disabled:opacity-60">

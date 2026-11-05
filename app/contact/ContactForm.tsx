@@ -1,15 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import SmsConsent from "../components/SmsConsent";
+import SmsNotice from "../components/SmsNotice";
 
 export default function ContactForm() {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "", website: "" });
-  // Starts unchecked on purpose: text-message consent has to be a deliberate tap.
-  const [smsConsent, setSmsConsent] = useState(false);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm({ ...form, [k]: e.target.value });
@@ -28,7 +26,7 @@ export default function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, smsConsent: form.phone.trim() ? smsConsent : false }),
+        body: JSON.stringify(form),
       });
       const data = await res.json();
       if (!data.success) throw new Error(data.error || "Your message couldn't be sent.");
@@ -62,7 +60,7 @@ export default function ContactForm() {
       </div>
 
       <input
-        className={`${field} mb-3`}
+        className={`${field} mb-4`}
         type="tel"
         placeholder="Phone Number (optional)"
         value={form.phone}
@@ -70,9 +68,6 @@ export default function ContactForm() {
         aria-label="Phone number (optional)"
         autoComplete="tel"
       />
-      <div className="mb-4">
-        <SmsConsent checked={smsConsent} onChange={setSmsConsent} />
-      </div>
 
       <textarea
         className={`${field} min-h-[210px] resize-y mb-4`}
@@ -93,6 +88,8 @@ export default function ContactForm() {
       />
 
       {error && <p className="text-[15px] text-red-700 font-semibold mb-4">{error}</p>}
+
+      <SmsNotice className="mb-4" />
 
       <div className="flex justify-end">
         <button
