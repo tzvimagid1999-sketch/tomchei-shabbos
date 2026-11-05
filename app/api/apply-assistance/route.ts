@@ -9,7 +9,10 @@ export async function POST(req: NextRequest) {
 
     // Spouse fields are intentionally optional — single, divorced, and widowed
     // applicants were otherwise forced to type "N/A" to get past validation.
-    const required = ["email", "status", "firstName", "lastName", "street", "city", "state", "zip", "phone", "numChildren", "childrenAges", "occupation", "assistanceType", "rabbiName", "rabbiPhone", "rabbiCongregation", "otherOrgAssistance"];
+    // Ages are only required when there are children. With 0 children the ages
+    // list is legitimately empty, and "0" must count as an answer.
+    const hasChildren = Number(data.numChildren) > 0;
+    const required = ["email", "status", "firstName", "lastName", "street", "city", "state", "zip", "phone", "numChildren", ...(hasChildren ? ["childrenAges"] : []), "occupation", "assistanceType", "rabbiName", "rabbiPhone", "rabbiCongregation", "otherOrgAssistance"];
     for (const field of required) {
       if (!String(data[field] || "").trim()) {
         return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });
