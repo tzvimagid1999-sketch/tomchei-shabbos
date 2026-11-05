@@ -46,6 +46,13 @@ export default function PrivacyPolicyPage() {
         donation (amount, date, name, and receipt details) so we can send you a receipt and keep our books.
       </p>
 
+      <h2>Public donor lists</h2>
+      <p>
+        Some of our campaign pages show a list of supporters. We list a name only when the donor checks the box asking
+        us to, and gifts without that choice stay anonymous. To have your name removed from a list, email{" "}
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+
       <h2>How we use your information</h2>
       <ul>
         <li>To process donations and send receipts and confirmations.</li>
