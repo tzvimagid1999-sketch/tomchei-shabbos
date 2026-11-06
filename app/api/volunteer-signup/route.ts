@@ -11,7 +11,7 @@ const INTEREST_EMAILS: Record<string, string> = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { firstName, lastName, email, phone, message, interests } = await req.json();
+    const { firstName, lastName, email, phone, message, interests, smsConsent } = await req.json();
 
     if (!firstName || !lastName || !email || !phone) {
       return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });
@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
         <p><strong>Name:</strong> ${escapeHtml(firstName)} ${escapeHtml(lastName)}</p>
         <p><strong>Email:</strong> ${escapeHtml(email)}</p>
         <p><strong>Phone:</strong> ${escapeHtml(phone)}</p>
+        <p><strong>Agreed to text messages:</strong> ${smsConsent === true ? "Yes (box checked)" : "No"}</p>
         ${message ? `<p><strong>Message:</strong> ${escapeHtml(message)}</p>` : ""}
       </div>`;
 

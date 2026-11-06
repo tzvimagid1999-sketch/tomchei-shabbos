@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
-import SmsNotice from "../components/SmsNotice";
+import SmsConsent from "../components/SmsConsent";
 
 const initialForm = {
   email: "",
@@ -40,6 +40,8 @@ const isYomTovOption = (opt: string) => opt !== "Shabbos assistance only";
 export default function ApplyForAssistancePage() {
   const [form, setForm] = useState(initialForm);
   const [childAges, setChildAges] = useState<string[]>([]);
+  // Unchecked by default: text-message consent must be a deliberate tap.
+  const [smsConsent, setSmsConsent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -77,7 +79,7 @@ export default function ApplyForAssistancePage() {
       const res = await fetch("/api/apply-assistance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, childrenAges: childAges.join(", ") }),
+        body: JSON.stringify({ ...form, childrenAges: childAges.join(", "), smsConsent }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || "Something went wrong. Please try again.");
@@ -323,7 +325,7 @@ export default function ApplyForAssistancePage() {
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <SmsNotice />
+          <SmsConsent checked={smsConsent} onChange={setSmsConsent} />
 
           <button type="submit" disabled={loading}
             className="w-full bg-[#F5A020] text-white py-4 rounded-lg font-semibold text-lg hover:bg-[#D48810] transition disabled:opacity-50">

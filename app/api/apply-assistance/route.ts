@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
           ${row("Spouse's Name", data.spouseName)}
           ${row("Spouse's Email", data.spouseEmail)}
           ${row("Phone", data.phone)}
+          ${row("Agreed to text messages", data.smsConsent === true ? "Yes (box checked)" : "No")}
           ${row("Address", `${data.street}${data.unit ? " " + data.unit : ""}, ${data.city}, ${data.state} ${data.zip}`)}
           ${row("Building/Gate Access", data.accessInstructions || "")}
           ${row("Children at Home", data.numChildren)}

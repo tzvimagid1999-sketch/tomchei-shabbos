@@ -4,6 +4,7 @@ import { sendMonthlyConfirmation, sendScheduleFailureAlert } from "../../../lib/
 import { sendHonoreeNotification } from "../../../lib/mailer";
 import { wallTag, companyTag, anonTag, newAnonId, pledgeTag, PLEDGED_TAG } from "../../../lib/donor-wall";
 import { verifyTurnstile } from "../../../lib/turnstile";
+import { notifySmsOptIn } from "../../../lib/sms-optin";
 
 // Sets up a MONTHLY recurring donation. Per USAePay support, this is a 3-step
 // flow (NOT a single "create customer with embedded payment method" call):
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign, subCampaign, company, displayName, anonymous, turnstileToken } = await req.json();
+    const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign, subCampaign, company, displayName, anonymous, turnstileToken, smsConsent } = await req.json();
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -291,6 +292,10 @@ export async function POST(req: NextRequest) {
         donorName: name || "A donor",
         amount: numericAmount,
       });
+    }
+
+    if (smsConsent === true && phone) {
+      await notifySmsOptIn({ name: name || "", phone: String(phone), source: "Donation form (monthly)" });
     }
 
     return NextResponse.json({ success: true, custnum: custkey, scheduleOk, debug: scheduleDebug });

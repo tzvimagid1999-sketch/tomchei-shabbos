@@ -47,9 +47,9 @@ export default function TermsPage() {
       </p>
       <ul>
         <li>
-          <strong>Consent:</strong> by submitting our donation, volunteer, assistance application or contact form, you
-          agree to receive these text messages at the phone number you provide, as the notice above each Submit button
-          explains. You can opt out at any time by replying STOP.
+          <strong>Consent:</strong> by providing your phone number and checking the consent box on our donation,
+          volunteer, assistance application or contact forms, you agree to receive these text messages. Consent is not
+          a condition of making a donation, volunteering, or applying for assistance.
         </li>
         <li>
           <strong>Message frequency</strong> varies. <strong>Message and data rates may apply.</strong>

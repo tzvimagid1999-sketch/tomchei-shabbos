@@ -4,7 +4,7 @@ import { CONTACT_EMAIL } from "../../lib/contact-info";
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, phone, message, website } = await req.json();
+    const { name, email, phone, smsConsent, message, website } = await req.json();
 
     // Honeypot: a field hidden from people but filled in by most bots. Anything
     // that fills it gets a success response and goes nowhere, so the bot has no
@@ -25,6 +25,8 @@ export async function POST(req: NextRequest) {
     if (phone && (phoneDigits.length < 10 || phoneDigits.length > 15)) {
       return NextResponse.json({ error: "That phone number doesn't look right." }, { status: 400 });
     }
+    // Consent only counts when a number was actually provided.
+    const textConsent = Boolean(phone) && smsConsent === true;
 
     await sendMail({
       to: CONTACT_EMAIL,
@@ -37,7 +39,7 @@ export async function POST(req: NextRequest) {
           <p style="font-size:15px;line-height:1.7">
             <strong>From:</strong> ${escapeHtml(name)}<br/>
             <strong>Email:</strong> ${escapeHtml(email)}
-            ${phone ? `<br/><strong>Phone:</strong> ${escapeHtml(String(phone))}` : ""}
+            ${phone ? `<br/><strong>Phone:</strong> ${escapeHtml(String(phone))}<br/><strong>Agreed to text messages:</strong> ${textConsent ? "Yes (box checked)" : "No"}` : ""}
           </p>
           <p style="font-size:15px;line-height:1.7;white-space:pre-wrap;border-left:3px solid #C8A75B;padding-left:14px">${escapeHtml(message)}</p>
           <p style="font-size:12px;color:#8B7355">Sent from the contact form on tomcheishabbosflorida.org</p>

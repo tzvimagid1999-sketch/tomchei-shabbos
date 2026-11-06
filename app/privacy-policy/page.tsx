@@ -64,19 +64,22 @@ export default function PrivacyPolicyPage() {
 
       <h2>Text messages (SMS)</h2>
       <p>
-        By submitting our donation, volunteer, assistance application or contact form, you agree to receive text
-        messages from Tomchei Shabbos of Florida at the phone number you provide, such as confirmations, scheduling and
-        delivery updates, and occasional updates about our work, as the notice above each Submit button says. Message
-        and data rates may apply, and message frequency varies.
+        If you give us your phone number and check the consent box on our donation, volunteer, assistance application or
+        contact forms, you agree to receive text messages from Tomchei Shabbos of Florida, such as confirmations,
+        scheduling and delivery updates, and occasional updates about our work. Message and data rates may apply, and
+        message frequency varies.
       </p>
       <ul>
         <li>
-          <strong>Opting out:</strong> reply <strong>STOP</strong> at any time (or email us) and we will stop texting
-          you. Reply <strong>HELP</strong> for help.
+          <strong>Opting out:</strong> reply <strong>STOP</strong> at any time and we will stop texting you. Reply{" "}
+          <strong>HELP</strong> for help.
         </li>
         <li>
           <strong>No sharing for marketing:</strong> we do not sell, rent, or share your phone number or text-message
           consent with third parties or affiliates for their marketing or promotional purposes.
+        </li>
+        <li>
+          Consent to receive text messages is not a condition of making a donation or applying for assistance.
         </li>
       </ul>
 
