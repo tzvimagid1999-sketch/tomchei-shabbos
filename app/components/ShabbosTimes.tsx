@@ -1,11 +1,11 @@
-// Shows this week's parsha and Shabbos times for Miami and Hollywood.
+// Shows this week's parsha and Shabbos times for Miami and Boca Raton.
 // Data comes from Hebcal's free Shabbat API and refreshes on its own: the
 // fetch is cached for an hour, so the card rolls over to the next week
 // without anyone editing the site. If Hebcal can't be reached it renders nothing.
 
 const CITIES = [
   { name: "Miami", geonameid: 4164138 },
-  { name: "Hollywood", geonameid: 4158928 },
+  { name: "Boca Raton", geonameid: 4148411 },
 ];
 
 type HebcalItem = { category: string; title: string; date: string; hebrew?: string };
