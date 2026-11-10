@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { Calendar, Clock, ArrowLeft } from "lucide-react";
 import { DONATE_HREF } from "../lib/site-config";
+import ShabbosTimes from "../components/ShabbosTimes";
 
 export const metadata = {
   alternates: { canonical: "/blog" },
@@ -87,6 +88,8 @@ export default function BlogPage() {
       {/* Article */}
       <section className="bg-[#FDF9F7] py-20">
         <div className="max-w-3xl mx-auto px-6">
+
+          <ShabbosTimes />
 
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
