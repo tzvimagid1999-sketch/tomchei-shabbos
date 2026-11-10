@@ -330,7 +330,7 @@ export default function DonatePage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* One-Time / Monthly / Weekly toggle */}
               <div className="flex rounded-xl overflow-hidden border-2 border-[#E5E5E5]">
-                {(["once", "monthly", "weekly"] as const).map((f) => (
+                {(["once", "weekly", "monthly"] as const).map((f) => (
                   <button type="button" key={f} onClick={() => setFrequency(f)}
                     className={`flex-1 py-3 text-sm font-bold tracking-wide transition-all ${
                       frequency === f ? "bg-[#1AABAB] text-white" : "bg-white text-gray-500 hover:bg-gray-50"
