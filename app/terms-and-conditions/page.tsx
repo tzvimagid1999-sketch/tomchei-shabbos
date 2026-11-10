@@ -25,8 +25,8 @@ export default function TermsPage() {
           extent the law allows, and no goods or services are provided in exchange for them.
         </li>
         <li>
-          Monthly gifts continue until the number of months you chose is reached, or until you cancel. You can cancel a
-          monthly gift using the link in your confirmation email, or by contacting us.
+          Monthly gifts continue until the number of months you chose is reached, or until you cancel. Weekly gifts
+          continue until you cancel. You can cancel a monthly or weekly gift using the link in your confirmation email, or by contacting us.
         </li>
         <li>
           If you believe a donation was made in error, contact us as soon as possible and we will work with you.

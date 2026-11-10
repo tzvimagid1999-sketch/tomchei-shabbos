@@ -40,7 +40,7 @@ const amounts = [
 
 const SPLIT_MONTH_OPTIONS = [3, 6, 12, 18, 24, 36];
 
-function SuccessScreen({ name, amount, email, monthly, pledgeMonths, onClose }: { name: string; amount: number; email: string; monthly: boolean; pledgeMonths?: number; onClose: () => void }) {
+function SuccessScreen({ name, amount, email, monthly, weekly, pledgeMonths, onClose }: { name: string; amount: number; email: string; monthly: boolean; weekly?: boolean; pledgeMonths?: number; onClose: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -74,6 +74,8 @@ function SuccessScreen({ name, amount, email, monthly, pledgeMonths, onClose }: 
         <p className="text-gray-600 text-lg mb-2">
           {pledgeMonths
             ? <>Your <strong>${amount}/month</strong> pledge is set up for <strong>{pledgeMonths} months</strong> (total: ${(amount * pledgeMonths).toLocaleString()}).</>
+            : weekly
+            ? <>Your <strong>${amount}/week</strong> donation is set up.</>
             : monthly
             ? <>Your <strong>${amount}/month</strong> donation is set up.</>
             : <>Your <strong>${amount}</strong> donation has been received.</>}
@@ -92,7 +94,7 @@ function SuccessScreen({ name, amount, email, monthly, pledgeMonths, onClose }: 
 }
 
 export default function DonatePage() {
-  const [frequency, setFrequency] = useState<"once" | "monthly">("once");
+  const [frequency, setFrequency] = useState<"once" | "monthly" | "weekly">("once");
   const [selected, setSelected] = useState(0);
   const [custom, setCustom] = useState("");
   const [splitMonths, setSplitMonths] = useState<number | null>(null); // null = ongoing until cancelled
@@ -119,7 +121,7 @@ export default function DonatePage() {
   const publicKey = process.env.NEXT_PUBLIC_USAEPAY_PUBLIC_KEY;
 
   const donationAmount = Number(custom) || selected;
-  const isRecurringFreq = frequency === "monthly";
+  const isRecurringFreq = frequency !== "once";
 
   const inputClass =
     "w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1AABAB] focus:border-transparent bg-white text-[#2D2D2D]";
@@ -222,6 +224,7 @@ export default function DonatePage() {
           paymentKey, name, email, phone, street, city, state, zip,
           turnstileToken,
           smsConsent: phone.trim() ? smsConsent : false,
+          ...(frequency === "weekly" ? { interval: "weekly" } : {}),
           ...(frequency === "monthly" && splitMonths ? { numPayments: splitMonths } : {}),
           ...(honoreeType && honoreeName ? { honoreeType, honoreeName } : {}),
           ...(honoreeType === "honor" && honoreeEmail ? { honoreeEmail } : {}),
@@ -249,7 +252,8 @@ export default function DonatePage() {
         name={name}
         amount={donationAmount}
         email={email}
-        monthly={isRecurringFreq}
+        monthly={frequency === "monthly"}
+        weekly={frequency === "weekly"}
         pledgeMonths={splitMonths || undefined}
         onClose={() => {
           setSuccess(false);
@@ -284,7 +288,8 @@ export default function DonatePage() {
         {/* Sponsorship tier cards */}
         <div id="donate-section" className="max-w-6xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-            {amounts.map((a) => {
+            {/* Weekly gifts offer the three "family for a week" tiers; month/year tiers don't fit a weekly charge. */}
+            {(frequency === "weekly" ? amounts.slice(0, 3) : amounts).map((a) => {
               const tierValue = frequency === "monthly" ? a.monthlyValue : a.value;
               const active = selected === tierValue && !custom;
               return (
@@ -300,7 +305,7 @@ export default function DonatePage() {
                   className="group bg-white rounded-[20px] p-5 sm:p-8 text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-2 border-[#1AABAB] w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]"
                   style={{ background: active ? "#F0FBFB" : "#FFFFFF" }}>
                   <p className="font-bold text-4xl sm:text-5xl text-[#1AABAB] mb-3 sm:mb-4">
-                    {frequency === "monthly" ? `$${a.monthlyValue}/mo` : a.label}
+                    {frequency === "monthly" ? `$${a.monthlyValue}/mo` : frequency === "weekly" ? `${a.label}/wk` : a.label}
                   </p>
                   <h3 className="text-base sm:text-lg font-bold text-[#2D2D2D] mb-2 sm:mb-3 leading-snug">
                     {frequency === "monthly" ? `Per year: $${(a.monthlyValue * 12).toLocaleString()}` : a.title}
@@ -323,17 +328,23 @@ export default function DonatePage() {
 
           <div className="bg-white rounded-2xl border-2 border-[#1AABAB] shadow-lg p-6 sm:p-10">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* One-Time / Monthly toggle */}
+              {/* One-Time / Monthly / Weekly toggle */}
               <div className="flex rounded-xl overflow-hidden border-2 border-[#E5E5E5]">
-                {(["once", "monthly"] as const).map((f) => (
+                {(["once", "monthly", "weekly"] as const).map((f) => (
                   <button type="button" key={f} onClick={() => setFrequency(f)}
                     className={`flex-1 py-3 text-sm font-bold tracking-wide transition-all ${
                       frequency === f ? "bg-[#1AABAB] text-white" : "bg-white text-gray-500 hover:bg-gray-50"
                     }`}>
-                    {f === "once" ? "One-Time" : "Monthly"}
+                    {f === "once" ? "One-Time" : f === "monthly" ? "Monthly" : "Weekly"}
                   </button>
                 ))}
               </div>
+
+              {frequency === "weekly" && (
+                <p className="text-center text-xs text-[#1AABAB] font-semibold bg-[#1AABAB]/10 rounded-lg py-2 px-4">
+                  You&apos;ll be charged this amount every week. Cancel anytime at /manage-donation.
+                </p>
+              )}
 
               {frequency === "monthly" && (
                 <>
@@ -358,7 +369,7 @@ export default function DonatePage() {
               {donationAmount > 0 && (
                 <div id="donation-amount-bar" className="bg-gradient-to-br from-[#F0FBFB] to-white border-2 border-[#1AABAB] rounded-xl p-6 mb-2 scroll-mt-24">
                   <p className="text-sm font-semibold text-[#2D2D2D] uppercase tracking-wider mb-2">Donation Amount</p>
-                  <p className="font-bold text-5xl text-[#1AABAB]">${donationAmount}{isRecurringFreq ? "/mo" : ""}</p>
+                  <p className="font-bold text-5xl text-[#1AABAB]">${donationAmount}{frequency === "monthly" ? "/mo" : frequency === "weekly" ? "/wk" : ""}</p>
                 </div>
               )}
 

@@ -26,7 +26,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign, subCampaign, company, displayName, anonymous, turnstileToken, smsConsent } = await req.json();
+    const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign, subCampaign, company, displayName, anonymous, turnstileToken, smsConsent, interval } = await req.json();
+    // Weekly gifts are always ongoing (cancel anytime); fixed-term pledges are monthly only.
+    const weekly = interval === "weekly";
+    const unit = weekly ? "weekly" : "monthly";
 
     const numericAmount = Number(amount);
     if (!numericAmount || numericAmount < 1) {
@@ -42,7 +45,7 @@ export async function POST(req: NextRequest) {
     }
     // For a capped pledge (e.g. "$100k over 12 months"), Step 2 below already
     // charges payment #1 — the schedule only needs to cover the remaining ones.
-    const totalPayments = numPayments ? Number(numPayments) : undefined;
+    const totalPayments = !weekly && numPayments ? Number(numPayments) : undefined;
     const remainingPayments = totalPayments && totalPayments > 1 ? totalPayments - 1 : undefined;
 
     // "Ongoing (until cancelled)" must still send an explicit numleft. Omitting
@@ -171,7 +174,7 @@ export async function POST(req: NextRequest) {
         // below is marked so its charges are not counted a second time.
         description: `${firstName} ${lastName} - ` + campaignTag + pledgeTag(totalPayments) + (totalPayments
           ? `Pledge payment 1 of ${totalPayments} to Tomchei Shabbos of Florida`
-          : "Monthly donation to Tomchei Shabbos of Florida (first payment)") + dedication,
+          : `${weekly ? "Weekly" : "Monthly"} donation to Tomchei Shabbos of Florida (first payment)`) + dedication,
         billing_address: billing,
       }),
     });
@@ -199,16 +202,17 @@ export async function POST(req: NextRequest) {
     const skipSchedule = totalPayments === 1; // single-payment pledge — nothing further to schedule
     if (!skipSchedule) {
       try {
-        const nextMonth = new Date();
-        nextMonth.setMonth(nextMonth.getMonth() + 1);
-        const nextBill = nextMonth.toISOString().slice(0, 10);
+        const nextDate = new Date();
+        if (weekly) nextDate.setDate(nextDate.getDate() + 7);
+        else nextDate.setMonth(nextDate.getMonth() + 1);
+        const nextBill = nextDate.toISOString().slice(0, 10);
 
         const schedRes = await fetch(`${endpoint}/customers/${custkey}/billing_schedules`, {
           method: "POST",
           headers: { Authorization: auth(), "Content-Type": "application/json" },
           body: JSON.stringify({
             amount: numericAmount.toFixed(2),
-            frequency: "monthly",
+            frequency: unit,
             start_date: nextBill,
             next_date: nextBill,
             enabled: true,
@@ -234,7 +238,7 @@ export async function POST(req: NextRequest) {
                 wallTag(displayName),
                 displayName ? companyTag(company) : "",
                 `${firstName} ${lastName} `,
-                totalPayments ? `(${totalPayments} monthly payments)` : "Monthly donation",
+                totalPayments ? `(${totalPayments} monthly payments)` : weekly ? "Weekly donation" : "Monthly donation",
               ]
             ),
             numleft: scheduleNumLeft,
@@ -266,6 +270,7 @@ export async function POST(req: NextRequest) {
         honoreeType: honoreeType || undefined,
         honoreeName: honoreeName || undefined,
         scheduleCreated: skipSchedule ? undefined : scheduleOk,
+        interval: unit,
       });
     } catch (emailErr: unknown) {
       console.error("Confirmation email threw:", emailErr instanceof Error ? emailErr.message : emailErr);
@@ -280,6 +285,7 @@ export async function POST(req: NextRequest) {
         email: email || "",
         amount: numericAmount,
         months: totalPayments,
+        interval: unit,
         custkey: String(custkey),
         reason: JSON.stringify(scheduleDebug).slice(0, 400),
       });
@@ -295,7 +301,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (smsConsent === true && phone) {
-      await notifySmsOptIn({ name: name || "", phone: String(phone), source: "Donation form (monthly)" });
+      await notifySmsOptIn({ name: name || "", phone: String(phone), source: `Donation form (${unit})` });
     }
 
     return NextResponse.json({ success: true, custnum: custkey, scheduleOk, debug: scheduleDebug });
@@ -303,7 +309,7 @@ export async function POST(req: NextRequest) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("USAePay recurring error:", message);
     return NextResponse.json(
-      { error: "Something went wrong setting up your monthly donation. Please try again." },
+      { error: `Something went wrong setting up your recurring donation. Please try again.` },
       { status: 500 }
     );
   }
