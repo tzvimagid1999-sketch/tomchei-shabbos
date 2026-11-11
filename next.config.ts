@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/tishrei", destination: "/donate", permanent: false },
       { source: "/RoshHashanah", destination: "/donate", permanent: false },
+      // The merchant funding page was taken down; old links go to the donate page.
+      { source: "/merchant-funding/:path*", destination: "/donate", permanent: false },
     ];
   },
 };
