@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { amount, paymentKey, name, email, phone, street, city, state, zip, numPayments, honoreeType, honoreeName, honoreeEmail, campaign, subCampaign, company, displayName, anonymous, turnstileToken, smsConsent, interval } = await req.json();
-    // Weekly gifts are always ongoing (cancel anytime); fixed-term pledges are monthly only.
+    // Weekly or monthly; either can be open-ended or a fixed number of payments.
     const weekly = interval === "weekly";
     const unit = weekly ? "weekly" : "monthly";
 
@@ -45,14 +45,14 @@ export async function POST(req: NextRequest) {
     }
     // For a capped pledge (e.g. "$100k over 12 months"), Step 2 below already
     // charges payment #1 — the schedule only needs to cover the remaining ones.
-    const totalPayments = !weekly && numPayments ? Number(numPayments) : undefined;
+    const totalPayments = numPayments ? Number(numPayments) : undefined;
     const remainingPayments = totalPayments && totalPayments > 1 ? totalPayments - 1 : undefined;
 
     // "Ongoing (until cancelled)" must still send an explicit numleft. Omitting
     // it makes USAePay store 0 — zero payments remaining — so the schedule looks
     // enabled but never charges again. Their docs say "*" means bill forever,
     // but the REST API silently ignores it, so we use a count that outlives any
-    // donor (9999 months ≈ 833 years). Cancelling still works normally.
+    // donor (9999 payments). Cancelling still works normally.
     const INDEFINITE_PAYMENTS = 9999;
     const scheduleNumLeft = remainingPayments ?? INDEFINITE_PAYMENTS;
     const dedication = honoreeType && honoreeName
@@ -238,7 +238,7 @@ export async function POST(req: NextRequest) {
                 wallTag(displayName),
                 displayName ? companyTag(company) : "",
                 `${firstName} ${lastName} `,
-                totalPayments ? `(${totalPayments} monthly payments)` : weekly ? "Weekly donation" : "Monthly donation",
+                totalPayments ? `(${totalPayments} ${unit} payments)` : weekly ? "Weekly donation" : "Monthly donation",
               ]
             ),
             numleft: scheduleNumLeft,

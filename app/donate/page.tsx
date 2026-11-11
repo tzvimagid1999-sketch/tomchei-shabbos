@@ -39,6 +39,7 @@ const amounts = [
 ];
 
 const SPLIT_MONTH_OPTIONS = [3, 6, 12, 18, 24, 36];
+const SPLIT_WEEK_OPTIONS = [3, 6, 9, 12, 18, 26, 52];
 
 function SuccessScreen({ name, amount, email, monthly, weekly, pledgeMonths, onClose }: { name: string; amount: number; email: string; monthly: boolean; weekly?: boolean; pledgeMonths?: number; onClose: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -72,7 +73,9 @@ function SuccessScreen({ name, amount, email, monthly, weekly, pledgeMonths, onC
           Thank You{name ? `, ${name.split(" ")[0]}` : ""}!
         </h3>
         <p className="text-gray-600 text-lg mb-2">
-          {pledgeMonths
+          {pledgeMonths && weekly
+            ? <>Your <strong>${amount}/week</strong> pledge is set up for <strong>{pledgeMonths} weeks</strong> (total: ${(amount * pledgeMonths).toLocaleString()}).</>
+            : pledgeMonths
             ? <>Your <strong>${amount}/month</strong> pledge is set up for <strong>{pledgeMonths} months</strong> (total: ${(amount * pledgeMonths).toLocaleString()}).</>
             : weekly
             ? <>Your <strong>${amount}/week</strong> donation is set up.</>
@@ -225,7 +228,7 @@ export default function DonatePage() {
           turnstileToken,
           smsConsent: phone.trim() ? smsConsent : false,
           ...(frequency === "weekly" ? { interval: "weekly" } : {}),
-          ...(frequency === "monthly" && splitMonths ? { numPayments: splitMonths } : {}),
+          ...(frequency !== "once" && splitMonths ? { numPayments: splitMonths } : {}),
           ...(honoreeType && honoreeName ? { honoreeType, honoreeName } : {}),
           ...(honoreeType === "honor" && honoreeEmail ? { honoreeEmail } : {}),
         }),
@@ -331,7 +334,7 @@ export default function DonatePage() {
               {/* One-Time / Monthly / Weekly toggle */}
               <div className="flex rounded-xl overflow-hidden border-2 border-[#E5E5E5]">
                 {(["once", "weekly", "monthly"] as const).map((f) => (
-                  <button type="button" key={f} onClick={() => setFrequency(f)}
+                  <button type="button" key={f} onClick={() => { setFrequency(f); setSplitMonths(null); }}
                     className={`flex-1 py-3 text-sm font-bold tracking-wide transition-all ${
                       frequency === f ? "bg-[#1AABAB] text-white" : "bg-white text-gray-500 hover:bg-gray-50"
                     }`}>
@@ -340,26 +343,20 @@ export default function DonatePage() {
                 ))}
               </div>
 
-              {frequency === "weekly" && (
-                <p className="text-center text-xs text-[#1AABAB] font-semibold bg-[#1AABAB]/10 rounded-lg py-2 px-4">
-                  You&apos;ll be charged this amount every week. Cancel anytime at /manage-donation.
-                </p>
-              )}
-
-              {frequency === "monthly" && (
+              {isRecurringFreq && (
                 <>
                   <p className="text-center text-xs text-[#1AABAB] font-semibold bg-[#1AABAB]/10 rounded-lg py-2 px-4">
                     {splitMonths
-                      ? `You'll be charged this amount monthly for ${splitMonths} months, then it automatically stops.`
-                      : "You'll be charged this amount every month. Cancel anytime at /manage-donation."}
+                      ? `You'll be charged this amount ${frequency === "weekly" ? "weekly" : "monthly"} for ${splitMonths} ${frequency === "weekly" ? "weeks" : "months"}, then it automatically stops.`
+                      : `You'll be charged this amount every ${frequency === "weekly" ? "week" : "month"}. Cancel anytime at /manage-donation.`}
                   </p>
                   <div>
                     <label className="block text-sm font-semibold text-[#2D2D2D] mb-3 uppercase tracking-wider">Split Over</label>
                     <select value={splitMonths ?? ""} onChange={(e) => setSplitMonths(e.target.value ? Number(e.target.value) : null)}
                       className="w-full border-2 border-[#E5E5E5] rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1AABAB] focus:border-transparent bg-white text-[#2D2D2D]">
                       <option value="">Ongoing (until cancelled)</option>
-                      {SPLIT_MONTH_OPTIONS.map((m) => (
-                        <option key={m} value={m}>{m} months</option>
+                      {(frequency === "weekly" ? SPLIT_WEEK_OPTIONS : SPLIT_MONTH_OPTIONS).map((n) => (
+                        <option key={n} value={n}>{n} {frequency === "weekly" ? "weeks" : "months"}</option>
                       ))}
                     </select>
                   </div>
