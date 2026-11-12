@@ -89,15 +89,26 @@ export const FORM_HTML = `<div class="wrap">
       </div>
     </section>
 
-    <!-- 3. Spouse -->
+    <!-- 3. Marital status / Spouse -->
     <section>
-      <h2><span class="num">3</span>Spouse information</h2>
-      <p class="hint">Leave this section blank if it does not apply to you.</p>
+      <h2><span class="num">3</span>Marital status</h2>
       <div class="grid">
-        <div><label for="spFirst">Spouse first name</label><input type="text" id="spFirst" name="Spouse first name"></div>
-        <div><label for="spLast">Spouse last name</label><input type="text" id="spLast" name="Spouse last name"></div>
+        <div class="full">
+          <label class="req">Are you married?</label>
+          <div class="seg" data-req-radio="married">
+            <label><input type="radio" name="married" value="Yes"> Yes</label>
+            <label><input type="radio" name="married" value="No"> No</label>
+          </div>
+        </div>
+      </div>
+      <div class="sub" id="spouseFields">
+      <h3>Spouse information</h3>
+      <div class="grid">
+        <div><label class="req" for="spFirst">Spouse first name</label><input type="text" id="spFirst" name="Spouse first name" required></div>
+        <div><label class="req" for="spLast">Spouse last name</label><input type="text" id="spLast" name="Spouse last name" required></div>
         <div><label for="spEmail">Spouse email</label><input type="email" id="spEmail" name="Spouse email"></div>
-        <div><label for="spPhone">Spouse phone</label><input type="tel" id="spPhone" name="Spouse phone"></div>
+        <div><label class="req" for="spPhone">Spouse phone</label><input type="tel" id="spPhone" name="Spouse phone" required></div>
+      </div>
       </div>
     </section>
 
@@ -134,18 +145,18 @@ export const FORM_HTML = `<div class="wrap">
         </div>
       </div>
 
-      <div class="sub">
+      <div class="sub" id="spouseEmp">
         <h3>Spouse</h3>
         <div class="grid">
           <div class="full">
-            <label>Currently employed?</label>
-            <div class="seg">
+            <label class="req">Currently employed?</label>
+            <div class="seg" data-req-radio="wEmployed">
               <label><input type="radio" name="wEmployed" value="Yes"> Yes</label>
               <label><input type="radio" name="wEmployed" value="No"> No</label>
             </div>
           </div>
           <div class="full"><label for="wPosition">Occupation</label><input type="text" id="wPosition" name="Spouse occupation" placeholder="What is your spouse’s occupation?"></div>
-          <div class="full"><label for="wYearly">Yearly earnings (before taxes)</label><div class="money"><span>$</span><input type="number" min="0" step="1" id="wYearly" name="Spouse yearly earnings"></div></div>
+          <div class="full"><label class="req" for="wYearly">Yearly earnings (before taxes)</label><div class="money"><span>$</span><input type="number" min="0" step="1" id="wYearly" name="Spouse yearly earnings" required></div></div>
         </div>
       </div>
       <p class="hint" style="margin:14px 0 0">Combined household earnings: <strong id="combined">$0</strong></p>

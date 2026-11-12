@@ -71,11 +71,25 @@ export default function ApplyForAssistancePage() {
     wireJob("h");
     wireJob("w");
 
+    // Marital status: the spouse sections only show (and only count) when married.
+    const isMarried = () => $("input[name=married]:checked")?.value === "Yes";
+    const household = () => (+$("#hYearly").value || 0) + (isMarried() ? +$("#wYearly").value || 0 : 0);
     const updCombined = () => {
-      $("#combined").textContent = fmt((+$("#hYearly").value || 0) + (+$("#wYearly").value || 0));
+      $("#combined").textContent = fmt(household());
     };
     $("#hYearly").addEventListener("input", updCombined);
     $("#wYearly").addEventListener("input", updCombined);
+    const syncMarried = () => {
+      const yes = isMarried();
+      $("#spouseFields").classList.toggle("hidden", !yes);
+      $("#spouseEmp").classList.toggle("hidden", !yes);
+      (($("#combined").parentElement as HTMLElement).firstChild as Text).textContent = yes
+        ? "Combined household earnings: "
+        : "Household earnings: ";
+      updCombined();
+    };
+    $$("input[name=married]").forEach((r) => r.addEventListener("change", syncMarried));
+    syncMarried();
 
     const syncAssist = () =>
       $("#assistList").classList.toggle("hidden", $("input[name=otherAssist]:checked")?.value !== "Yes");
@@ -133,7 +147,7 @@ export default function ApplyForAssistancePage() {
       const v = (id: string) => $("#" + id).value.trim();
       const radio = (n: string) => $(`input[name=${n}]:checked`)?.value || "";
       const job = (p: string): string[][] => {
-        const rows = [["Currently employed", radio(p + "Employed") || "—"]];
+        const rows = [["Currently employed", radio(p + "Employed")]];
         rows.push(["Occupation", v(p + "Position") || "—"]);
         rows.push(["Yearly earnings", fmt(v(p + "Yearly"))]);
         return rows;
@@ -145,21 +159,25 @@ export default function ApplyForAssistancePage() {
           : "No";
       const kids = readKids();
       const consent = $("#smsConsent").checked;
+      const married = isMarried();
       const groups: Array<[string, string[][]]> = [
         ["Status", [["Application", radio("status")]]],
         ["Applicant", [["Name", v("firstName") + " " + v("lastName")], ["Email", v("email")], ["Phone", v("phone")]]],
-        ["Spouse", [["Name", (v("spFirst") + " " + v("spLast")).trim() || "—"], ["Email", v("spEmail") || "—"], ["Phone", v("spPhone") || "—"]]],
+        ["Marital status", [["Married", radio("married")]]],
+        ...(isMarried()
+          ? ([["Spouse", [["Name", v("spFirst") + " " + v("spLast")], ["Email", v("spEmail") || "—"], ["Phone", v("spPhone")]]]] as Array<[string, string[][]]>)
+          : []),
         ["Address", [["Address", [v("street"), v("apt")].filter(Boolean).join(", ") + ", " + v("city") + ", " + v("state").toUpperCase() + " " + v("zip")]]],
         ["Applicant — employment", job("h")],
-        ["Spouse — employment", job("w")],
-        ["Household income", [["Combined yearly earnings", fmt((+v("hYearly") || 0) + (+v("wYearly") || 0))]]],
+        ...(isMarried() ? ([["Spouse — employment", job("w")]] as Array<[string, string[][]]>) : []),
+        ["Household income", [[isMarried() ? "Combined yearly earnings" : "Yearly earnings", fmt(household())]]],
         ["Government assistance", [["Food stamps (SNAP)", radio("snap") === "Yes" ? "Yes — " + fmt(v("snapAmt")) + " per month" : radio("snap")], ["Other assistance", assist]]],
         ["Rent or mortgage", [["Monthly rent or mortgage", fmt(v("housingCost"))]]],
         ["Shul", [["Shul", v("shul")], ["Rabbi", v("rabbi")], ["Rabbi phone", v("rabbiPhone")], ["Rabbi email", v("rabbiEmail") || "—"]]],
       ];
       const kidRows: string[][] = [["Number of children", String(kids.length)]];
       kids.forEach((k, i) => kidRows.push([`Child ${i + 1}`, `${k.name} — ${k.gender}, age ${k.age}${k.school ? ", " + k.school : ""}`]));
-      groups.splice(9, 0, ["Children", kidRows]);
+      groups.splice(groups.findIndex((g) => g[0] === "Shul"), 0, ["Children", kidRows]);
       groups.push(["Anything you’d like to add", [["Notes", v("notes") || "—"]]]);
       groups.push(["Text messages", [["Agreed to text messages", consent ? "Yes (box checked)" : "No"]]]);
 
@@ -168,10 +186,11 @@ export default function ApplyForAssistancePage() {
       const fields = {
         status: radio("status"),
         firstName: v("firstName"), lastName: v("lastName"), email: v("email"), phone: v("phone"),
-        spFirst: v("spFirst"), spLast: v("spLast"), spEmail: v("spEmail"), spPhone: v("spPhone"),
+        married: radio("married"),
+        spFirst: married ? v("spFirst") : "", spLast: married ? v("spLast") : "", spEmail: married ? v("spEmail") : "", spPhone: married ? v("spPhone") : "",
         street: v("street"), apt: v("apt"), city: v("city"), state: v("state").toUpperCase(), zip: v("zip"),
         hEmployed: radio("hEmployed"), hPosition: v("hPosition"), hYearly: v("hYearly"),
-        wEmployed: radio("wEmployed"), wPosition: v("wPosition"), wYearly: v("wYearly"),
+        wEmployed: married ? radio("wEmployed") : "", wPosition: married ? v("wPosition") : "", wYearly: married ? v("wYearly") : "",
         snap: radio("snap"), snapAmt: v("snapAmt"),
         otherAssist: radio("otherAssist"), assist: assistChecked, assistOther: v("assistOther"),
         housingCost: v("housingCost"), numKids: v("numKids"), kids,
@@ -248,7 +267,7 @@ export default function ApplyForAssistancePage() {
       (root.querySelector("#app") as HTMLFormElement).reset();
       $("#kids").innerHTML = "";
       $$("#assistList,#snapAmtWrap").forEach((el) => el.classList.add("hidden"));
-      updCombined();
+      syncMarried();
       armed = false;
       btn.textContent = "Clear form";
       window.scrollTo({ top: 0 });

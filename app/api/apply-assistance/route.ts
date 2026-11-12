@@ -19,12 +19,13 @@ export async function POST(req: NextRequest) {
     const groups: unknown = body?.groups;
 
     // Required answers, matching the form's own required fields. The spouse
-    // section is optional: single, divorced and widowed applicants leave it blank.
+    // answers are only required when the applicant says they are married.
     const required = [
-      "status", "firstName", "lastName", "email", "phone",
+      "status", "firstName", "lastName", "email", "phone", "married",
       "street", "city", "state", "zip", "hEmployed", "hYearly",
       "snap", "otherAssist", "housingCost", "numKids", "shul", "rabbi", "rabbiPhone",
     ];
+    if (f.married === "Yes") required.push("spFirst", "spLast", "spPhone", "wEmployed", "wYearly");
     for (const field of required) {
       if (!str(f[field])) {
         return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });
