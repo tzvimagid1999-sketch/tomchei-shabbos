@@ -18,10 +18,11 @@ export async function POST(req: NextRequest) {
     const f = (body?.fields ?? {}) as Record<string, unknown>;
     const groups: unknown = body?.groups;
 
-    // Required answers, matching the form's own required fields.
+    // Required answers, matching the form's own required fields. The spouse
+    // section is optional: single, divorced and widowed applicants leave it blank.
     const required = [
-      "status", "firstName", "lastName", "email", "phone", "spFirst", "spLast", "spPhone",
-      "street", "city", "state", "zip", "hEmployed", "hYearly", "wEmployed", "wYearly",
+      "status", "firstName", "lastName", "email", "phone",
+      "street", "city", "state", "zip", "hEmployed", "hYearly",
       "snap", "otherAssist", "housingCost", "numKids", "shul", "rabbi", "rabbiPhone",
     ];
     for (const field of required) {

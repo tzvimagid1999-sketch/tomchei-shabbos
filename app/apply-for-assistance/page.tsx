@@ -133,7 +133,7 @@ export default function ApplyForAssistancePage() {
       const v = (id: string) => $("#" + id).value.trim();
       const radio = (n: string) => $(`input[name=${n}]:checked`)?.value || "";
       const job = (p: string): string[][] => {
-        const rows = [["Currently employed", radio(p + "Employed")]];
+        const rows = [["Currently employed", radio(p + "Employed") || "—"]];
         rows.push(["Occupation", v(p + "Position") || "—"]);
         rows.push(["Yearly earnings", fmt(v(p + "Yearly"))]);
         return rows;
@@ -148,7 +148,7 @@ export default function ApplyForAssistancePage() {
       const groups: Array<[string, string[][]]> = [
         ["Status", [["Application", radio("status")]]],
         ["Applicant", [["Name", v("firstName") + " " + v("lastName")], ["Email", v("email")], ["Phone", v("phone")]]],
-        ["Spouse", [["Name", v("spFirst") + " " + v("spLast")], ["Email", v("spEmail") || "—"], ["Phone", v("spPhone")]]],
+        ["Spouse", [["Name", (v("spFirst") + " " + v("spLast")).trim() || "—"], ["Email", v("spEmail") || "—"], ["Phone", v("spPhone") || "—"]]],
         ["Address", [["Address", [v("street"), v("apt")].filter(Boolean).join(", ") + ", " + v("city") + ", " + v("state").toUpperCase() + " " + v("zip")]]],
         ["Applicant — employment", job("h")],
         ["Spouse — employment", job("w")],
