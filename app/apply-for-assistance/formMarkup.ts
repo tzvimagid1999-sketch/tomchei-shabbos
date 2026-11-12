@@ -70,7 +70,7 @@ export const FORM_HTML = `<div class="wrap">
     <!-- 1. Status -->
     <section>
       <h2><span class="num">1</span>Application status</h2>
-      <p class="hint">Are you applying for the first time, or have you applied before?</p>
+      <p class="hint">Are you applying for the first time, or have you applied before? <span style="color:var(--err)">*</span></p>
       <div class="seg" data-req-radio="status">
         <label><input type="radio" name="status" value="New application"> New application</label>
         <label><input type="radio" name="status" value="Reapplying"> Reapplying</label>
