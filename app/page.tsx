@@ -3,6 +3,7 @@ import Image from "next/image";
 import StatsSection from "./components/StatsSection";
 import FadeInOnScroll from "./components/FadeInOnScroll";
 import { DONATE_HREF } from "./lib/site-config";
+import HomeDedications from "./components/HomeDedications";
 
 export const metadata = { alternates: { canonical: "/" } };
 
@@ -34,6 +35,7 @@ export default function Home() {
           <p className="font-jost text-white text-2xl sm:text-3xl font-bold tracking-wide drop-shadow-lg">
             Food. Dignity. Community.
           </p>
+          <HomeDedications />
         </div>
 
         {/* Buttons — bottom-right; smaller and side-by-side on mobile, original

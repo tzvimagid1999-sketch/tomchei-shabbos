@@ -3,63 +3,78 @@ import { sendMail, escapeHtml } from "../../lib/mailer";
 
 // Sends assistance applications by email instead of storing them — this
 // nonprofit doesn't have a database, and staff already work out of email/Gmail.
+//
+// The page posts { groups, fields }: `groups` is the reviewed summary exactly as
+// the applicant saw it (this is what goes in the email), `fields` is the same
+// answers in structured form (used for validation and the sheet log).
+type Kid = { name?: string; gender?: string; age?: string; school?: string };
+
+const str = (v: unknown) => (typeof v === "string" ? v.trim() : typeof v === "number" ? String(v) : "");
+const emailOk = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
 export async function POST(req: NextRequest) {
   try {
-    const data = await req.json();
+    const body = await req.json();
+    const f = (body?.fields ?? {}) as Record<string, unknown>;
+    const groups: unknown = body?.groups;
 
-    // Spouse fields are intentionally optional — single, divorced, and widowed
-    // applicants were otherwise forced to type "N/A" to get past validation.
-    // Ages are only required when there are children. With 0 children the ages
-    // list is legitimately empty, and "0" must count as an answer.
-    const hasChildren = Number(data.numChildren) > 0;
-    const required = ["email", "status", "firstName", "lastName", "street", "city", "state", "zip", "phone", "numChildren", ...(hasChildren ? ["childrenAges"] : []), "occupation", "assistanceType", "rabbiName", "rabbiPhone", "rabbiCongregation", "otherOrgAssistance"];
+    // Required answers, matching the form's own required fields.
+    const required = [
+      "status", "firstName", "lastName", "email", "phone", "spFirst", "spLast", "spPhone",
+      "street", "city", "state", "zip", "hEmployed", "hYearly", "wEmployed", "wYearly",
+      "snap", "otherAssist", "housingCost", "numKids", "shul", "rabbi", "rabbiPhone",
+    ];
     for (const field of required) {
-      if (!String(data[field] || "").trim()) {
+      if (!str(f[field])) {
         return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });
       }
     }
-    if (data.unit && !String(data.accessInstructions || "").trim()) {
-      return NextResponse.json({ error: "Please provide building/gate access instructions." }, { status: 400 });
+    if (!emailOk(str(f.email))) {
+      return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
+    }
+    if (f.snap === "Yes" && !str(f.snapAmt)) {
+      return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });
+    }
+    const kids: Kid[] = Array.isArray(f.kids) ? (f.kids as Kid[]) : [];
+    if (kids.length !== Number(f.numKids) || kids.some((k) => !str(k?.name) || !str(k?.gender) || !str(k?.age))) {
+      return NextResponse.json({ error: "Please fill in every child's name, gender and age." }, { status: 400 });
+    }
+    if (!Array.isArray(groups) || groups.length === 0) {
+      return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });
     }
 
     if (!process.env.GMAIL_APP_PASSWORD) {
       return NextResponse.json({ error: "Applications are not configured yet. Please try again later." }, { status: 500 });
     }
 
-    const row = (label: string, value: string) =>
-      value ? `<tr><td style="padding:6px 12px 6px 0;color:#888;font-size:13px;white-space:nowrap;vertical-align:top">${escapeHtml(label)}</td><td style="padding:6px 0;font-size:14px">${escapeHtml(value)}</td></tr>` : "";
+    const applicant = `${str(f.firstName)} ${str(f.lastName)}`;
+
+    const sections = (groups as unknown[])
+      .map((g) => {
+        if (!Array.isArray(g)) return "";
+        const [title, rows] = g as [unknown, unknown];
+        if (!Array.isArray(rows)) return "";
+        const trs = rows
+          .map((r) =>
+            Array.isArray(r)
+              ? `<tr><td style="padding:6px 12px 6px 0;color:#888;font-size:13px;white-space:nowrap;vertical-align:top">${escapeHtml(str(r[0]))}</td><td style="padding:6px 0;font-size:14px">${escapeHtml(str(r[1]))}</td></tr>`
+              : ""
+          )
+          .join("");
+        return `<h3 style="color:#1AABAB;font-size:15px;margin:20px 0 4px">${escapeHtml(str(title))}</h3><table style="border-collapse:collapse;width:100%">${trs}</table>`;
+      })
+      .join("");
 
     const html = `
       <div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto">
         <h2 style="color:#1AABAB">New Assistance Application</h2>
-        <table style="border-collapse:collapse;width:100%">
-          ${row("Status", data.status)}
-          ${row("Applicant", `${data.firstName} ${data.lastName}`)}
-          ${row("Applicant Email", data.email)}
-          ${row("Spouse's Name", data.spouseName)}
-          ${row("Spouse's Email", data.spouseEmail)}
-          ${row("Phone", data.phone)}
-          ${row("Agreed to text messages", data.smsConsent === true ? "Yes (box checked)" : "No")}
-          ${row("Address", `${data.street}${data.unit ? " " + data.unit : ""}, ${data.city}, ${data.state} ${data.zip}`)}
-          ${row("Building/Gate Access", data.accessInstructions || "")}
-          ${row("Children at Home", data.numChildren)}
-          ${row("Ages of Children", data.childrenAges)}
-          ${row("Occupation", data.occupation)}
-          ${row("Spouse's Occupation", data.spouseOccupation)}
-          ${row("Assistance Requested", data.assistanceType)}
-          ${row("Local Rabbi", data.rabbiName)}
-          ${row("Rabbi's Phone", data.rabbiPhone)}
-          ${row("Rabbi's Congregation", data.rabbiCongregation)}
-          ${row("Receiving Assistance from Other Organization(s)", data.otherOrgAssistance)}
-          ${row("Which Organization(s)", data.otherOrgAssistanceDetails || "")}
-          ${row("Additional Info", data.additionalInfo || "")}
-        </table>
+        ${sections}
       </div>`;
 
     await sendMail({
       to: "chanies@tomcheishabbosflorida.org",
-      replyTo: data.email,
-      subject: `Assistance Application — ${data.firstName} ${data.lastName}`,
+      replyTo: str(f.email),
+      subject: `Assistance Application — ${applicant}`,
       html,
     });
 
@@ -67,11 +82,11 @@ export async function POST(req: NextRequest) {
     // best-effort, don't fail the whole submission if just this email fails.
     try {
       await sendMail({
-        to: data.email,
+        to: str(f.email),
         subject: "We received your application",
         html: `
           <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#2F3A44">
-            <h2 style="color:#1AABAB">Thank you, ${escapeHtml(data.firstName)}!</h2>
+            <h2 style="color:#1AABAB">Thank you, ${escapeHtml(str(f.firstName))}!</h2>
             <p style="font-size:16px;line-height:1.7">
               We've received your application for assistance from Tomchei Shabbos of Florida.
               Our team will review it and reach out to you soon.
@@ -85,12 +100,44 @@ export async function POST(req: NextRequest) {
 
     // Also log the application to the Google Sheet — best-effort, never blocks
     // the email above or fails the submission if the sheet is unreachable.
+    // The sheet script was written for the previous form, so the old field names
+    // are still filled in where the new form has an equivalent; the new answers
+    // ride along under their own names.
     if (process.env.GOOGLE_SHEET_WEBHOOK_URL) {
       try {
+        const sheetData = {
+          ...f,
+          kids: kids.map((k) => `${str(k.name)} (${str(k.gender)}, ${str(k.age)}${str(k.school) ? ", " + str(k.school) : ""})`).join("; "),
+          assist: Array.isArray(f.assist) ? (f.assist as string[]).join(", ") : "",
+          email: str(f.email),
+          status: str(f.status),
+          firstName: str(f.firstName),
+          lastName: str(f.lastName),
+          spouseName: `${str(f.spFirst)} ${str(f.spLast)}`.trim(),
+          spouseEmail: str(f.spEmail),
+          street: str(f.street),
+          unit: str(f.apt),
+          accessInstructions: "",
+          city: str(f.city),
+          state: str(f.state),
+          zip: str(f.zip),
+          phone: str(f.phone),
+          numChildren: str(f.numKids),
+          childrenAges: kids.map((k) => str(k.age)).join(", "),
+          occupation: str(f.hPosition),
+          spouseOccupation: str(f.wPosition),
+          assistanceType: "",
+          rabbiName: str(f.rabbi),
+          rabbiPhone: str(f.rabbiPhone),
+          rabbiCongregation: str(f.shul),
+          otherOrgAssistance: "",
+          otherOrgAssistanceDetails: "",
+          additionalInfo: str(f.notes),
+        };
         await fetch(`${process.env.GOOGLE_SHEET_WEBHOOK_URL}?secret=${process.env.GOOGLE_SHEET_SECRET}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify(sheetData),
         });
       } catch (sheetErr: unknown) {
         console.error("Failed to log application to Google Sheet (non-fatal):", sheetErr instanceof Error ? sheetErr.message : sheetErr);

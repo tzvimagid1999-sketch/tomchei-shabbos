@@ -1,361 +1,270 @@
 "use client";
-import { useState } from "react";
-import Image from "next/image";
-import { CheckCircle } from "lucide-react";
-import SmsConsent from "../components/SmsConsent";
+import { useEffect, useRef } from "react";
+import { FORM_CSS, FORM_HTML } from "./formMarkup";
 
-const initialForm = {
-  email: "",
-  status: "",
-  firstName: "",
-  lastName: "",
-  spouseName: "",
-  street: "",
-  unit: "",
-  accessInstructions: "",
-  city: "",
-  state: "FL",
-  zip: "",
-  phone: "",
-  spouseEmail: "",
-  numChildren: "",
-  childrenAges: "",
-  occupation: "",
-  spouseOccupation: "",
-  assistanceType: "",
-  rabbiName: "",
-  rabbiPhone: "",
-  rabbiCongregation: "",
-  otherOrgAssistance: "",
-  otherOrgAssistanceDetails: "",
-  additionalInfo: "",
-};
-
-// Rosh Hashanah applications closed 2026-09-08. Shabbos assistance is a
-// year-round request, not tied to the Yom Tov calendar, so it stays open —
-// only the two options that include Yom Tov are shut off.
-const YOM_TOV_CLOSED = true;
-const isYomTovOption = (opt: string) => opt !== "Shabbos assistance only";
-
+// The family application form, copied from the supplied Family-Application-Form.html.
+// Markup and styles live in formMarkup.ts; the form's own logic (children cards,
+// show/hide questions, validation, review step) is the original script, scoped to
+// this page. Only the final submit differs: it posts to /api/apply-assistance,
+// which emails the application and logs it to the sheet, instead of a Google
+// Apps Script address.
 export default function ApplyForAssistancePage() {
-  const [form, setForm] = useState(initialForm);
-  const [childAges, setChildAges] = useState<string[]>([]);
-  // Unchecked by default: text-message consent must be a deliberate tap.
-  const [smsConsent, setSmsConsent] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [showClosedNotice, setShowClosedNotice] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
 
-  const inputClass =
-    "w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#1AABAB] transition font-medium text-gray-700 bg-white";
-  const labelClass = "block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide";
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || root.dataset.wired) return;
+    root.dataset.wired = "1";
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const $ = (s: string) => root.querySelector(s) as HTMLElement & HTMLInputElement & HTMLSelectElement;
+    const $$ = (s: string) => Array.from(root.querySelectorAll(s)) as Array<HTMLElement & HTMLInputElement & HTMLSelectElement>;
+    const fmt = (n: unknown) => "$" + (Number(n) || 0).toLocaleString("en-US");
 
-  const handleNumChildrenChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const n = Number(e.target.value);
-    setForm({ ...form, numChildren: e.target.value });
-    setChildAges((prev) => Array.from({ length: n }, (_, i) => prev[i] || ""));
-  };
+    // Number of children dropdown
+    const numKids = $("#numKids");
+    numKids.innerHTML =
+      '<option value="">Select…</option>' +
+      Array.from({ length: 16 }, (_, i) => `<option value="${i}">${i}</option>`).join("");
 
-  const handleAgeChange = (index: number, value: string) => {
-    setChildAges((prev) => prev.map((a, i) => (i === index ? value : a)));
-  };
+    const ages = ["Under 1"].concat(Array.from({ length: 30 }, (_, i) => String(i + 1)));
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // Defense in depth: the radio's own onChange already refuses to select a
-    // Yom Tov option, so this should be unreachable — but a submission must
-    // never depend solely on a click handler having run correctly.
-    if (YOM_TOV_CLOSED && isYomTovOption(form.assistanceType)) {
-      setShowClosedNotice(true);
-      return;
+    type Kid = { name?: string; gender?: string; age?: string; school?: string };
+    const attr = (s: string) => s.replace(/"/g, "&quot;");
+
+    function kidCard(i: number, prev: Kid) {
+      const opt = (list: string[], sel?: string) =>
+        '<option value="">Select…</option>' + list.map((v) => `<option${v === sel ? " selected" : ""}>${v}</option>`).join("");
+      return `<div class="child" data-kid="${i}">
+      <h4>Child ${i + 1}</h4>
+      <div class="grid">
+        <div><label class="req">First name</label><input type="text" data-f="name" value="${attr(prev.name || "")}" required></div>
+        <div><label class="req">Boy or girl</label><select data-f="gender" required>${opt(["Boy", "Girl"], prev.gender)}</select></div>
+        <div><label class="req">Age</label><select data-f="age" required>${opt(ages, prev.age)}</select></div>
+        <div class="school-wrap"><label>School / yeshiva</label><input type="text" data-f="school" value="${attr(prev.school || "")}" placeholder="Name of school"></div>
+      </div>
+    </div>`;
     }
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch("/api/apply-assistance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, childrenAges: childAges.join(", "), smsConsent }),
+    function readKids(): Kid[] {
+      return $$("#kids .child").map((c) => {
+        const o: Record<string, string> = {};
+        c.querySelectorAll<HTMLInputElement>("[data-f]").forEach((el) => (o[el.dataset.f as string] = el.value.trim()));
+        return o;
       });
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data.error || "Something went wrong. Please try again.");
-      setSubmitted(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     }
-    setLoading(false);
-  };
+    numKids.addEventListener("change", () => {
+      const prev = readKids();
+      const n = Number(numKids.value) || 0;
+      $("#kids").innerHTML = Array.from({ length: n }, (_, i) => kidCard(i, prev[i] || {})).join("");
+    });
 
-  if (submitted) {
-    return (
-      <main className="pt-32 pb-32 bg-[#FDF9F7] min-h-screen">
-        <div className="max-w-md mx-auto px-6 text-center">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10">
-            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-5" />
-            <h1 className="font-playfair text-3xl font-bold text-[#1AABAB] mb-3">Application Received</h1>
-            <p className="text-gray-600">
-              Thank you for submitting your application. Our team will review it and reach out to you soon.
-            </p>
-          </div>
-        </div>
-      </main>
+    // Employment toggles
+    function wireJob(prefix: string) {
+      const radios = $$(`input[name=${prefix}Employed]`);
+      const sync = () => {
+        const yes = radios.find((r) => r.checked)?.value === "Yes";
+        ($(`#${prefix}Position`) as HTMLInputElement).required = yes;
+        $(`label[for=${prefix}Position]`).classList.toggle("req", yes);
+      };
+      radios.forEach((r) => r.addEventListener("change", sync));
+      sync();
+    }
+    wireJob("h");
+    wireJob("w");
+
+    const updCombined = () => {
+      $("#combined").textContent = fmt((+$("#hYearly").value || 0) + (+$("#wYearly").value || 0));
+    };
+    $("#hYearly").addEventListener("input", updCombined);
+    $("#wYearly").addEventListener("input", updCombined);
+
+    const syncAssist = () =>
+      $("#assistList").classList.toggle("hidden", $("input[name=otherAssist]:checked")?.value !== "Yes");
+    $$("input[name=otherAssist]").forEach((r) => r.addEventListener("change", syncAssist));
+    syncAssist();
+    $$("input[name=snap]").forEach((r) =>
+      r.addEventListener("change", () => {
+        $("#snapAmtWrap").classList.toggle("hidden", $("input[name=snap]:checked")?.value !== "Yes");
+      })
     );
-  }
+    $("#snapAmtWrap").classList.add("hidden");
+
+    // Validation
+    const emailOk = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    function validate() {
+      $$(".invalid").forEach((el) => el.classList.remove("invalid"));
+      $$(".err-msg").forEach((el) => el.remove());
+      let first: HTMLElement | null = null;
+      let count = 0;
+      const flag = (el: HTMLElement, msg: string) => {
+        el.classList.add("invalid");
+        count++;
+        const m = document.createElement("div");
+        m.className = "err-msg";
+        m.textContent = msg;
+        el.closest("div")?.appendChild(m);
+        if (!first) first = el;
+      };
+      $$("#app [required]").forEach((el) => {
+        if (el.offsetParent === null) return;
+        if (!el.value.trim()) flag(el, "Required");
+        else if ((el.getAttribute("type") === "email") && !emailOk(el.value)) flag(el, "Enter a valid email");
+      });
+      const sp = $("#spEmail");
+      if (sp.value.trim() && !emailOk(sp.value)) flag(sp, "Enter a valid email");
+      $$("[data-req-radio]").forEach((g) => {
+        if (g.offsetParent === null) return;
+        if (!g.querySelector("input:checked")) flag(g, "Please choose one");
+      });
+      const re = $("#rabbiEmail");
+      if (re.value.trim() && !emailOk(re.value)) flag(re, "Enter a valid email");
+      const top = $("#topErr");
+      if (count) {
+        top.textContent = `Please complete the ${count} highlighted item${count > 1 ? "s" : ""}.`;
+        top.classList.remove("hidden");
+        (first as HTMLElement | null)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        return false;
+      }
+      top.classList.add("hidden");
+      return true;
+    }
+
+    // Collect answers
+    function collect() {
+      const v = (id: string) => $("#" + id).value.trim();
+      const radio = (n: string) => $(`input[name=${n}]:checked`)?.value || "";
+      const job = (p: string): string[][] => {
+        const rows = [["Currently employed", radio(p + "Employed")]];
+        rows.push(["Occupation", v(p + "Position") || "—"]);
+        rows.push(["Yearly earnings", fmt(v(p + "Yearly"))]);
+        return rows;
+      };
+      const assistChecked = $$("input[name=assist]:checked").map((c) => c.value);
+      const assist =
+        radio("otherAssist") === "Yes"
+          ? [...assistChecked, v("assistOther")].filter(Boolean).join(", ") || "Yes (not specified)"
+          : "No";
+      const kids = readKids();
+      const consent = $("#smsConsent").checked;
+      const groups: Array<[string, string[][]]> = [
+        ["Status", [["Application", radio("status")]]],
+        ["Applicant", [["Name", v("firstName") + " " + v("lastName")], ["Email", v("email")], ["Phone", v("phone")]]],
+        ["Spouse", [["Name", v("spFirst") + " " + v("spLast")], ["Email", v("spEmail") || "—"], ["Phone", v("spPhone")]]],
+        ["Address", [["Address", [v("street"), v("apt")].filter(Boolean).join(", ") + ", " + v("city") + ", " + v("state").toUpperCase() + " " + v("zip")]]],
+        ["Applicant — employment", job("h")],
+        ["Spouse — employment", job("w")],
+        ["Household income", [["Combined yearly earnings", fmt((+v("hYearly") || 0) + (+v("wYearly") || 0))]]],
+        ["Government assistance", [["Food stamps (SNAP)", radio("snap") === "Yes" ? "Yes — " + fmt(v("snapAmt")) + " per month" : radio("snap")], ["Other assistance", assist]]],
+        ["Rent or mortgage", [["Monthly rent or mortgage", fmt(v("housingCost"))]]],
+        ["Shul", [["Shul", v("shul")], ["Rabbi", v("rabbi")], ["Rabbi phone", v("rabbiPhone")], ["Rabbi email", v("rabbiEmail") || "—"]]],
+      ];
+      const kidRows: string[][] = [["Number of children", String(kids.length)]];
+      kids.forEach((k, i) => kidRows.push([`Child ${i + 1}`, `${k.name} — ${k.gender}, age ${k.age}${k.school ? ", " + k.school : ""}`]));
+      groups.splice(9, 0, ["Children", kidRows]);
+      groups.push(["Anything you’d like to add", [["Notes", v("notes") || "—"]]]);
+      groups.push(["Text messages", [["Agreed to text messages", consent ? "Yes (box checked)" : "No"]]]);
+
+      // Structured copy of the answers: the server checks the required ones and
+      // the sheet log reads from it.
+      const fields = {
+        status: radio("status"),
+        firstName: v("firstName"), lastName: v("lastName"), email: v("email"), phone: v("phone"),
+        spFirst: v("spFirst"), spLast: v("spLast"), spEmail: v("spEmail"), spPhone: v("spPhone"),
+        street: v("street"), apt: v("apt"), city: v("city"), state: v("state").toUpperCase(), zip: v("zip"),
+        hEmployed: radio("hEmployed"), hPosition: v("hPosition"), hYearly: v("hYearly"),
+        wEmployed: radio("wEmployed"), wPosition: v("wPosition"), wYearly: v("wYearly"),
+        snap: radio("snap"), snapAmt: v("snapAmt"),
+        otherAssist: radio("otherAssist"), assist: assistChecked, assistOther: v("assistOther"),
+        housingCost: v("housingCost"), numKids: v("numKids"), kids,
+        shul: v("shul"), rabbi: v("rabbi"), rabbiPhone: v("rabbiPhone"), rabbiEmail: v("rabbiEmail"),
+        notes: v("notes"), smsConsent: consent,
+      };
+      return { groups, fields };
+    }
+
+    const esc = (s: unknown) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c] as string));
+    let lastCollected: ReturnType<typeof collect> | null = null;
+
+    $("#app").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!validate()) return;
+      const collected = collect();
+      lastCollected = collected;
+      $("#sendErr").classList.add("hidden");
+      $("#review").innerHTML =
+        '<h2 style="font-family:Fraunces,Georgia,serif;font-weight:500;margin:0">Application summary</h2>' +
+        collected.groups
+          .map(([t, rows]) => `<h3>${esc(t)}</h3><table>${rows.map(([a, b]) => `<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join("")}</table>`)
+          .join("");
+      $("#app").classList.add("hidden");
+      $("#reviewWrap").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    $("#editBtn").addEventListener("click", () => {
+      $("#reviewWrap").classList.add("hidden");
+      $("#app").classList.remove("hidden");
+      window.scrollTo({ top: 0 });
+    });
+    $("#submitBtn").addEventListener("click", async (e) => {
+      const btn = e.target as HTMLButtonElement;
+      const err = $("#sendErr");
+      if (!lastCollected) return;
+      btn.disabled = true;
+      btn.textContent = "Sending…";
+      err.classList.add("hidden");
+      try {
+        const res = await fetch("/api/apply-assistance", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(lastCollected),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || "Something went wrong.");
+        $("#reviewWrap").classList.add("hidden");
+        $("#doneWrap").classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (ex) {
+        err.textContent =
+          ex instanceof Error && ex.message && ex.message !== "Failed to fetch"
+            ? ex.message
+            : "Something went wrong sending your application. Please check your internet connection and try again.";
+        err.classList.remove("hidden");
+      }
+      btn.disabled = false;
+      btn.textContent = "Submit application";
+    });
+    // Two-click clear (no confirm dialogs allowed)
+    let armed = false;
+    $("#resetBtn").addEventListener("click", (e) => {
+      const btn = e.target as HTMLButtonElement;
+      if (!armed) {
+        armed = true;
+        btn.textContent = "Click again to clear";
+        setTimeout(() => {
+          armed = false;
+          btn.textContent = "Clear form";
+        }, 3000);
+        return;
+      }
+      (root.querySelector("#app") as HTMLFormElement).reset();
+      $("#kids").innerHTML = "";
+      $$("#assistList,#snapAmtWrap").forEach((el) => el.classList.add("hidden"));
+      updCombined();
+      armed = false;
+      btn.textContent = "Clear form";
+      window.scrollTo({ top: 0 });
+    });
+  }, []);
 
   return (
     <main className="pt-20">
-      {/* Hero */}
-      <section className="relative min-h-[300px] flex items-center justify-center text-center overflow-hidden">
-        <Image src="/apply-header.jpg" alt="" fill className="object-cover" style={{ objectPosition: "center 45%" }} priority sizes="100vw" />
-        <div className="absolute inset-0 bg-[#1AABAB]/25" />
-        <div className="relative z-10 max-w-4xl mx-auto px-6">
-          <h1 className="font-playfair text-4xl sm:text-6xl font-bold text-white my-4 leading-[1.08]">Apply for Assistance</h1>
-          <p className="text-white/90 max-w-xl mx-auto">
-            Applicants in financial need seeking assistance with Shabbos observance are asked to complete all fields thoroughly.
-          </p>
-        </div>
-      </section>
-
-      <div className="max-w-2xl mx-auto px-6 py-16">
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 space-y-6">
-          {/* Status */}
-          <div>
-            <label className={labelClass}>Status *</label>
-            <div className="flex gap-4 mt-1">
-              {["I am a new recipient", "I am re-applying"].map((opt) => (
-                <label key={opt} className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <input type="radio" name="status" value={opt} checked={form.status === opt} onChange={handleChange} required />
-                  {opt}
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Applicant info */}
-          <div>
-            <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Your Information</h3>
-            <div className="grid grid-cols-2 gap-3 mb-3">
-              <div>
-                <label className={labelClass}>First Name *</label>
-                <input name="firstName" required value={form.firstName} onChange={handleChange} className={inputClass} />
-              </div>
-              <div>
-                <label className={labelClass}>Last Name *</label>
-                <input name="lastName" required value={form.lastName} onChange={handleChange} className={inputClass} />
-              </div>
-            </div>
-            <div className="mb-3">
-              <label className={labelClass}>Email *</label>
-              <input type="email" name="email" required value={form.email} onChange={handleChange} className={inputClass} />
-            </div>
-            <div className="mb-3">
-              <label className={labelClass}>Phone Number *</label>
-              <input name="phone" required value={form.phone} onChange={handleChange} className={inputClass} />
-            </div>
-            <div className="mb-3">
-              <label className={labelClass}>Occupation *</label>
-              <input name="occupation" required value={form.occupation} onChange={handleChange} className={inputClass} />
-            </div>
-          </div>
-
-          {/* Spouse info */}
-          <div>
-            <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Spouse&apos;s Information</h3>
-            <div className="mb-3">
-              <label className={labelClass}>Spouse&apos;s Name</label>
-              <input name="spouseName" value={form.spouseName} onChange={handleChange} className={inputClass} />
-            </div>
-            <div className="mb-3">
-              <label className={labelClass}>Spouse&apos;s Email</label>
-              <input type="email" name="spouseEmail" value={form.spouseEmail} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Spouse&apos;s Occupation</label>
-              <input name="spouseOccupation" value={form.spouseOccupation} onChange={handleChange} className={inputClass} />
-            </div>
-          </div>
-
-          {/* Address */}
-          <div>
-            <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Address</h3>
-            <div className="mb-3">
-              <label className={labelClass}>Street Address *</label>
-              <input name="street" required value={form.street} onChange={handleChange} className={inputClass} />
-            </div>
-            <div className="mb-3">
-              <label className={labelClass}>Unit / Apartment Number</label>
-              <input name="unit" value={form.unit} onChange={handleChange} className={inputClass} />
-            </div>
-            {form.unit && (
-              <div className="mb-3">
-                <label className={labelClass}>Building / Gate Access Instructions *</label>
-                <input type="text" name="accessInstructions" required
-                  value={form.accessInstructions} onChange={handleChange}
-                  placeholder="e.g. gate code, doorman, leave with front desk"
-                  className={inputClass} />
-              </div>
-            )}
-            <div className="grid grid-cols-3 gap-3">
-              <div>
-                <label className={labelClass}>City *</label>
-                <input name="city" required value={form.city} onChange={handleChange} className={inputClass} />
-              </div>
-              <div>
-                <label className={labelClass}>State *</label>
-                <input name="state" required maxLength={2} value={form.state}
-                  onChange={(e) => setForm((f) => ({ ...f, state: e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 2) }))}
-                  className={inputClass} />
-              </div>
-              <div>
-                <label className={labelClass}>ZIP Code *</label>
-                <input name="zip" required value={form.zip} onChange={handleChange} className={inputClass} />
-              </div>
-            </div>
-          </div>
-
-          {/* Children */}
-          <div>
-            <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Children</h3>
-            <div>
-              <label className={labelClass}>Number of Children at Home *</label>
-              <select name="numChildren" required value={form.numChildren} onChange={handleNumChildrenChange} className={inputClass}>
-                <option value="" disabled>Select</option>
-                {Array.from({ length: 16 }, (_, i) => i).map((n) => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
-            </div>
-
-            {childAges.length > 0 && (
-              <div className="mt-3">
-                <label className={labelClass}>Ages of Children *</label>
-                <div className="grid grid-cols-4 gap-2">
-                  {childAges.map((age, i) => (
-                    <input key={i} type="number" min={0} max={30} required placeholder={`#${i + 1}`}
-                      value={age} onChange={(e) => handleAgeChange(i, e.target.value)}
-                      className={`${inputClass} text-center`} />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Assistance type */}
-          <div>
-            <label className={labelClass}>Assistance Type Requested *</label>
-            <div className="space-y-2 mt-1">
-              {["Yom Tov assistance only", "Shabbos assistance only", "Shabbos and Yom Tov assistance"].map((opt) => (
-                <label
-                  key={opt}
-                  className={`flex items-center gap-2 text-sm font-medium ${
-                    YOM_TOV_CLOSED && isYomTovOption(opt) ? "text-gray-400" : "text-gray-700"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="assistanceType"
-                    value={opt}
-                    checked={form.assistanceType === opt}
-                    onChange={(e) => {
-                      // Refuses the selection itself rather than only checking
-                      // at submit time, so the applicant sees the notice at
-                      // the moment they try to pick a closed option, not
-                      // after filling in the rest of the form.
-                      if (YOM_TOV_CLOSED && isYomTovOption(opt)) {
-                        setShowClosedNotice(true);
-                        return;
-                      }
-                      handleChange(e);
-                    }}
-                    required
-                  />
-                  {opt}
-                  {YOM_TOV_CLOSED && isYomTovOption(opt) && (
-                    <span className="text-xs font-normal text-gray-400">(closed)</span>
-                  )}
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Rabbi */}
-          <div>
-            <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Local Rabbi</h3>
-            <div className="mb-3">
-              <label className={labelClass}>Rabbi&apos;s Name *</label>
-              <input name="rabbiName" required value={form.rabbiName} onChange={handleChange} className={inputClass} />
-            </div>
-            <div className="mb-3">
-              <label className={labelClass}>Rabbi&apos;s Phone Number *</label>
-              <input name="rabbiPhone" required value={form.rabbiPhone} onChange={handleChange} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Rabbi&apos;s Congregation *</label>
-              <input name="rabbiCongregation" required value={form.rabbiCongregation} onChange={handleChange} className={inputClass} />
-            </div>
-          </div>
-
-          {/* Other */}
-          <div>
-            <label className={labelClass}>Are you receiving assistance from other organization(s)? *</label>
-            <div className="flex gap-4 mt-1">
-              {["Yes", "No"].map((opt) => (
-                <label key={opt} className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <input type="radio" name="otherOrgAssistance" value={opt} checked={form.otherOrgAssistance === opt} onChange={handleChange} required />
-                  {opt}
-                </label>
-              ))}
-            </div>
-            {form.otherOrgAssistance === "Yes" && (
-              <div className="mt-3">
-                <label className={labelClass}>Which organization(s)? *</label>
-                <textarea name="otherOrgAssistanceDetails" required rows={2} value={form.otherOrgAssistanceDetails} onChange={handleChange} className={inputClass} />
-              </div>
-            )}
-          </div>
-          <div>
-            <label className={labelClass}>Additional Information</label>
-            <textarea name="additionalInfo" rows={3} value={form.additionalInfo} onChange={handleChange} className={inputClass} />
-          </div>
-
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-
-          <SmsConsent checked={smsConsent} onChange={setSmsConsent} />
-
-          <button type="submit" disabled={loading}
-            className="w-full bg-[#F5A020] text-white py-4 rounded-lg font-semibold text-lg hover:bg-[#D48810] transition disabled:opacity-50">
-            {loading ? "Submitting..." : "Submit Application"}
-          </button>
-        </form>
-      </div>
-
-      {showClosedNotice && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setShowClosedNotice(false)}
-          />
-          <div className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center">
-            <h2 className="font-playfair text-2xl font-bold text-[#1AABAB] mb-3">
-              Applications Closed
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Rosh Hashanah applications are closed. Shabbos assistance applications are still open.
-            </p>
-            <button
-              onClick={() => setShowClosedNotice(false)}
-              className="w-full bg-[#1AABAB] text-white py-3 rounded-lg font-semibold hover:bg-[#158888] transition"
-            >
-              Okay
-            </button>
-          </div>
-        </div>
-      )}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet"
+      />
+      <style dangerouslySetInnerHTML={{ __html: FORM_CSS }} />
+      <div ref={rootRef} className="fa" dangerouslySetInnerHTML={{ __html: FORM_HTML }} />
     </main>
   );
 }
